@@ -1,64 +1,66 @@
-# Publishing the SDKs
+# Publishing SDKs on GitHub
 
-The repository is the public SDK boundary. Do not change any application
-repository's visibility. Publish only reviewed exported SDK files, the license,
-public contracts, examples and distribution tooling in this repository.
+The supported distribution is this public repository, immutable Go module tags,
+and qualified package archives in GitHub Releases. npm and PyPI publication is
+not part of the current product decision. No npm/PyPI accounts, publisher
+configuration, or registry write credentials are required. The active workflow
+only qualifies archives and has read-only repository permissions; it never
+publishes to those registries.
 
-1. The reviewed source is published at
-   [dev-null-GmbH/d0-sdk](https://github.com/dev-null-GmbH/d0-sdk), with `main`
-   as its default branch. Qualification run
-   [38725343029](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38725343029)
-   passed. Require its `qualify` job for changes and protect main and the five
-   `{auth,platform,accounting,einvoice,eric}/go/v*` tags from replacement.
-   The `public-sdk-release` environment is restricted to `main`.
-2. Configure npm ownership of `@dev-null-gmbh` and the five package names.
-   Configure each trusted publisher for owner `dev-null-GmbH`, repository
-   `d0-sdk`, workflow `release.yml`, environment `public-sdk-release`, with
-   direct `npm publish` allowed. Initial npm package creation may need the
-   organization's authenticated bootstrap before a publisher can be assigned.
-   Do not create a long-lived write token for CI.
-3. Configure the five PyPI projects (or pending publishers) with those same
-   GitHub repository/workflow/environment claims. Keep publisher administration
-   with the company's package owners.
-4. Run `Qualify and publish SDKs` on main with `publish=true`. The qualification
-   job has no publishing authority. The publishing job downloads only that run's
-   qualified archives, checks their digests, publishes auth before product
-   packages and obtains registry credentials through OIDC. Existing identical
-   versions can resume; different bytes at the same version fail closed. No
-   customer or API requests are sent by this workflow.
-5. Package versions come from each product’s matching TypeScript and Python
-   metadata; Go uses the same product version. The tag job creates missing tags
-   at the qualified source commit. An existing tag is accepted only when its
-   complete Go module tree is identical, allowing unrelated products and release
-   documentation to change without moving published tags. The final job verifies anonymous registry downloads and runs all
-   product examples from installed packages. After it succeeds,
-   update the Console SDK catalog's publication evidence and this release state.
-   A successful build alone is not evidence that registries serve the package.
+The repository is the public SDK boundary. Keep application repositories private.
+Publish only reviewed exported SDKs, their MIT license, public contracts,
+examples, and the distribution tooling already present here.
 
-The five Go modules at v0.1.0 are already published and have passed anonymous
-installation through proxy.golang.org and sum.golang.org. The refreshed
-Accounting and ERiC Go modules are published as 0.1.1 at commit
-`8a56e28666be2321f5f73b6a9ce328fbac0b2155`; v0.1.0 remains immutable.
-[Main qualification](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38743622153)
-passed. A fresh anonymous installation used proxy.golang.org with sum.golang.org
-and ran all four product Go examples successfully. npm and PyPI
-publication still require company account and publisher setup.
+## Release procedure
 
-ERiC Go 0.1.2 is published at `6f2c39612a661ec557e96e5caff093a057e6e1de`;
-[main qualification](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38748901791),
-a fresh public proxy/checksum download and its installed example passed. The
-[SDK archive release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15)
-contains that run’s exact 35 package archives plus their internal SHA256SUMS.
-Its outer ZIP SHA-256 is `6c11b63a5ce5f24dff79d1f3d33c7879ff48831d66dd9029b37abf073152dd93`;
-an anonymous release download matched all 404,724 bytes. This archive release
-does not claim npm or PyPI registry publication.
+1. Merge the reviewed export and require a successful `qualify` job on the exact
+   `main` commit. `tools/check.sh` verifies source hashes, package contents,
+   language checks, and all twelve product examples installed from packed
+   archives in fresh customer directories. Preserve protection of `main` and
+   `{auth,platform,accounting,einvoice,eric}/go/v*` tags.
+2. Retrieve that successful run's `sdk-<full commit SHA>` artifact as its original
+   ZIP through the GitHub Actions artifact API. Verify every entry against its
+   internal `SHA256SUMS`, reject unexpected entries, and calculate the ZIP's
+   SHA-256. Retain the qualification run, artifact ID, source commit and checksum
+   in the release notes. Do not rebuild packages between qualification and
+   publication or include application source.
+3. On a clean checkout of that qualified commit, run `python3 tools/go_tags.py`
+   to check existing module tags. Each existing tag must have exactly the same
+   complete module tree. Create missing tags with `--publish` only in the
+   documented release context: `GITHUB_REPOSITORY=dev-null-GmbH/d0-sdk`,
+   `GITHUB_REF=refs/heads/main`, and `RELEASE_SHA` equal to the checked-out commit.
+   The command uses the authenticated `gh` operator session. Never move a tag.
+4. Create a GitHub release at the qualified commit with a new `sdk-YYYY-MM-DD`
+   tag (or a distinct suffix for another release that day). Upload the original
+   ZIP and a checksum file. Use `gh release create --target <commit>` and
+   `--notes-file` with the reviewed notes. If a release already exists, inspect
+   and verify it; do not overwrite its tag or assets.
+5. Download the release ZIP anonymously and compare its byte count, outer
+   checksum and all inner checksums. Verify current Go versions with a fresh
+   `GOMODCACHE`, `GOPROXY=https://proxy.golang.org`, `GOSUMDB=sum.golang.org`,
+   `GOWORK=off`, and empty private-module bypass settings, then run the installed
+   product examples. Update the Console's versioned catalog with the exact
+   release URL and proven installation commands. A successful build alone is
+   not evidence that the public download works.
 
-The workflow retains npm/Python artifacts and a Go module-proxy fixture with
-SHA-256 checksums. Upstream source commits and original/exported file hashes
-remain committed in `sources.json` and `export-manifest.json`.
+The retained registry helper scripts are inactive tooling, not a publication
+instruction. Enabling another distribution channel requires a new explicit
+product decision and its release qualification.
 
-Qualification uses exact existing product tool versions; download-artifact
-v8.0.2 was additionally verified against its official release on 2026-10-15.
-Registry integration follows [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/),
-[PyPI trusted publishing](https://docs.pypi.org/trusted-publishers/), and
-[uv publishing](https://docs.astral.sh/uv/guides/package/).
+## Current verified release
+
+[SDK release of 15 October 2026](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15)
+contains all 15 language packages from source
+`6f2c39612a661ec557e96e5caff093a057e6e1de`, qualified by
+[main CI run 38748901791](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38748901791).
+The original artifact ZIP contains 35 package/module files plus `SHA256SUMS`.
+Its 404,724-byte anonymous download has SHA-256
+`6c11b63a5ce5f24dff79d1f3d33c7879ff48831d66dd9029b37abf073152dd93`.
+The README gives direct TypeScript and Python archive installation commands.
+
+Current versions are Auth, Platform and EInvoice 0.1.0, Accounting 0.1.1, and
+ERiC 0.1.2. All current Go modules passed anonymous proxy/checksum downloads and
+installed examples. Prior tags and release contents remain unchanged. Package
+versions come from each product's matching TypeScript/Python metadata; Go uses
+the same product version. Source commits and original/exported file hashes
+remain in `sources.json` and `export-manifest.json`.

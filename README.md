@@ -9,7 +9,8 @@ anonymous Go proxy and checksum-database downloads. Accounting and ERiC 0.1.1
 are also published and passed fresh anonymous downloads and installed examples.
 ERiC 0.1.2 is published with the same verification. All 15 SDK packages are also
 available as [qualified release archives](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15).
-npm and PyPI registry publication is pending account setup.
+GitHub Releases and these public sources are the supported distribution channels.
+The SDKs are not published to npm or PyPI; no registry account is needed to install them.
 Live product availability is reported separately in the Developer Console.
 
 | Product | Production operations | Isolated test operations | Package directories |
@@ -20,7 +21,7 @@ Live product availability is reported separately in the Developer Console.
 | EInvoice | 7 | 7 | [Go](einvoice/go), [TypeScript](einvoice/typescript), [Python](einvoice/python) |
 | ERiC | 49 | 2 | [Go](eric/go), [TypeScript](eric/typescript), [Python](eric/python) |
 
-The registry package names are `@dev-null-gmbh/{product}`,
+The package names inside the release archives are `@dev-null-gmbh/{product}`,
 `d0-{product}` and `github.com/dev-null-GmbH/d0-sdk/{product}/go`.
 The auth packages are `@dev-null-gmbh/auth-machine`, `d0-auth-machine` and
 `github.com/dev-null-GmbH/d0-sdk/auth/go`. Auth, Platform and EInvoice use 0.1.0, Accounting uses 0.1.1 and the ERiC
@@ -45,6 +46,46 @@ directory. They exercise the actual client with a deterministic transport, never
 a live service. Contracts and operation inventories are included next to the
 clients. API discovery, setup and current product availability belong to the
 d0 Developer Console.
+
+## Install the released packages
+
+Download the [qualified SDK bundle](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15),
+verify its checksum, and unpack it. Run the following in a new directory:
+
+```sh
+curl --fail --location --output d0-sdk.zip \
+  https://github.com/dev-null-GmbH/d0-sdk/releases/download/sdk-2026-10-15/d0-sdk-2026-10-15.zip
+printf '%s  %s\n' \
+  6c11b63a5ce5f24dff79d1f3d33c7879ff48831d66dd9029b37abf073152dd93 \
+  d0-sdk.zip | shasum -a 256 --check
+unzip d0-sdk.zip -d sdk
+(cd sdk && shasum -a 256 --check SHA256SUMS)
+```
+
+Install the TypeScript packages together so the exact shared authentication
+dependency is resolved from the same release. In your application directory,
+replace `/absolute/path/to/sdk` with the unpacked directory:
+
+```sh
+npm install --ignore-scripts /absolute/path/to/sdk/npm/*.tgz
+```
+
+For Python, use your application's virtual environment:
+
+```sh
+python -m pip install /absolute/path/to/sdk/python/*.whl
+```
+
+Both commands install all five packages; you can instead pass only the auth
+archive and the required product archive. Ordinary third-party dependencies
+still resolve through the standard package indexes. Go uses public immutable
+module tags, for example:
+
+```sh
+go get github.com/dev-null-GmbH/d0-sdk/eric/go@v0.1.2
+```
+
+The package directories above contain the language-specific API examples.
 
 ## Qualification and provenance
 
