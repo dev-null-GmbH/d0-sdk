@@ -44,6 +44,15 @@ passed. A fresh anonymous installation used proxy.golang.org with sum.golang.org
 and ran all four product Go examples successfully. npm and PyPI
 publication still require company account and publisher setup.
 
+ERiC Go 0.1.2 is published at `6f2c39612a661ec557e96e5caff093a057e6e1de`;
+[main qualification](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38748901791),
+a fresh public proxy/checksum download and its installed example passed. The
+[SDK archive release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15)
+contains that run’s exact 35 package archives plus their internal SHA256SUMS.
+Its outer ZIP SHA-256 is `6c11b63a5ce5f24dff79d1f3d33c7879ff48831d66dd9029b37abf073152dd93`;
+an anonymous release download matched all 404,724 bytes. This archive release
+does not claim npm or PyPI registry publication.
+
 The workflow retains npm/Python artifacts and a Go module-proxy fixture with
 SHA-256 checksums. Upstream source commits and original/exported file hashes
 remain committed in `sources.json` and `export-manifest.json`.
