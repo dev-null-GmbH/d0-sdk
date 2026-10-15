@@ -6,7 +6,10 @@ trusted server applications. Private signing keys never belong in browser code.
 
 **Release state:** all five Go modules at v0.1.0 are public and verified through
 anonymous Go proxy and checksum-database downloads. Accounting and ERiC 0.1.1
-are also published and passed fresh anonymous downloads and installed examples. npm and PyPI publication is pending account setup.
+are also published and passed fresh anonymous downloads and installed examples.
+ERiC 0.1.2 is published with the same verification. All 15 SDK packages are also
+available as [qualified release archives](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15).
+npm and PyPI registry publication is pending account setup.
 Live product availability is reported separately in the Developer Console.
 
 | Product | Production operations | Isolated test operations | Package directories |
@@ -21,9 +24,8 @@ The registry package names are `@dev-null-gmbh/{product}`,
 `d0-{product}` and `github.com/dev-null-GmbH/d0-sdk/{product}/go`.
 The auth packages are `@dev-null-gmbh/auth-machine`, `d0-auth-machine` and
 `github.com/dev-null-GmbH/d0-sdk/auth/go`. Auth, Platform and EInvoice use 0.1.0, Accounting uses 0.1.1 and the ERiC
-0.1.2 candidate adds the optional filing-consent replay-only header. Product
-packages retain the exact auth dependency at 0.1.0. The candidate is not yet a
-published registry release.
+0.1.2 SDK adds the optional filing-consent replay-only header. Product packages
+retain the exact auth dependency at 0.1.0.
 
 Select `production` or `test` explicitly, use separate client credentials for
 each, and grant only the product scopes your integration needs. Each machine
