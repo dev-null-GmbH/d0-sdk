@@ -4,7 +4,8 @@ Typed Go, TypeScript and Python clients for d0 Platform, Accounting, EInvoice an
 ERiC, with the shared d0 machine OAuth/DPoP transport. These clients are for
 trusted server applications. Private signing keys never belong in browser code.
 
-**Release state:** version 0.1.0 is a locally qualified distribution candidate.
+**Release state:** version 0.1.0 source is public and its
+[GitHub qualification passed](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38725343029).
 Registry publication and live product availability are separate; installation
 from the public registries is not claimed yet.
 

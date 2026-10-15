@@ -4,9 +4,13 @@ The repository is the public SDK boundary. Do not change any application
 repository's visibility. Publish only reviewed exported SDK files, the license,
 public contracts, examples and distribution tooling in this repository.
 
-1. Create `dev-null-GmbH/d0-sdk` as a public repository, push the reviewed main
-   commit, and require its qualification job for changes. Protect main and the
-   five `{auth,platform,accounting,einvoice,eric}/go/v0.1.0` tags from replacement.
+1. The reviewed source is published at
+   [dev-null-GmbH/d0-sdk](https://github.com/dev-null-GmbH/d0-sdk), with `main`
+   as its default branch. Qualification run
+   [38725343029](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38725343029)
+   passed. Require its `qualify` job for changes and protect main and the five
+   `{auth,platform,accounting,einvoice,eric}/go/v0.1.0` tags from replacement.
+   The `public-sdk-release` environment is restricted to `main`.
 2. Configure npm ownership of `@dev-null-gmbh` and the five package names.
    Configure each trusted publisher for owner `dev-null-GmbH`, repository
    `d0-sdk`, workflow `release.yml`, environment `public-sdk-release`, with
