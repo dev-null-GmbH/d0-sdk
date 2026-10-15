@@ -37,7 +37,11 @@ public contracts, examples and distribution tooling in this repository.
 
 The five Go modules at v0.1.0 are already published and have passed anonymous
 installation through proxy.golang.org and sum.golang.org. The refreshed
-Accounting and ERiC contracts are released separately as 0.1.1; v0.1.0 remains immutable. npm and PyPI
+Accounting and ERiC Go modules are published as 0.1.1 at commit
+`8a56e28666be2321f5f73b6a9ce328fbac0b2155`; v0.1.0 remains immutable.
+[Main qualification](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38743622153)
+passed. A fresh anonymous installation used proxy.golang.org with sum.golang.org
+and ran all four product Go examples successfully. npm and PyPI
 publication still require company account and publisher setup.
 
 The workflow retains npm/Python artifacts and a Go module-proxy fixture with
