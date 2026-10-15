@@ -1,0 +1,43 @@
+{
+  "name": "@dev-null-gmbh/einvoice",
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24.21.0 <27"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "example:fixture": "npm run build && node examples/fixture.mjs"
+  },
+  "dependencies": {
+    "@dev-null-gmbh/auth-machine": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.4",
+    "typescript": "7.0.2",
+    "vitest": "5.0.3"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dev-null-GmbH/d0-sdk.git",
+    "directory": "einvoice/typescript"
+  }
+}

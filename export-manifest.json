@@ -1,0 +1,929 @@
+{
+  "schemaVersion": 1,
+  "sources": {
+    "auth": {
+      "repository": "d0-auth",
+      "commit": "427beab15ee4ba6d6487a85120d920f028a1cee5",
+      "prefix": "packages/machine"
+    },
+    "platform": {
+      "repository": "d0-api",
+      "commit": "fc447ce3ac35dfa320e273009cb9a3928c3e4690",
+      "prefix": "sdk"
+    },
+    "accounting": {
+      "repository": "devacc-api",
+      "commit": "9725d58f26c058ae422b48b86be9029e61fe6bae",
+      "prefix": "sdk"
+    },
+    "einvoice": {
+      "repository": "devacc-einvoice-platform",
+      "commit": "d4a456dd25a52d250bf003b6984f96d297e8fe2f",
+      "prefix": "sdk"
+    },
+    "eric": {
+      "repository": "devacc-eric-svc",
+      "commit": "20fd055b1f6bc14d188d9685d43b7bffe7a4328a",
+      "prefix": "sdk"
+    }
+  },
+  "files": {
+    "accounting/CONTRACT.md": {
+      "sourcePath": "sdk/CONTRACT.md",
+      "sourceSha256": "c3e1b04894b385f5ef219c142e44df80557f9fdb4db1ce4388381dcd3208e409",
+      "sha256": "c3e1b04894b385f5ef219c142e44df80557f9fdb4db1ce4388381dcd3208e409",
+      "transformed": false
+    },
+    "accounting/contracts/production/public-openapi.json": {
+      "sourcePath": "sdk/contracts/production/public-openapi.json",
+      "sourceSha256": "5b1262c6d3cf959ae2543b349ec5591cb491b54b416e803a209b12863f174eae",
+      "sha256": "5b1262c6d3cf959ae2543b349ec5591cb491b54b416e803a209b12863f174eae",
+      "transformed": false
+    },
+    "accounting/contracts/test/public-openapi.json": {
+      "sourcePath": "sdk/contracts/test/public-openapi.json",
+      "sourceSha256": "84f95a57f78e344ec6a27607bf745676ae421d4a63e619f09378f0e483f72784",
+      "sha256": "84f95a57f78e344ec6a27607bf745676ae421d4a63e619f09378f0e483f72784",
+      "transformed": false
+    },
+    "accounting/go/client.go": {
+      "sourcePath": "sdk/go/client.go",
+      "sourceSha256": "efd3f31d0f81bd0bf79730b9b72caae63729d12da6fc5ae0d05fd38008553b3d",
+      "sha256": "efd3f31d0f81bd0bf79730b9b72caae63729d12da6fc5ae0d05fd38008553b3d",
+      "transformed": false
+    },
+    "accounting/go/client_test.go": {
+      "sourcePath": "sdk/go/client_test.go",
+      "sourceSha256": "4fe190ef1d50dc2e0c6c7c42d9cef603c3f00f859855f130da6031c62a0ec03e",
+      "sha256": "4fe190ef1d50dc2e0c6c7c42d9cef603c3f00f859855f130da6031c62a0ec03e",
+      "transformed": false
+    },
+    "accounting/go/examples/fixture/main.go": {
+      "sourcePath": "sdk/go/examples/fixture/main.go",
+      "sourceSha256": "9db5b8cd981728a67d65a3cf315fdff6b875caf5eb2034be0ce317cfe1497bb5",
+      "sha256": "9db5b8cd981728a67d65a3cf315fdff6b875caf5eb2034be0ce317cfe1497bb5",
+      "transformed": false
+    },
+    "accounting/go/fixture/fixture.go": {
+      "sourcePath": "sdk/go/fixture/fixture.go",
+      "sourceSha256": "2d0fcffb68af8e4441017fb21dedbfc5200f29be651c4b2b7c22d5106085b64d",
+      "sha256": "2d0fcffb68af8e4441017fb21dedbfc5200f29be651c4b2b7c22d5106085b64d",
+      "transformed": false
+    },
+    "accounting/go/fixture/fixture_test.go": {
+      "sourcePath": "sdk/go/fixture/fixture_test.go",
+      "sourceSha256": "8d3080198df6d7036bb7b6a79acae2d1e8a03f23885167f5afc7ff1fddc9ce10",
+      "sha256": "8d3080198df6d7036bb7b6a79acae2d1e8a03f23885167f5afc7ff1fddc9ce10",
+      "transformed": false
+    },
+    "accounting/go/gen/api.gen.go": {
+      "sourcePath": "sdk/go/gen/api.gen.go",
+      "sourceSha256": "3628523e37c9c4f281d66ac2e8610fc09920a7a8d80167d91c1a1e0a66098c08",
+      "sha256": "3628523e37c9c4f281d66ac2e8610fc09920a7a8d80167d91c1a1e0a66098c08",
+      "transformed": false
+    },
+    "accounting/go/go.mod": {
+      "sourcePath": "sdk/go/go.mod",
+      "sourceSha256": "9e8d6c51a7840be4ff8c3c505ce200d581b52a0438a2597f68c49b34b4d96028",
+      "sha256": "0d5346be48b03c3d6d329f567f789d7d3cfda7a0fc172e75285494942d654009",
+      "transformed": true
+    },
+    "accounting/go/go.sum": {
+      "sourcePath": "sdk/go/go.sum",
+      "sourceSha256": "52a7f3ca4e6b405f7161635125e028c2c503ca18726f1f202411a0eb63c06439",
+      "sha256": "52a7f3ca4e6b405f7161635125e028c2c503ca18726f1f202411a0eb63c06439",
+      "transformed": false
+    },
+    "accounting/go/oapi-codegen.yaml": {
+      "sourcePath": "sdk/go/oapi-codegen.yaml",
+      "sourceSha256": "94898b4ee4af41fb9b65a115ddd632819fb095933f570b4f4ad405fbe9f07879",
+      "sha256": "94898b4ee4af41fb9b65a115ddd632819fb095933f570b4f4ad405fbe9f07879",
+      "transformed": false
+    },
+    "accounting/go/operations_gen.go": {
+      "sourcePath": "sdk/go/operations_gen.go",
+      "sourceSha256": "dd9891febef03840b50b0106d47a72fd46888e32f500d4aaf7c2c94a9e117321",
+      "sha256": "dd9891febef03840b50b0106d47a72fd46888e32f500d4aaf7c2c94a9e117321",
+      "transformed": false
+    },
+    "accounting/operations.json": {
+      "sourcePath": "sdk/operations.json",
+      "sourceSha256": "3db4c3c543f80ff2f03279fc1334c03cdb97076926b48efa979cad85b24ed463",
+      "sha256": "3db4c3c543f80ff2f03279fc1334c03cdb97076926b48efa979cad85b24ed463",
+      "transformed": false
+    },
+    "accounting/python/README.md": {
+      "sourcePath": "sdk/python/README.md",
+      "sourceSha256": "e5e994fda8c9fb11f65a05498ed0b1fa071e20995a6f437b9ff263982808d926",
+      "sha256": "e5e994fda8c9fb11f65a05498ed0b1fa071e20995a6f437b9ff263982808d926",
+      "transformed": false
+    },
+    "accounting/python/examples/fixture.py": {
+      "sourcePath": "sdk/python/examples/fixture.py",
+      "sourceSha256": "27cb7c589e9e3e4288db19de3469d2507c10d70ff9602045a48e6868fa160037",
+      "sha256": "27cb7c589e9e3e4288db19de3469d2507c10d70ff9602045a48e6868fa160037",
+      "transformed": false
+    },
+    "accounting/python/pyproject.toml": {
+      "sourcePath": "sdk/python/pyproject.toml",
+      "sourceSha256": "a6c257313d88bdd3f3c5d37db2a8326fc9b820f7062fb93b4bec55655d710eb7",
+      "sha256": "b32863b7c2e10f1127c20c3533d4ac94098bbebf35d118355d9389f5232db360",
+      "transformed": true
+    },
+    "accounting/python/src/d0_accounting/__init__.py": {
+      "sourcePath": "sdk/python/src/d0_accounting/__init__.py",
+      "sourceSha256": "af9c1ab083047c65b3d8de5e3fac9dbea176646f28470098fcc404a3364fc7fd",
+      "sha256": "af9c1ab083047c65b3d8de5e3fac9dbea176646f28470098fcc404a3364fc7fd",
+      "transformed": false
+    },
+    "accounting/python/src/d0_accounting/generated.py": {
+      "sourcePath": "sdk/python/src/d0_accounting/generated.py",
+      "sourceSha256": "2883a38642642b278d718f74d6a2a92b7d82045dd0e3a7422f5af412f0d85c66",
+      "sha256": "2883a38642642b278d718f74d6a2a92b7d82045dd0e3a7422f5af412f0d85c66",
+      "transformed": false
+    },
+    "accounting/python/src/d0_accounting/methods.py": {
+      "sourcePath": "sdk/python/src/d0_accounting/methods.py",
+      "sourceSha256": "2d96215cd87a0bbec911a53d5c89fe32f66cb3f6c79c9ffcad5f3aa02439a163",
+      "sha256": "2d96215cd87a0bbec911a53d5c89fe32f66cb3f6c79c9ffcad5f3aa02439a163",
+      "transformed": false
+    },
+    "accounting/python/src/d0_accounting/operations.py": {
+      "sourcePath": "sdk/python/src/d0_accounting/operations.py",
+      "sourceSha256": "873fb9af641e3a70a3ee738bef6b79e47860f07f8c4678f4ac8f3f89e5526c94",
+      "sha256": "873fb9af641e3a70a3ee738bef6b79e47860f07f8c4678f4ac8f3f89e5526c94",
+      "transformed": false
+    },
+    "accounting/python/src/d0_accounting/py.typed": {
+      "sourcePath": "sdk/python/src/d0_accounting/py.typed",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "transformed": false
+    },
+    "accounting/python/tests/test_client.py": {
+      "sourcePath": "sdk/python/tests/test_client.py",
+      "sourceSha256": "393bd164db4f8d55f743e80cb273652f4da30015b1f77b5927f1f28244ac7983",
+      "sha256": "393bd164db4f8d55f743e80cb273652f4da30015b1f77b5927f1f28244ac7983",
+      "transformed": false
+    },
+    "accounting/typescript/README.md": {
+      "sourcePath": "sdk/typescript/README.md",
+      "sourceSha256": "330039441d7ee3e981975f070bd69920026c457f86de8c70b59d442ef8b5a012",
+      "sha256": "330039441d7ee3e981975f070bd69920026c457f86de8c70b59d442ef8b5a012",
+      "transformed": false
+    },
+    "accounting/typescript/examples/fixture.mjs": {
+      "sourcePath": "sdk/typescript/examples/fixture.mjs",
+      "sourceSha256": "f513d48a6214eabb547b73a880231291509342ff588ad905b2ae1813254302ca",
+      "sha256": "f513d48a6214eabb547b73a880231291509342ff588ad905b2ae1813254302ca",
+      "transformed": false
+    },
+    "accounting/typescript/package.json": {
+      "sourcePath": "sdk/typescript/package.json",
+      "sourceSha256": "e24d61edddd59f2578dc3759321db34ff44a28485cd8db141f27e9f6c806b3fc",
+      "sha256": "0b277a9198e9babac952901707d69a8d5b6132045e67662c76b203c33d0a5b54",
+      "transformed": true
+    },
+    "accounting/typescript/src/generated.ts": {
+      "sourcePath": "sdk/typescript/src/generated.ts",
+      "sourceSha256": "84b1016d2064bea887f4cb3bbcd853844612e2a4e37dd2eb9015ab03303abbbb",
+      "sha256": "84b1016d2064bea887f4cb3bbcd853844612e2a4e37dd2eb9015ab03303abbbb",
+      "transformed": false
+    },
+    "accounting/typescript/src/index.test.ts": {
+      "sourcePath": "sdk/typescript/src/index.test.ts",
+      "sourceSha256": "18f8151fd84b49bb1ec7bbb09b68faedee72a97d897e32cfabe69d2b8a5fa757",
+      "sha256": "18f8151fd84b49bb1ec7bbb09b68faedee72a97d897e32cfabe69d2b8a5fa757",
+      "transformed": false
+    },
+    "accounting/typescript/src/index.ts": {
+      "sourcePath": "sdk/typescript/src/index.ts",
+      "sourceSha256": "c2b2bd12b413fb73b7839315f118441862d02e05d47f748beba961c79c43cbaa",
+      "sha256": "c2b2bd12b413fb73b7839315f118441862d02e05d47f748beba961c79c43cbaa",
+      "transformed": false
+    },
+    "accounting/typescript/src/operations.ts": {
+      "sourcePath": "sdk/typescript/src/operations.ts",
+      "sourceSha256": "ae44c638fff5646b4e62ac127a089c5d3afdab49c369b722ac4d4814e12d1036",
+      "sha256": "ae44c638fff5646b4e62ac127a089c5d3afdab49c369b722ac4d4814e12d1036",
+      "transformed": false
+    },
+    "accounting/typescript/tsconfig.build.json": {
+      "sourcePath": "sdk/typescript/tsconfig.build.json",
+      "sourceSha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "sha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "transformed": false
+    },
+    "accounting/typescript/tsconfig.json": {
+      "sourcePath": "sdk/typescript/tsconfig.json",
+      "sourceSha256": "87cdd86895eaed40ce4773d3ec10c07f76f58b627eccdfe7b735a79d7f6faa9c",
+      "sha256": "87cdd86895eaed40ce4773d3ec10c07f76f58b627eccdfe7b735a79d7f6faa9c",
+      "transformed": false
+    },
+    "accounting/go/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "accounting/python/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "accounting/typescript/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "auth/go/README.md": {
+      "sourcePath": "packages/machine/go/README.md",
+      "sourceSha256": "039aac9631b0f68b8f0a1ca2c7ba5f2e2294d4df9897e7403576d552fa48d10f",
+      "sha256": "039aac9631b0f68b8f0a1ca2c7ba5f2e2294d4df9897e7403576d552fa48d10f",
+      "transformed": false
+    },
+    "auth/go/client.go": {
+      "sourcePath": "packages/machine/go/client.go",
+      "sourceSha256": "95a97f1297e8cb5ab430d47ff74ce33a08ff7b9bc2874040b6d6bd7a3c63269d",
+      "sha256": "95a97f1297e8cb5ab430d47ff74ce33a08ff7b9bc2874040b6d6bd7a3c63269d",
+      "transformed": false
+    },
+    "auth/go/client_test.go": {
+      "sourcePath": "packages/machine/go/client_test.go",
+      "sourceSha256": "58cc4c63860a101f074b827e51af0425fe98aa223119462f929182f7ef344e04",
+      "sha256": "58cc4c63860a101f074b827e51af0425fe98aa223119462f929182f7ef344e04",
+      "transformed": false
+    },
+    "auth/go/go.mod": {
+      "sourcePath": "packages/machine/go/go.mod",
+      "sourceSha256": "2e7824ba318bec54097c73e487a096fe604ad78970b5d3afdb169d719aed4689",
+      "sha256": "2e7824ba318bec54097c73e487a096fe604ad78970b5d3afdb169d719aed4689",
+      "transformed": false
+    },
+    "auth/go/go.sum": {
+      "sourcePath": "packages/machine/go/go.sum",
+      "sourceSha256": "fbc572f9e977f123935c7e2e4e95e62e1b6edf41be5a82e0fc6d19afe813d7c7",
+      "sha256": "fbc572f9e977f123935c7e2e4e95e62e1b6edf41be5a82e0fc6d19afe813d7c7",
+      "transformed": false
+    },
+    "auth/python/.python-version": {
+      "sourcePath": "packages/machine/python/.python-version",
+      "sourceSha256": "5abd4dc1efa09469b88916c8e4e027a8c266a9b6d06f43ac9da3e30cd00b4ab5",
+      "sha256": "5abd4dc1efa09469b88916c8e4e027a8c266a9b6d06f43ac9da3e30cd00b4ab5",
+      "transformed": false
+    },
+    "auth/python/README.md": {
+      "sourcePath": "packages/machine/python/README.md",
+      "sourceSha256": "07bbb7b88f2c34bb92a299361af8083702489de8c047fd6c1e61f9233f354da5",
+      "sha256": "07bbb7b88f2c34bb92a299361af8083702489de8c047fd6c1e61f9233f354da5",
+      "transformed": false
+    },
+    "auth/python/pyproject.toml": {
+      "sourcePath": "packages/machine/python/pyproject.toml",
+      "sourceSha256": "fdcd0f2282ac83791ba52d7a8a5e699dea7712b87ac9cf85911e2e0a3583610e",
+      "sha256": "f484c9db2f4d51b4d4dd8593b46af04fb0c24c435483d572aed87ec982e6eac5",
+      "transformed": true
+    },
+    "auth/python/src/d0_auth_machine/__init__.py": {
+      "sourcePath": "packages/machine/python/src/d0_auth_machine/__init__.py",
+      "sourceSha256": "037f261fcaf3fc21280b0ca071711948427558c7d236b101a92824b399251e8a",
+      "sha256": "037f261fcaf3fc21280b0ca071711948427558c7d236b101a92824b399251e8a",
+      "transformed": false
+    },
+    "auth/python/src/d0_auth_machine/py.typed": {
+      "sourcePath": "packages/machine/python/src/d0_auth_machine/py.typed",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "transformed": false
+    },
+    "auth/python/tests/test_machine.py": {
+      "sourcePath": "packages/machine/python/tests/test_machine.py",
+      "sourceSha256": "538fac07a460ba4117ab738bc8899af9ff589ccb6c3e030ced0ac4118db851b5",
+      "sha256": "538fac07a460ba4117ab738bc8899af9ff589ccb6c3e030ced0ac4118db851b5",
+      "transformed": false
+    },
+    "auth/typescript/README.md": {
+      "sourcePath": "packages/machine/typescript/README.md",
+      "sourceSha256": "6ae67fec4ea08ba0c46bd152158198b8328dbde71a1213978cfae6351e73e313",
+      "sha256": "6ae67fec4ea08ba0c46bd152158198b8328dbde71a1213978cfae6351e73e313",
+      "transformed": false
+    },
+    "auth/typescript/package.json": {
+      "sourcePath": "packages/machine/typescript/package.json",
+      "sourceSha256": "0ab997fa9daf75e03d975c34ef0b981ceac669d7762cfd7c736b107870f057a4",
+      "sha256": "d649f50718b2b8f0cd6ab0f3d1995d652831895c889957d837932c92d6670dde",
+      "transformed": true
+    },
+    "auth/typescript/src/index.test.ts": {
+      "sourcePath": "packages/machine/typescript/src/index.test.ts",
+      "sourceSha256": "d260a6262d0e886fe18be6978b66a763d9202b483af58e2c801c7fcab6a14392",
+      "sha256": "d260a6262d0e886fe18be6978b66a763d9202b483af58e2c801c7fcab6a14392",
+      "transformed": false
+    },
+    "auth/typescript/src/index.ts": {
+      "sourcePath": "packages/machine/typescript/src/index.ts",
+      "sourceSha256": "29fecb2479621cc6f20fc170afc83589cb5515f03892909b826235706b00b6b7",
+      "sha256": "29fecb2479621cc6f20fc170afc83589cb5515f03892909b826235706b00b6b7",
+      "transformed": false
+    },
+    "auth/typescript/tsconfig.build.json": {
+      "sourcePath": "packages/machine/typescript/tsconfig.build.json",
+      "sourceSha256": "e883a566fdb582989966c70919866acae056d84dc0333c01079e0352a8876537",
+      "sha256": "e883a566fdb582989966c70919866acae056d84dc0333c01079e0352a8876537",
+      "transformed": false
+    },
+    "auth/typescript/tsconfig.json": {
+      "sourcePath": "packages/machine/typescript/tsconfig.json",
+      "sourceSha256": "389cb0fd531c2c7db4b00106a8583a8eebf330676da962927554dfbb8747cfb2",
+      "sha256": "389cb0fd531c2c7db4b00106a8583a8eebf330676da962927554dfbb8747cfb2",
+      "transformed": false
+    },
+    "auth/go/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "auth/python/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "auth/typescript/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "einvoice/CONTRACT.md": {
+      "sourcePath": "sdk/CONTRACT.md",
+      "sourceSha256": "68e0ede352dc8e076ccb9a70eec39eeb50e989529886b4999461e665649f2f59",
+      "sha256": "68e0ede352dc8e076ccb9a70eec39eeb50e989529886b4999461e665649f2f59",
+      "transformed": false
+    },
+    "einvoice/go/README.md": {
+      "sourcePath": "sdk/go/README.md",
+      "sourceSha256": "d9551bba40379bd8269b100c450ab8bb3601949c246cf44b3a4ad49f423510b9",
+      "sha256": "d9551bba40379bd8269b100c450ab8bb3601949c246cf44b3a4ad49f423510b9",
+      "transformed": false
+    },
+    "einvoice/go/client.go": {
+      "sourcePath": "sdk/go/client.go",
+      "sourceSha256": "fc8b072eaae5963a0b105d4e764a067b404851f4806341f60338cd1841a41e10",
+      "sha256": "fc8b072eaae5963a0b105d4e764a067b404851f4806341f60338cd1841a41e10",
+      "transformed": false
+    },
+    "einvoice/go/client_test.go": {
+      "sourcePath": "sdk/go/client_test.go",
+      "sourceSha256": "d9920b17412107019a213373069328b46a1c6a8c6320ec22825a6db6907fadba",
+      "sha256": "d9920b17412107019a213373069328b46a1c6a8c6320ec22825a6db6907fadba",
+      "transformed": false
+    },
+    "einvoice/go/examples/fixture/main.go": {
+      "sourcePath": "sdk/go/examples/fixture/main.go",
+      "sourceSha256": "88bd16d86548c5c2888608f2b6c03e94db414efe11364d105c94ed46e37b3eb1",
+      "sha256": "88bd16d86548c5c2888608f2b6c03e94db414efe11364d105c94ed46e37b3eb1",
+      "transformed": false
+    },
+    "einvoice/go/go.mod": {
+      "sourcePath": "sdk/go/go.mod",
+      "sourceSha256": "3b80f0e6a3372ad3940a939b1c68fe59a789819ee7829fd42a0b92852e8404a7",
+      "sha256": "e68a0b71cae77a1ef1a0701a296aed9d65659b87ad0465f525b304d66591a552",
+      "transformed": true
+    },
+    "einvoice/go/go.sum": {
+      "sourcePath": "sdk/go/go.sum",
+      "sourceSha256": "fbc572f9e977f123935c7e2e4e95e62e1b6edf41be5a82e0fc6d19afe813d7c7",
+      "sha256": "fbc572f9e977f123935c7e2e4e95e62e1b6edf41be5a82e0fc6d19afe813d7c7",
+      "transformed": false
+    },
+    "einvoice/python/README.md": {
+      "sourcePath": "sdk/python/README.md",
+      "sourceSha256": "709f27e52d7e60f8c9f996a489921d3510a2edc0d13acecb93ed701f5fe507e5",
+      "sha256": "709f27e52d7e60f8c9f996a489921d3510a2edc0d13acecb93ed701f5fe507e5",
+      "transformed": false
+    },
+    "einvoice/python/examples/fixture.py": {
+      "sourcePath": "sdk/python/examples/fixture.py",
+      "sourceSha256": "4203b3dd2348d5d61245ea0267548df271c4ad789c77fc1b27b7a6d69fe2c95c",
+      "sha256": "4203b3dd2348d5d61245ea0267548df271c4ad789c77fc1b27b7a6d69fe2c95c",
+      "transformed": false
+    },
+    "einvoice/python/pyproject.toml": {
+      "sourcePath": "sdk/python/pyproject.toml",
+      "sourceSha256": "e05a6a85b5906f3c0554f0781f21636530392d75146d87445e0173a635fbe946",
+      "sha256": "2adc28854a18d2362d998f9e514f33e6eb39362fcb7ed953b05d63e543bc9cf3",
+      "transformed": true
+    },
+    "einvoice/python/src/d0_einvoice/__init__.py": {
+      "sourcePath": "sdk/python/src/d0_einvoice/__init__.py",
+      "sourceSha256": "cf6aa6f7cacb8c4ad574841ef0c49eb3ea706261819b8a5a34cf5ceae2abf287",
+      "sha256": "cf6aa6f7cacb8c4ad574841ef0c49eb3ea706261819b8a5a34cf5ceae2abf287",
+      "transformed": false
+    },
+    "einvoice/python/src/d0_einvoice/py.typed": {
+      "sourcePath": "sdk/python/src/d0_einvoice/py.typed",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "transformed": false
+    },
+    "einvoice/python/tests/test_client.py": {
+      "sourcePath": "sdk/python/tests/test_client.py",
+      "sourceSha256": "21af7c64ca7e5b392b02dc757f2541ec6ef2692676f32e05073647cc4df1eb34",
+      "sha256": "21af7c64ca7e5b392b02dc757f2541ec6ef2692676f32e05073647cc4df1eb34",
+      "transformed": false
+    },
+    "einvoice/typescript/README.md": {
+      "sourcePath": "sdk/typescript/README.md",
+      "sourceSha256": "8a4d9a7b02def481c171282e2f55666fed276d00983bf81933d2466a110ce03d",
+      "sha256": "8a4d9a7b02def481c171282e2f55666fed276d00983bf81933d2466a110ce03d",
+      "transformed": false
+    },
+    "einvoice/typescript/examples/fixture.mjs": {
+      "sourcePath": "sdk/typescript/examples/fixture.mjs",
+      "sourceSha256": "abcbf6b2aa6993833b7616623b970bcf96687320941fc22c413205fdba542d25",
+      "sha256": "abcbf6b2aa6993833b7616623b970bcf96687320941fc22c413205fdba542d25",
+      "transformed": false
+    },
+    "einvoice/typescript/package.json": {
+      "sourcePath": "sdk/typescript/package.json",
+      "sourceSha256": "8079d89dd8801afb7864e6a728c93b73d8bae32484caf7ece8021efe5b2f8971",
+      "sha256": "cbe3b3c76bd7d2e7491c4aef001cda0c1b7e49162229f580a0bd40bc3f9f207f",
+      "transformed": true
+    },
+    "einvoice/typescript/src/index.test.ts": {
+      "sourcePath": "sdk/typescript/src/index.test.ts",
+      "sourceSha256": "ff9f01e121f05ef3c9964985e547d3c58fcda8ef19eb864e7b2f6786371c5abd",
+      "sha256": "ff9f01e121f05ef3c9964985e547d3c58fcda8ef19eb864e7b2f6786371c5abd",
+      "transformed": false
+    },
+    "einvoice/typescript/src/index.ts": {
+      "sourcePath": "sdk/typescript/src/index.ts",
+      "sourceSha256": "49c651e31fe116e7ce4bbf0665c52c9dcbfaf5cb25d386f9504d456c96b259e9",
+      "sha256": "49c651e31fe116e7ce4bbf0665c52c9dcbfaf5cb25d386f9504d456c96b259e9",
+      "transformed": false
+    },
+    "einvoice/typescript/tsconfig.build.json": {
+      "sourcePath": "sdk/typescript/tsconfig.build.json",
+      "sourceSha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "sha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "transformed": false
+    },
+    "einvoice/typescript/tsconfig.json": {
+      "sourcePath": "sdk/typescript/tsconfig.json",
+      "sourceSha256": "15b20af6e2bd858dc95022c34d8b5a3acd02cef65e0370f5bcc3f7301fd08d75",
+      "sha256": "15b20af6e2bd858dc95022c34d8b5a3acd02cef65e0370f5bcc3f7301fd08d75",
+      "transformed": false
+    },
+    "einvoice/go/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "einvoice/python/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "einvoice/typescript/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "eric/CONTRACT.md": {
+      "sourcePath": "sdk/CONTRACT.md",
+      "sourceSha256": "5e8d2b324fc2f2a7f96d21102148fe81ac6126132a8dcfdf09efa1cfe466e40d",
+      "sha256": "5e8d2b324fc2f2a7f96d21102148fe81ac6126132a8dcfdf09efa1cfe466e40d",
+      "transformed": false
+    },
+    "eric/contracts/production/public-openapi.json": {
+      "sourcePath": "sdk/contracts/production/public-openapi.json",
+      "sourceSha256": "2154a43c9b71432b175c586e8c311d1cb632128d62cfb2b90086cef1b1aa85a3",
+      "sha256": "2154a43c9b71432b175c586e8c311d1cb632128d62cfb2b90086cef1b1aa85a3",
+      "transformed": false
+    },
+    "eric/contracts/test/public-openapi.json": {
+      "sourcePath": "sdk/contracts/test/public-openapi.json",
+      "sourceSha256": "912bbc8d7d5d37960d12c85bed9f3abb514f05b807186221a6b103ae56d16d0c",
+      "sha256": "912bbc8d7d5d37960d12c85bed9f3abb514f05b807186221a6b103ae56d16d0c",
+      "transformed": false
+    },
+    "eric/go/client.go": {
+      "sourcePath": "sdk/go/client.go",
+      "sourceSha256": "d5d3dd88f34e93032e36485ca44cab8e7b50e59e7fb1d794c27b3393766d7a87",
+      "sha256": "d5d3dd88f34e93032e36485ca44cab8e7b50e59e7fb1d794c27b3393766d7a87",
+      "transformed": false
+    },
+    "eric/go/client_test.go": {
+      "sourcePath": "sdk/go/client_test.go",
+      "sourceSha256": "d485897614a5d86fef7c17b2892a72eb35f28a686f2832c3547fc8e3123d8e78",
+      "sha256": "d485897614a5d86fef7c17b2892a72eb35f28a686f2832c3547fc8e3123d8e78",
+      "transformed": false
+    },
+    "eric/go/examples/fixture/main.go": {
+      "sourcePath": "sdk/go/examples/fixture/main.go",
+      "sourceSha256": "820c9073c7292b8e6d753f9cc80b32979a0553758ba4fa69038597bfa70c2289",
+      "sha256": "820c9073c7292b8e6d753f9cc80b32979a0553758ba4fa69038597bfa70c2289",
+      "transformed": false
+    },
+    "eric/go/genprod/api.gen.go": {
+      "sourcePath": "sdk/go/genprod/api.gen.go",
+      "sourceSha256": "41d5a9fa1d36fcc3217127d421d008505f3858ee0f070f13f4f3e5a51788d526",
+      "sha256": "41d5a9fa1d36fcc3217127d421d008505f3858ee0f070f13f4f3e5a51788d526",
+      "transformed": false
+    },
+    "eric/go/gentest/api.gen.go": {
+      "sourcePath": "sdk/go/gentest/api.gen.go",
+      "sourceSha256": "252aaf5f2b6ceff82bc2c798876afafd32d55c2ca013fdc15aea935a8598e1d1",
+      "sha256": "252aaf5f2b6ceff82bc2c798876afafd32d55c2ca013fdc15aea935a8598e1d1",
+      "transformed": false
+    },
+    "eric/go/go.mod": {
+      "sourcePath": "sdk/go/go.mod",
+      "sourceSha256": "c7272e856279233568c5b344a95d9dc1df43b0ba978f2977020b73ac3bf8ed81",
+      "sha256": "1860b975f50b10d0b5e7b068ad1222e76da6ff19689efbaf8adff30ec39762ab",
+      "transformed": true
+    },
+    "eric/go/go.sum": {
+      "sourcePath": "sdk/go/go.sum",
+      "sourceSha256": "52a7f3ca4e6b405f7161635125e028c2c503ca18726f1f202411a0eb63c06439",
+      "sha256": "52a7f3ca4e6b405f7161635125e028c2c503ca18726f1f202411a0eb63c06439",
+      "transformed": false
+    },
+    "eric/go/oapi-prod.yaml": {
+      "sourcePath": "sdk/go/oapi-prod.yaml",
+      "sourceSha256": "b0b95838048f4c35e784dc44d5f364e8f5ef67f46270ab103c56803daf4f7124",
+      "sha256": "b0b95838048f4c35e784dc44d5f364e8f5ef67f46270ab103c56803daf4f7124",
+      "transformed": false
+    },
+    "eric/go/oapi-test.yaml": {
+      "sourcePath": "sdk/go/oapi-test.yaml",
+      "sourceSha256": "c3749319dc1190c859c7bceeed57a27901150579d46965d3bf84fc686510958f",
+      "sha256": "c3749319dc1190c859c7bceeed57a27901150579d46965d3bf84fc686510958f",
+      "transformed": false
+    },
+    "eric/go/operations_gen.go": {
+      "sourcePath": "sdk/go/operations_gen.go",
+      "sourceSha256": "95d50a83d8baf91653e2d7d21b1234914ecf7c9c6dfcb25b8c8e93a285249811",
+      "sha256": "95d50a83d8baf91653e2d7d21b1234914ecf7c9c6dfcb25b8c8e93a285249811",
+      "transformed": false
+    },
+    "eric/operations.json": {
+      "sourcePath": "sdk/operations.json",
+      "sourceSha256": "bfa8c9191b371240a3c065dd906c98bcefdec87133e2fffa12dfd1f5640d1a2b",
+      "sha256": "bfa8c9191b371240a3c065dd906c98bcefdec87133e2fffa12dfd1f5640d1a2b",
+      "transformed": false
+    },
+    "eric/python/README.md": {
+      "sourcePath": "sdk/python/README.md",
+      "sourceSha256": "e8d4ad78ac61c16e5e6b0c258360d8a190b979aff4f1136c6cd9238bf9571369",
+      "sha256": "e8d4ad78ac61c16e5e6b0c258360d8a190b979aff4f1136c6cd9238bf9571369",
+      "transformed": false
+    },
+    "eric/python/examples/fixture.py": {
+      "sourcePath": "sdk/python/examples/fixture.py",
+      "sourceSha256": "7611c86361933b3f3e59bca92175d8464de8559e228bb330614cb18a65434527",
+      "sha256": "7611c86361933b3f3e59bca92175d8464de8559e228bb330614cb18a65434527",
+      "transformed": false
+    },
+    "eric/python/pyproject.toml": {
+      "sourcePath": "sdk/python/pyproject.toml",
+      "sourceSha256": "12d5f99ce3e2c676771bcd4703b6c0b506097fac427211f7f74f74adf92ca4d0",
+      "sha256": "b585ec2f83dc518d4d1bf0911e93183bcc6f20e3c369a9f26809d004fad8cd94",
+      "transformed": true
+    },
+    "eric/python/src/d0_eric/__init__.py": {
+      "sourcePath": "sdk/python/src/d0_eric/__init__.py",
+      "sourceSha256": "0bf0a2ce6297869d0f00db21116734bc1391f9d93220e507daf73ad1b00616ea",
+      "sha256": "0bf0a2ce6297869d0f00db21116734bc1391f9d93220e507daf73ad1b00616ea",
+      "transformed": false
+    },
+    "eric/python/src/d0_eric/generated.py": {
+      "sourcePath": "sdk/python/src/d0_eric/generated.py",
+      "sourceSha256": "d06170d245770537f0808d47c8df5a0e3fed8beaf537ad26ccdb51003e96c432",
+      "sha256": "d06170d245770537f0808d47c8df5a0e3fed8beaf537ad26ccdb51003e96c432",
+      "transformed": false
+    },
+    "eric/python/src/d0_eric/methods.py": {
+      "sourcePath": "sdk/python/src/d0_eric/methods.py",
+      "sourceSha256": "318e3441936ab2d25a2415abc796570cbdf3a2261ef6bdd8c4a59b469d154d9a",
+      "sha256": "318e3441936ab2d25a2415abc796570cbdf3a2261ef6bdd8c4a59b469d154d9a",
+      "transformed": false
+    },
+    "eric/python/src/d0_eric/operations.py": {
+      "sourcePath": "sdk/python/src/d0_eric/operations.py",
+      "sourceSha256": "87172984617cdc51f2166c2306b9761fcfcefd3a2289d2044b41cf325312fb87",
+      "sha256": "87172984617cdc51f2166c2306b9761fcfcefd3a2289d2044b41cf325312fb87",
+      "transformed": false
+    },
+    "eric/python/src/d0_eric/py.typed": {
+      "sourcePath": "sdk/python/src/d0_eric/py.typed",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "transformed": false
+    },
+    "eric/python/tests/test_client.py": {
+      "sourcePath": "sdk/python/tests/test_client.py",
+      "sourceSha256": "f1f4a7053bb949e7f2b8bba427109e729fc2afe02cc577f50b1cdabde56479c3",
+      "sha256": "f1f4a7053bb949e7f2b8bba427109e729fc2afe02cc577f50b1cdabde56479c3",
+      "transformed": false
+    },
+    "eric/typescript/README.md": {
+      "sourcePath": "sdk/typescript/README.md",
+      "sourceSha256": "f4d65f4431702f1d5e063eace0325c77aaa583939029d971a42066e5aa809aa9",
+      "sha256": "f4d65f4431702f1d5e063eace0325c77aaa583939029d971a42066e5aa809aa9",
+      "transformed": false
+    },
+    "eric/typescript/examples/fixture.mjs": {
+      "sourcePath": "sdk/typescript/examples/fixture.mjs",
+      "sourceSha256": "bbbebac6c4d5f3bcefb22bf502365f877ab8d64df0951e9d57051c8168ce34c9",
+      "sha256": "bbbebac6c4d5f3bcefb22bf502365f877ab8d64df0951e9d57051c8168ce34c9",
+      "transformed": false
+    },
+    "eric/typescript/package.json": {
+      "sourcePath": "sdk/typescript/package.json",
+      "sourceSha256": "67fa2c7a8e4e26dfb15a0b95f8ae179537c417f697a0aca223bb9056b8164746",
+      "sha256": "f2cb1bddb6ce79ffcdadd278f0a40b3342f414348bf3b24a87cbbf7b7f303c20",
+      "transformed": true
+    },
+    "eric/typescript/src/generated.ts": {
+      "sourcePath": "sdk/typescript/src/generated.ts",
+      "sourceSha256": "50214faa9c20badabbdc55a64a526ccf62bd89e27aa67367e2d3826b23139313",
+      "sha256": "50214faa9c20badabbdc55a64a526ccf62bd89e27aa67367e2d3826b23139313",
+      "transformed": false
+    },
+    "eric/typescript/src/index.test.ts": {
+      "sourcePath": "sdk/typescript/src/index.test.ts",
+      "sourceSha256": "7db94e47048965a655f32ac19da4d1f76ba2f910c1e05a4bfb547a7f74bf88a1",
+      "sha256": "7db94e47048965a655f32ac19da4d1f76ba2f910c1e05a4bfb547a7f74bf88a1",
+      "transformed": false
+    },
+    "eric/typescript/src/index.ts": {
+      "sourcePath": "sdk/typescript/src/index.ts",
+      "sourceSha256": "5515fc33bf7259f83e77ebfcc8736ca41197451aa5e0591f337dc1ad79230af1",
+      "sha256": "5515fc33bf7259f83e77ebfcc8736ca41197451aa5e0591f337dc1ad79230af1",
+      "transformed": false
+    },
+    "eric/typescript/src/operations.ts": {
+      "sourcePath": "sdk/typescript/src/operations.ts",
+      "sourceSha256": "a1a88993ec084bd7d24a3b7395aee06e56d8b3fd07ab77a8e14c18d68d01c512",
+      "sha256": "a1a88993ec084bd7d24a3b7395aee06e56d8b3fd07ab77a8e14c18d68d01c512",
+      "transformed": false
+    },
+    "eric/typescript/tsconfig.build.json": {
+      "sourcePath": "sdk/typescript/tsconfig.build.json",
+      "sourceSha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "sha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "transformed": false
+    },
+    "eric/typescript/tsconfig.json": {
+      "sourcePath": "sdk/typescript/tsconfig.json",
+      "sourceSha256": "87cdd86895eaed40ce4773d3ec10c07f76f58b627eccdfe7b735a79d7f6faa9c",
+      "sha256": "87cdd86895eaed40ce4773d3ec10c07f76f58b627eccdfe7b735a79d7f6faa9c",
+      "transformed": false
+    },
+    "eric/go/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "eric/python/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "eric/typescript/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "platform/CONTRACT.md": {
+      "sourcePath": "sdk/CONTRACT.md",
+      "sourceSha256": "0f06c4001c48f695b1f8e17aca00a17d66316a7c9c49f4ce8b5f569e4f43c9f0",
+      "sha256": "0f06c4001c48f695b1f8e17aca00a17d66316a7c9c49f4ce8b5f569e4f43c9f0",
+      "transformed": false
+    },
+    "platform/go/README.md": {
+      "sourcePath": "sdk/go/README.md",
+      "sourceSha256": "ea086952488cd82b4267c7626755b243573f19cfd62af7f8c7aacc312fd82443",
+      "sha256": "ea086952488cd82b4267c7626755b243573f19cfd62af7f8c7aacc312fd82443",
+      "transformed": false
+    },
+    "platform/go/client.go": {
+      "sourcePath": "sdk/go/client.go",
+      "sourceSha256": "678c5dfdec642e952245c596bc9eb9bb02966b7280db8d1db34104c78f8f918a",
+      "sha256": "678c5dfdec642e952245c596bc9eb9bb02966b7280db8d1db34104c78f8f918a",
+      "transformed": false
+    },
+    "platform/go/client_test.go": {
+      "sourcePath": "sdk/go/client_test.go",
+      "sourceSha256": "2fc3e2259dc88356dd96cb9e5cf022aaecee415e933c72810ff303657bf09fd5",
+      "sha256": "2fc3e2259dc88356dd96cb9e5cf022aaecee415e933c72810ff303657bf09fd5",
+      "transformed": false
+    },
+    "platform/go/examples/fixture/main.go": {
+      "sourcePath": "sdk/go/examples/fixture/main.go",
+      "sourceSha256": "b0c3b28099938c9427f7d0e4e3553d328edbc3c8bfa67911db8fe14a85eb15a7",
+      "sha256": "b0c3b28099938c9427f7d0e4e3553d328edbc3c8bfa67911db8fe14a85eb15a7",
+      "transformed": false
+    },
+    "platform/go/gen/api.gen.go": {
+      "sourcePath": "sdk/go/gen/api.gen.go",
+      "sourceSha256": "3821bedcdbafd34d309ad22e19360f7034026b5fb12f7f9f296e209c6102f6ec",
+      "sha256": "3821bedcdbafd34d309ad22e19360f7034026b5fb12f7f9f296e209c6102f6ec",
+      "transformed": false
+    },
+    "platform/go/go.mod": {
+      "sourcePath": "sdk/go/go.mod",
+      "sourceSha256": "0937dbc44fdad2fd69849b29c31a59d8c376668e3650790dca44903d06782771",
+      "sha256": "7ef1f92de2a1151a3c606c4ec13f0b07462cf043d2e0533dcb9ee1c6758d99c4",
+      "transformed": true
+    },
+    "platform/go/go.sum": {
+      "sourcePath": "sdk/go/go.sum",
+      "sourceSha256": "52a7f3ca4e6b405f7161635125e028c2c503ca18726f1f202411a0eb63c06439",
+      "sha256": "52a7f3ca4e6b405f7161635125e028c2c503ca18726f1f202411a0eb63c06439",
+      "transformed": false
+    },
+    "platform/go/oapi-codegen.yaml": {
+      "sourcePath": "sdk/go/oapi-codegen.yaml",
+      "sourceSha256": "94898b4ee4af41fb9b65a115ddd632819fb095933f570b4f4ad405fbe9f07879",
+      "sha256": "94898b4ee4af41fb9b65a115ddd632819fb095933f570b4f4ad405fbe9f07879",
+      "transformed": false
+    },
+    "platform/go/operations_gen.go": {
+      "sourcePath": "sdk/go/operations_gen.go",
+      "sourceSha256": "fc2804db2186ea5a999c6c606513c94c15a8987cbb8ee2da97a0ef58258008ec",
+      "sha256": "fc2804db2186ea5a999c6c606513c94c15a8987cbb8ee2da97a0ef58258008ec",
+      "transformed": false
+    },
+    "platform/operations.json": {
+      "sourcePath": "sdk/operations.json",
+      "sourceSha256": "8296369128446d236eaaf2194f9d1b49115c08e7018030566ea684f69d83a3ce",
+      "sha256": "8296369128446d236eaaf2194f9d1b49115c08e7018030566ea684f69d83a3ce",
+      "transformed": false
+    },
+    "platform/python/README.md": {
+      "sourcePath": "sdk/python/README.md",
+      "sourceSha256": "ec86961b09893ca23c25bdfc41be046b3347e923ce63a61679c8396ce245112f",
+      "sha256": "ec86961b09893ca23c25bdfc41be046b3347e923ce63a61679c8396ce245112f",
+      "transformed": false
+    },
+    "platform/python/examples/fixture.py": {
+      "sourcePath": "sdk/python/examples/fixture.py",
+      "sourceSha256": "544dd9037d37f049033d5a500ee11ec723f36f16198aaee8e927ee81b7ff1c68",
+      "sha256": "544dd9037d37f049033d5a500ee11ec723f36f16198aaee8e927ee81b7ff1c68",
+      "transformed": false
+    },
+    "platform/python/pyproject.toml": {
+      "sourcePath": "sdk/python/pyproject.toml",
+      "sourceSha256": "99b7bb9049cc2a49f0b273b871d3db9a31d8309ec21ee5dee011667c4faeb9c2",
+      "sha256": "bf47e98984bd55fac58683e077280120efd3845b5d1bf6d018cd404e8b86ad87",
+      "transformed": true
+    },
+    "platform/python/src/d0_platform/__init__.py": {
+      "sourcePath": "sdk/python/src/d0_platform/__init__.py",
+      "sourceSha256": "0752664d2343b91effcda33d1ea966ec03fe0f8a41d74bac3c2d0191ad95fd74",
+      "sha256": "0752664d2343b91effcda33d1ea966ec03fe0f8a41d74bac3c2d0191ad95fd74",
+      "transformed": false
+    },
+    "platform/python/src/d0_platform/generated.py": {
+      "sourcePath": "sdk/python/src/d0_platform/generated.py",
+      "sourceSha256": "6bc3e7c3931de60fe92147aaa5575d953a1a65923612d7f4a747dbf54a4f9fb5",
+      "sha256": "6bc3e7c3931de60fe92147aaa5575d953a1a65923612d7f4a747dbf54a4f9fb5",
+      "transformed": false
+    },
+    "platform/python/src/d0_platform/methods.py": {
+      "sourcePath": "sdk/python/src/d0_platform/methods.py",
+      "sourceSha256": "092b9d4dae9d94761824aaf5f0be915e7829646585327e58436618e9a549b9d6",
+      "sha256": "092b9d4dae9d94761824aaf5f0be915e7829646585327e58436618e9a549b9d6",
+      "transformed": false
+    },
+    "platform/python/src/d0_platform/operations.py": {
+      "sourcePath": "sdk/python/src/d0_platform/operations.py",
+      "sourceSha256": "c50ef683bc6d8ff8972e3a40c2bdd37d3706bafb952010bdaf1502fd3b640bb4",
+      "sha256": "c50ef683bc6d8ff8972e3a40c2bdd37d3706bafb952010bdaf1502fd3b640bb4",
+      "transformed": false
+    },
+    "platform/python/src/d0_platform/py.typed": {
+      "sourcePath": "sdk/python/src/d0_platform/py.typed",
+      "sourceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "transformed": false
+    },
+    "platform/python/tests/test_client.py": {
+      "sourcePath": "sdk/python/tests/test_client.py",
+      "sourceSha256": "637f8c36c204a88ec8a3940aa3cfb4846fe4d5693ea78577d1ea1b0c4caecf03",
+      "sha256": "637f8c36c204a88ec8a3940aa3cfb4846fe4d5693ea78577d1ea1b0c4caecf03",
+      "transformed": false
+    },
+    "platform/spec/production.json": {
+      "sourcePath": "sdk/spec/production.json",
+      "sourceSha256": "56d637d285bd1f558c7c547df24f883e40e6df31680784652331ffeb93ade12c",
+      "sha256": "56d637d285bd1f558c7c547df24f883e40e6df31680784652331ffeb93ade12c",
+      "transformed": false
+    },
+    "platform/spec/test.json": {
+      "sourcePath": "sdk/spec/test.json",
+      "sourceSha256": "50b05381921f8d84f3f4601f2bff95a9540762bdb0a81dc42bbe4f1ae48efe4a",
+      "sha256": "50b05381921f8d84f3f4601f2bff95a9540762bdb0a81dc42bbe4f1ae48efe4a",
+      "transformed": false
+    },
+    "platform/typescript/README.md": {
+      "sourcePath": "sdk/typescript/README.md",
+      "sourceSha256": "b7f04ac17ae14bcf98bebbb64b25a35be2f1cb9ad2acf90a04dc9c785a88c8a4",
+      "sha256": "b7f04ac17ae14bcf98bebbb64b25a35be2f1cb9ad2acf90a04dc9c785a88c8a4",
+      "transformed": false
+    },
+    "platform/typescript/examples/fixture.mjs": {
+      "sourcePath": "sdk/typescript/examples/fixture.mjs",
+      "sourceSha256": "8a9e1136d4a7a1dc3360992f290739aa949f44563edbba4cd630a7dd21307c14",
+      "sha256": "8a9e1136d4a7a1dc3360992f290739aa949f44563edbba4cd630a7dd21307c14",
+      "transformed": false
+    },
+    "platform/typescript/package.json": {
+      "sourcePath": "sdk/typescript/package.json",
+      "sourceSha256": "b8337a34613877208eb28d57cf184f8e8fed54350dbbc5adf81b14cbf7a4b066",
+      "sha256": "4d819584750ec2ea8f6a9ec09aeef20e0cf6f376285e17e9bbd20c7e9d1a0913",
+      "transformed": true
+    },
+    "platform/typescript/src/generated.ts": {
+      "sourcePath": "sdk/typescript/src/generated.ts",
+      "sourceSha256": "f43399a7f01e9a75338573f6bb721da7809f76cd279040d882dba2d0c4f46e12",
+      "sha256": "f43399a7f01e9a75338573f6bb721da7809f76cd279040d882dba2d0c4f46e12",
+      "transformed": false
+    },
+    "platform/typescript/src/index.test.ts": {
+      "sourcePath": "sdk/typescript/src/index.test.ts",
+      "sourceSha256": "f5cf1983aeaf6c3635ad8c151d69f6854f016ee818a8d742cdfc96cfaa191886",
+      "sha256": "f5cf1983aeaf6c3635ad8c151d69f6854f016ee818a8d742cdfc96cfaa191886",
+      "transformed": false
+    },
+    "platform/typescript/src/index.ts": {
+      "sourcePath": "sdk/typescript/src/index.ts",
+      "sourceSha256": "71a03b113e6a14643d1fb73118dbc0cff6e28f27bedfd74ff0946ecb77a524ef",
+      "sha256": "71a03b113e6a14643d1fb73118dbc0cff6e28f27bedfd74ff0946ecb77a524ef",
+      "transformed": false
+    },
+    "platform/typescript/src/operations.ts": {
+      "sourcePath": "sdk/typescript/src/operations.ts",
+      "sourceSha256": "a9b65de3d3b0c724d86ae0378b4c97adee76be6d9070c9f20af2a7e390c6b5b6",
+      "sha256": "a9b65de3d3b0c724d86ae0378b4c97adee76be6d9070c9f20af2a7e390c6b5b6",
+      "transformed": false
+    },
+    "platform/typescript/tsconfig.build.json": {
+      "sourcePath": "sdk/typescript/tsconfig.build.json",
+      "sourceSha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "sha256": "387b06b8615f44749ab40a800f0e3328b647f7882ea0a68849b1581a8c945beb",
+      "transformed": false
+    },
+    "platform/typescript/tsconfig.json": {
+      "sourcePath": "sdk/typescript/tsconfig.json",
+      "sourceSha256": "87cdd86895eaed40ce4773d3ec10c07f76f58b627eccdfe7b735a79d7f6faa9c",
+      "sha256": "87cdd86895eaed40ce4773d3ec10c07f76f58b627eccdfe7b735a79d7f6faa9c",
+      "transformed": false
+    },
+    "platform/go/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "platform/python/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    },
+    "platform/typescript/LICENSE": {
+      "origin": "distribution-license",
+      "sourcePath": "LICENSE",
+      "sourceSha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "sha256": "cb4b60f9d71351d4d1c8643af559df6f6499a7ec86af91f03ffcb30a3c9e1988",
+      "transformed": false
+    }
+  }
+}

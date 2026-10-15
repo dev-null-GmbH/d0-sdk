@@ -1,0 +1,3 @@
+# ERiC TypeScript machine SDK
+
+Use `EricClient.create("production", tenantUUID, machineConfig)` on a trusted server with the shared d0-auth transport. Its 49 named production methods use generated exact request/result types. The `"test"` profile exposes only the two synthetic simulation methods. `npm run example:fixture` exercises a production notice read and accepted/rejected test simulations offline. `sdk/CONTRACT.md` pins catalog hashes and release prerequisites. This source package's local auth dependency is for qualification only; release assembly must pin the immutable public `@dev-null-gmbh/auth-machine` package.

@@ -1,0 +1,9 @@
+package: gentest
+output: sdk/go/gentest/api.gen.go
+generate:
+  models: true
+  client: true
+  embedded-spec: false
+output-options:
+  nullable-type: true
+  skip-prune: true

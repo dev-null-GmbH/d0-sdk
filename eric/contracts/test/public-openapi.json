@@ -1,0 +1,234 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "ERiC Customer Test API",
+    "version": "1.0.0",
+    "description": "Isolated customer-test eric contract. Only the listed operations are supported. Use OAuth client credentials with private_key_jwt, DPoP and the sole resource/audience https://api.test.d0.eu/eric; issuer https://auth.d0.eu. Source qualification does not assert live availability."
+  },
+  "servers": [
+    {
+      "url": "https://api.test.d0.eu/eric"
+    }
+  ],
+  "paths": {
+    "/v1/tenants/{tenantId}/products/{productId}/simulations": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/tenant"
+        },
+        {
+          "$ref": "#/components/parameters/product"
+        },
+        {
+          "$ref": "#/components/parameters/tenantHeader"
+        }
+      ],
+      "post": {
+        "operationId": "createEricTestSimulation",
+        "security": [
+          {
+            "testMachineDPoP": [],
+            "testProof": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idempotency"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "fixture"
+                ],
+                "properties": {
+                  "fixture": {
+                    "enum": [
+                      "validation-accepted-v1",
+                      "validation-rejected-v1"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Durable synthetic result; never native evidence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/simulation"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/problem"
+          }
+        }
+      }
+    },
+    "/v1/tenants/{tenantId}/products/{productId}/simulations/{simulationId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/tenant"
+        },
+        {
+          "$ref": "#/components/parameters/product"
+        },
+        {
+          "$ref": "#/components/parameters/tenantHeader"
+        },
+        {
+          "name": "simulationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getEricTestSimulation",
+        "security": [
+          {
+            "testMachineDPoP": [],
+            "testProof": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current client's durable synthetic status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/simulation"
+                }
+              }
+            }
+          },
+          "default": {
+            "$ref": "#/components/responses/problem"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "testMachineDPoP": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Authorization: DPoP <PS256 access token>; sole test-resource audience, current test machine projection and local tenant/product scopes."
+      },
+      "testProof": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "DPoP",
+        "description": "ES256 proof for the exact test-host request URL."
+      }
+    },
+    "responses": {
+      "problem": {
+        "description": "Fail-closed problem response",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "type",
+                "title",
+                "status"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "simulation": {
+        "type": "object",
+        "required": [
+          "id",
+          "fixture",
+          "status",
+          "outcome",
+          "simulated"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fixture": {
+            "enum": [
+              "validation-accepted-v1",
+              "validation-rejected-v1"
+            ]
+          },
+          "status": {
+            "const": "completed"
+          },
+          "outcome": {
+            "enum": [
+              "simulated_accepted",
+              "simulated_rejected"
+            ]
+          },
+          "simulated": {
+            "const": true
+          }
+        }
+      }
+    },
+    "parameters": {
+      "tenantHeader": {
+        "name": "X-ERIC-Tenant",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "product": {
+        "name": "productId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "tenant": {
+        "name": "tenantId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "idempotency": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+        }
+      }
+    }
+  },
+  "x-d0-environment": "test",
+  "x-d0-resource": "https://api.test.d0.eu/eric"
+}

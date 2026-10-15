@@ -1,0 +1,2 @@
+[tool.uv.workspace]
+members = ["auth/python", "platform/python", "accounting/python", "einvoice/python", "eric/python"]

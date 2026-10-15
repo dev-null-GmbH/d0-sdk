@@ -1,0 +1,9 @@
+package: gen
+output: sdk/go/gen/api.gen.go
+generate:
+  models: true
+  client: true
+  embedded-spec: false
+output-options:
+  nullable-type: true
+  skip-prune: true

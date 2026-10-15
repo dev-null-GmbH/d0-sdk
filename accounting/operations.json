@@ -1,0 +1,1935 @@
+[
+  {
+    "id": "listTaxRules",
+    "method": "GET",
+    "path": "/tax-rules",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "calculateTax",
+    "method": "POST",
+    "path": "/tax-calculations",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getFinancialStatements",
+    "method": "GET",
+    "path": "/reports/financial-statements",
+    "params": [
+      {
+        "name": "fiscalYearId",
+        "wire": "fiscalYearId",
+        "in": "query",
+        "required": true,
+        "pattern": "^fy_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "mappingRevisionId",
+        "wire": "mappingRevisionId",
+        "in": "query",
+        "required": true,
+        "pattern": "^map_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "asOf",
+        "wire": "asOf",
+        "in": "query",
+        "required": false,
+        "pattern": "^(empty|je_[0-9A-HJKMNP-TV-Z]{26})$"
+      },
+      {
+        "name": "currency",
+        "wire": "currency",
+        "in": "query",
+        "required": false,
+        "pattern": "^[A-Z]{3}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "listFiscalYears",
+    "method": "GET",
+    "path": "/fiscal-years",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^fy_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createFiscalYear",
+    "method": "POST",
+    "path": "/fiscal-years",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getFiscalYear",
+    "method": "GET",
+    "path": "/fiscal-years/{yearId}",
+    "params": [
+      {
+        "name": "yearId",
+        "wire": "yearId",
+        "in": "path",
+        "required": true,
+        "pattern": "^fy_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "finalizeFiscalYear",
+    "method": "POST",
+    "path": "/fiscal-years/{yearId}/finalize",
+    "params": [
+      {
+        "name": "yearId",
+        "wire": "yearId",
+        "in": "path",
+        "required": true,
+        "pattern": "^fy_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "closeFiscalYear",
+    "method": "POST",
+    "path": "/fiscal-years/{yearId}/close",
+    "params": [
+      {
+        "name": "yearId",
+        "wire": "yearId",
+        "in": "path",
+        "required": true,
+        "pattern": "^fy_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "carryforwardFiscalYear",
+    "method": "POST",
+    "path": "/fiscal-years/{yearId}/carryforward",
+    "params": [
+      {
+        "name": "yearId",
+        "wire": "yearId",
+        "in": "path",
+        "required": true,
+        "pattern": "^fy_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getTrialBalance",
+    "method": "GET",
+    "path": "/reports/trial-balance",
+    "params": [
+      {
+        "name": "asOf",
+        "wire": "asOf",
+        "in": "query",
+        "required": false,
+        "pattern": "^(empty|je_[0-9A-HJKMNP-TV-Z]{26})$"
+      },
+      {
+        "name": "currency",
+        "wire": "currency",
+        "in": "query",
+        "required": false,
+        "pattern": "^[A-Z]{3}$"
+      },
+      {
+        "name": "bookingDateFrom",
+        "wire": "bookingDateFrom",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "bookingDateTo",
+        "wire": "bookingDateTo",
+        "in": "query",
+        "required": false
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "listAccountMappings",
+    "method": "GET",
+    "path": "/account-mappings",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^map_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "publishAccountMapping",
+    "method": "POST",
+    "path": "/account-mappings",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getAccountMapping",
+    "method": "GET",
+    "path": "/account-mappings/{mappingId}",
+    "params": [
+      {
+        "name": "mappingId",
+        "wire": "mappingId",
+        "in": "path",
+        "required": true,
+        "pattern": "^map_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "retireAccount",
+    "method": "POST",
+    "path": "/accounts/{accountId}/retire",
+    "params": [
+      {
+        "name": "accountId",
+        "wire": "accountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "downloadTenantExport",
+    "method": "GET",
+    "path": "/exports/tenant",
+    "params": [],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/zip",
+    "test": false
+  },
+  {
+    "id": "listTenants",
+    "method": "GET",
+    "path": "/tenants",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createTenant",
+    "method": "POST",
+    "path": "/tenants",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "listMemberships",
+    "method": "GET",
+    "path": "/tenants/{tenantId}/memberships",
+    "params": [
+      {
+        "name": "tenantId",
+        "wire": "tenantId",
+        "in": "path",
+        "required": true,
+        "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^mem_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createMembership",
+    "method": "POST",
+    "path": "/tenants/{tenantId}/memberships",
+    "params": [
+      {
+        "name": "tenantId",
+        "wire": "tenantId",
+        "in": "path",
+        "required": true,
+        "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "replaceMembership",
+    "method": "PUT",
+    "path": "/tenants/{tenantId}/memberships/{membershipId}",
+    "params": [
+      {
+        "name": "tenantId",
+        "wire": "tenantId",
+        "in": "path",
+        "required": true,
+        "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "membershipId",
+        "wire": "membershipId",
+        "in": "path",
+        "required": true,
+        "pattern": "^mem_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "listAccounts",
+    "method": "GET",
+    "path": "/accounts",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "createAccount",
+    "method": "POST",
+    "path": "/accounts",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "getAccount",
+    "method": "GET",
+    "path": "/accounts/{accountId}",
+    "params": [
+      {
+        "name": "accountId",
+        "wire": "accountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "getAccountStatement",
+    "method": "GET",
+    "path": "/accounts/{accountId}/statement",
+    "params": [
+      {
+        "name": "accountId",
+        "wire": "accountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "asOf",
+        "wire": "asOf",
+        "in": "query",
+        "required": false,
+        "pattern": "^(empty|je_[0-9A-HJKMNP-TV-Z]{26})$"
+      },
+      {
+        "name": "currency",
+        "wire": "currency",
+        "in": "query",
+        "required": false,
+        "pattern": "^[A-Z]{3}$"
+      },
+      {
+        "name": "bookingDateFrom",
+        "wire": "bookingDateFrom",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "bookingDateTo",
+        "wire": "bookingDateTo",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getAccountBalances",
+    "method": "GET",
+    "path": "/accounts/{accountId}/balances",
+    "params": [
+      {
+        "name": "accountId",
+        "wire": "accountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "asOf",
+        "wire": "asOf",
+        "in": "query",
+        "required": false,
+        "pattern": "^(empty|je_[0-9A-HJKMNP-TV-Z]{26})$"
+      },
+      {
+        "name": "currency",
+        "wire": "currency",
+        "in": "query",
+        "required": false,
+        "pattern": "^[A-Z]{3}$"
+      },
+      {
+        "name": "bookingDateFrom",
+        "wire": "bookingDateFrom",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "bookingDateTo",
+        "wire": "bookingDateTo",
+        "in": "query",
+        "required": false
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "listPeriods",
+    "method": "GET",
+    "path": "/periods",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "createPeriod",
+    "method": "POST",
+    "path": "/periods",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "getPeriod",
+    "method": "GET",
+    "path": "/periods/{periodId}",
+    "params": [
+      {
+        "name": "periodId",
+        "wire": "periodId",
+        "in": "path",
+        "required": true,
+        "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "festschreibenPeriod",
+    "method": "POST",
+    "path": "/periods/{periodId}/festschreiben",
+    "params": [
+      {
+        "name": "periodId",
+        "wire": "periodId",
+        "in": "path",
+        "required": true,
+        "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "listJournalEntries",
+    "method": "GET",
+    "path": "/journal-entries",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "status",
+        "wire": "status",
+        "in": "query",
+        "required": true
+      },
+      {
+        "name": "periodId",
+        "wire": "periodId",
+        "in": "query",
+        "required": false,
+        "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "query",
+        "required": false,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "bookingDateFrom",
+        "wire": "bookingDateFrom",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "bookingDateTo",
+        "wire": "bookingDateTo",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "externalReference",
+        "wire": "externalReference",
+        "in": "query",
+        "required": false
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "createJournalEntryDraft",
+    "method": "POST",
+    "path": "/journal-entries",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "getJournalEntry",
+    "method": "GET",
+    "path": "/journal-entries/{entryId}",
+    "params": [
+      {
+        "name": "entryId",
+        "wire": "entryId",
+        "in": "path",
+        "required": true,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "replaceJournalEntryDraft",
+    "method": "PUT",
+    "path": "/journal-entries/{entryId}",
+    "params": [
+      {
+        "name": "entryId",
+        "wire": "entryId",
+        "in": "path",
+        "required": true,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "ifMatch",
+        "wire": "If-Match",
+        "in": "header",
+        "required": true,
+        "pattern": "^\"je-v1-[A-Za-z0-9_-]{32}\"$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": true
+  },
+  {
+    "id": "discardJournalEntryDraft",
+    "method": "DELETE",
+    "path": "/journal-entries/{entryId}",
+    "params": [
+      {
+        "name": "entryId",
+        "wire": "entryId",
+        "in": "path",
+        "required": true,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "ifMatch",
+        "wire": "If-Match",
+        "in": "header",
+        "required": true,
+        "pattern": "^\"je-v1-[A-Za-z0-9_-]{32}\"$"
+      }
+    ],
+    "status": 204,
+    "bodyType": "",
+    "responseType": "",
+    "test": true
+  },
+  {
+    "id": "postJournalEntry",
+    "method": "POST",
+    "path": "/journal-entries/{entryId}/post",
+    "params": [
+      {
+        "name": "entryId",
+        "wire": "entryId",
+        "in": "path",
+        "required": true,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "ifMatch",
+        "wire": "If-Match",
+        "in": "header",
+        "required": false,
+        "pattern": "^\"je-v1-[A-Za-z0-9_-]{32}\"$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "reverseJournalEntry",
+    "method": "POST",
+    "path": "/journal-entries/{entryId}/reverse",
+    "params": [
+      {
+        "name": "entryId",
+        "wire": "entryId",
+        "in": "path",
+        "required": true,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "linkJournalEntryDocument",
+    "method": "POST",
+    "path": "/journal-entries/{entryId}/documents/{documentId}",
+    "params": [
+      {
+        "name": "entryId",
+        "wire": "entryId",
+        "in": "path",
+        "required": true,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      }
+    ],
+    "status": 204,
+    "bodyType": "",
+    "responseType": "",
+    "test": false
+  },
+  {
+    "id": "listDocuments",
+    "method": "GET",
+    "path": "/documents",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "status",
+        "wire": "status",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "origin",
+        "wire": "origin",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "documentDateFrom",
+        "wire": "documentDateFrom",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "documentDateTo",
+        "wire": "documentDateTo",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "journalEntryId",
+        "wire": "journalEntryId",
+        "in": "query",
+        "required": false,
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "sourceDocumentId",
+        "wire": "sourceDocumentId",
+        "in": "query",
+        "required": false,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createDocument",
+    "method": "POST",
+    "path": "/documents",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "listDocumentSources",
+    "method": "GET",
+    "path": "/documents/{documentId}/sources",
+    "params": [
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getDocument",
+    "method": "GET",
+    "path": "/documents/{documentId}",
+    "params": [
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "downloadDocument",
+    "method": "GET",
+    "path": "/documents/{documentId}/content",
+    "params": [
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/octet-stream",
+    "test": false
+  },
+  {
+    "id": "createDocumentUploadRequest",
+    "method": "POST",
+    "path": "/documents/{documentId}/upload-requests",
+    "params": [
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "completeDocument",
+    "method": "POST",
+    "path": "/documents/{documentId}/complete",
+    "params": [
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createDocumentPreservation",
+    "method": "POST",
+    "path": "/documents/{documentId}/preservation-requests",
+    "params": [
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 202,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getDocumentPreservation",
+    "method": "GET",
+    "path": "/document-preservation-requests/{preservationId}",
+    "params": [
+      {
+        "name": "preservationId",
+        "wire": "preservationId",
+        "in": "path",
+        "required": true,
+        "pattern": "^prsv_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createEInvoiceValidation",
+    "method": "POST",
+    "path": "/documents/{documentId}/e-invoice-validations",
+    "params": [
+      {
+        "name": "documentId",
+        "wire": "documentId",
+        "in": "path",
+        "required": true,
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      }
+    ],
+    "status": 202,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getEInvoiceValidation",
+    "method": "GET",
+    "path": "/e-invoice-validations/{validationId}",
+    "params": [
+      {
+        "name": "validationId",
+        "wire": "validationId",
+        "in": "path",
+        "required": true,
+        "pattern": "^eiv_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createZUGFeRDPDF",
+    "method": "POST",
+    "path": "/e-invoice-validations/{validationId}/zugferd-pdfs",
+    "params": [
+      {
+        "name": "validationId",
+        "wire": "validationId",
+        "in": "path",
+        "required": true,
+        "pattern": "^eiv_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 202,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getZUGFeRDPDF",
+    "method": "GET",
+    "path": "/zugferd-pdfs/{zugferdPdfId}",
+    "params": [
+      {
+        "name": "zugferdPdfId",
+        "wire": "zugferdPdfId",
+        "in": "path",
+        "required": true,
+        "pattern": "^eip_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "listWebhookEndpoints",
+    "method": "GET",
+    "path": "/webhook-endpoints",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^whep_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "createWebhookEndpoint",
+    "method": "POST",
+    "path": "/webhook-endpoints",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "getWebhookEndpoint",
+    "method": "GET",
+    "path": "/webhook-endpoints/{webhookEndpointId}",
+    "params": [
+      {
+        "name": "webhookEndpointId",
+        "wire": "webhookEndpointId",
+        "in": "path",
+        "required": true,
+        "pattern": "^whep_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "replaceWebhookEndpoint",
+    "method": "PUT",
+    "path": "/webhook-endpoints/{webhookEndpointId}",
+    "params": [
+      {
+        "name": "webhookEndpointId",
+        "wire": "webhookEndpointId",
+        "in": "path",
+        "required": true,
+        "pattern": "^whep_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "ifMatch",
+        "wire": "If-Match",
+        "in": "header",
+        "required": true,
+        "pattern": "^\"whep-v1-[A-Za-z0-9_-]{32}\"$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  {
+    "id": "deleteWebhookEndpoint",
+    "method": "DELETE",
+    "path": "/webhook-endpoints/{webhookEndpointId}",
+    "params": [
+      {
+        "name": "webhookEndpointId",
+        "wire": "webhookEndpointId",
+        "in": "path",
+        "required": true,
+        "pattern": "^whep_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "ifMatch",
+        "wire": "If-Match",
+        "in": "header",
+        "required": true,
+        "pattern": "^\"whep-v1-[A-Za-z0-9_-]{32}\"$"
+      }
+    ],
+    "status": 204,
+    "bodyType": "",
+    "responseType": "",
+    "test": false
+  },
+  {
+    "id": "rotateWebhookEndpointSecret",
+    "method": "PUT",
+    "path": "/webhook-endpoints/{webhookEndpointId}/secret",
+    "params": [
+      {
+        "name": "webhookEndpointId",
+        "wire": "webhookEndpointId",
+        "in": "path",
+        "required": true,
+        "pattern": "^whep_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "ifMatch",
+        "wire": "If-Match",
+        "in": "header",
+        "required": true,
+        "pattern": "^\"whep-v1-[A-Za-z0-9_-]{32}\"$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 204,
+    "bodyType": "application/json",
+    "responseType": "",
+    "test": false
+  }
+]

@@ -1,0 +1,637 @@
+{
+  "components": {
+    "schemas": {
+      "DomainBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://api.test.d0.eu/schemas/DomainBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "created_at": {
+            "description": "RFC 3339 creation time",
+            "type": "string"
+          },
+          "expires_at": {
+            "description": "RFC 3339 expiry, when known",
+            "type": "string"
+          },
+          "fqdn": {
+            "description": "The managed domain",
+            "type": "string"
+          },
+          "nameservers": {
+            "description": "Delegation nameservers",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "status": {
+            "description": "Domain status",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "RFC 3339 last-update time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fqdn",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "ErrorDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "location": {
+            "description": "Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'",
+            "type": "string"
+          },
+          "message": {
+            "description": "Error message text",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value at the given location"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorModel": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://api.test.d0.eu/schemas/ErrorModel.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "detail": {
+            "description": "A human-readable explanation specific to this occurrence of the problem.",
+            "examples": [
+              "Property foo is required but is missing."
+            ],
+            "type": "string"
+          },
+          "errors": {
+            "description": "Optional list of individual error details",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "instance": {
+            "description": "A URI reference that identifies the specific occurrence of the problem.",
+            "examples": [
+              "https://example.com/error-log/abc123"
+            ],
+            "format": "uri",
+            "type": "string"
+          },
+          "status": {
+            "description": "HTTP status code",
+            "examples": [
+              400
+            ],
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "description": "A short, human-readable summary of the problem type. This value should not change between occurrences of the error.",
+            "examples": [
+              "Bad Request"
+            ],
+            "type": "string"
+          },
+          "type": {
+            "default": "about:blank",
+            "description": "A URI reference to human-readable documentation for the error.",
+            "examples": [
+              "https://example.com/errors/example"
+            ],
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ListDomainsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://api.test.d0.eu/schemas/ListDomainsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "domains": {
+            "description": "The tenant's managed domains, newest first",
+            "items": {
+              "$ref": "#/components/schemas/DomainBody"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "domains"
+        ],
+        "type": "object"
+      },
+      "ListRecordsOutputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://api.test.d0.eu/schemas/ListRecordsOutputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "records": {
+            "description": "The zone's record sets",
+            "items": {
+              "$ref": "#/components/schemas/RecordBody"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "records"
+        ],
+        "type": "object"
+      },
+      "RecordBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://api.test.d0.eu/schemas/RecordBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "name": {
+            "description": "Record name (FQDN)",
+            "type": "string"
+          },
+          "read_only": {
+            "description": "True for platform-managed sets (SOA, apex NS) that cannot be edited",
+            "type": "boolean"
+          },
+          "records": {
+            "description": "Record contents",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "ttl": {
+            "description": "Time-to-live in seconds",
+            "format": "int64",
+            "type": "integer"
+          },
+          "type": {
+            "description": "Record type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "ttl",
+          "records",
+          "read_only"
+        ],
+        "type": "object"
+      },
+      "RecordUpsertBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://api.test.d0.eu/schemas/RecordUpsertBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "records": {
+            "description": "Record contents for this name+type",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "ttl": {
+            "description": "Time-to-live in seconds (default 3600)",
+            "format": "int64",
+            "maximum": 604800,
+            "minimum": 60,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "records"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "machineDPoP": {
+        "flows": {
+          "clientCredentials": {
+            "scopes": {
+              "platform.dns.read": "Read simulated DNS",
+              "platform.dns.write": "Change simulated DNS",
+              "platform.domains.read": "Read synthetic domains"
+            },
+            "tokenUrl": "https://auth.d0.eu/oauth2/token"
+          }
+        },
+        "type": "oauth2"
+      }
+    }
+  },
+  "info": {
+    "description": "Isolated customer DNS exercises. Domains end in .test and DNS changes persist only in the organization's test database. No registrar, payment, public DNS, S3 or Kubernetes operations are exposed.",
+    "title": "d0 Platform customer test API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.2",
+  "paths": {
+    "/platform/v1/domains": {
+      "get": {
+        "description": "Lists the caller tenant's managed domains, newest first.",
+        "operationId": "platform-listDomains",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListDomainsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.domains.read"
+            ]
+          }
+        ],
+        "summary": "List managed domains",
+        "tags": [
+          "domains"
+        ]
+      }
+    },
+    "/platform/v1/domains/{domain}": {
+      "get": {
+        "description": "Returns a managed domain's detail. Scoped to the caller tenant.",
+        "operationId": "platform-getDomain",
+        "parameters": [
+          {
+            "description": "The managed domain",
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "description": "The managed domain",
+              "examples": [
+                "example.eu"
+              ],
+              "maxLength": 253,
+              "minLength": 3,
+              "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.domains.read"
+            ]
+          }
+        ],
+        "summary": "Get a managed domain",
+        "tags": [
+          "domains"
+        ]
+      }
+    },
+    "/platform/v1/domains/{domain}/dns/records": {
+      "get": {
+        "description": "Lists the domain's zone records. SOA and the apex NS set are flagged read_only. Scoped to the caller tenant.",
+        "operationId": "platform-listDNSRecords",
+        "parameters": [
+          {
+            "description": "The managed domain",
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "description": "The managed domain",
+              "examples": [
+                "example.eu"
+              ],
+              "maxLength": 253,
+              "minLength": 3,
+              "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRecordsOutputBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.dns.read"
+            ]
+          }
+        ],
+        "summary": "List DNS records",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
+    "/platform/v1/domains/{domain}/dns/records/{name}/{type}": {
+      "delete": {
+        "description": "Deletes one RRset (name+type); deleting a missing set is a no-op (204). SOA and the apex NS set are not editable (422). Scoped to the caller tenant.",
+        "operationId": "platform-deleteDNSRecord",
+        "parameters": [
+          {
+            "description": "The managed domain",
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "description": "The managed domain",
+              "examples": [
+                "example.eu"
+              ],
+              "maxLength": 253,
+              "minLength": 3,
+              "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Record name (relative, '@' for apex, or FQDN)",
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "description": "Record name (relative, '@' for apex, or FQDN)",
+              "examples": [
+                "www"
+              ],
+              "maxLength": 253,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Record type, e.g. A, AAAA, CNAME, MX, TXT, NS, CAA, SRV",
+            "in": "path",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "description": "Record type, e.g. A, AAAA, CNAME, MX, TXT, NS, CAA, SRV",
+              "examples": [
+                "A"
+              ],
+              "pattern": "^[A-Za-z]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.dns.write"
+            ]
+          }
+        ],
+        "summary": "Delete a DNS record set",
+        "tags": [
+          "dns"
+        ]
+      },
+      "put": {
+        "description": "Upserts one RRset (name+type). Validated for RFC-correct content and zone structure before it reaches the backend. SOA and the apex NS set are not editable (422). Scoped to the caller tenant.",
+        "operationId": "platform-upsertDNSRecord",
+        "parameters": [
+          {
+            "description": "The managed domain",
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "description": "The managed domain",
+              "examples": [
+                "example.eu"
+              ],
+              "maxLength": 253,
+              "minLength": 3,
+              "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Record name (relative, '@' for apex, or FQDN)",
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "description": "Record name (relative, '@' for apex, or FQDN)",
+              "examples": [
+                "www"
+              ],
+              "maxLength": 253,
+              "type": "string"
+            }
+          },
+          {
+            "description": "Record type, e.g. A, AAAA, CNAME, MX, TXT, NS, CAA, SRV",
+            "in": "path",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "description": "Record type, e.g. A, AAAA, CNAME, MX, TXT, NS, CAA, SRV",
+              "examples": [
+                "A"
+              ],
+              "pattern": "^[A-Za-z]+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordUpsertBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.dns.write"
+            ]
+          }
+        ],
+        "summary": "Create or replace a DNS record set",
+        "tags": [
+          "dns"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "machineDPoP": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://api.test.d0.eu"
+    }
+  ]
+}

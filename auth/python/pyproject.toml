@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling==1.32.3"]
+build-backend = "hatchling.build"
+
+[project]
+license = "MIT"
+license-files = ["LICENSE"]
+name = "d0-auth-machine"
+version = "0.1.0"
+description = "d0 machine OAuth and DPoP HTTP client"
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = ["joserfc==1.7.5", "cryptography==50.0.2", "cffi==2.1.1"]
+
+[dependency-groups]
+dev = ["mypy==2.4.0", "ruff==0.17.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/d0_auth_machine"]

@@ -1,0 +1,12 @@
+go 1.27.2
+
+use (
+	./auth/go
+	./platform/go
+	./accounting/go
+	./einvoice/go
+	./eric/go
+)
+
+// Qualify the unpublished dependency from this release tree without private sources.
+replace github.com/dev-null-GmbH/d0-sdk/auth/go v0.1.0 => ./auth/go

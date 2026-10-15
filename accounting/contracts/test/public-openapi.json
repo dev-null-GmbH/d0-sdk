@@ -1,0 +1,2054 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "/dev/accounting API",
+    "version": "0.1.0",
+    "summary": "GoBD-compliant German double-entry accounting as an API.",
+    "description": "Isolated customer-test accounting contract. Only the listed operations are supported. Use OAuth client credentials with private_key_jwt, DPoP and the sole resource/audience https://api.test.d0.eu/accounting; issuer https://auth.d0.eu. Source qualification does not assert live availability.",
+    "contact": {
+      "name": "/dev/null GmbH",
+      "url": "https://d0.eu",
+      "email": "api@d0.eu"
+    },
+    "license": {
+      "name": "Proprietary",
+      "identifier": "LicenseRef-devnull-proprietary"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.test.d0.eu/accounting/v1"
+    }
+  ],
+  "paths": {
+    "/reports/trial-balance": {
+      "get": {
+        "operationId": "getTrialBalance",
+        "x-d0-machine-scopes": [
+          "accounting.read"
+        ],
+        "summary": "Read a complete Summen- und Saldenliste at one posting cutoff",
+        "description": "Requires accounting.read. Returns posted opening, debit, credit and closing\namounts per account and currency, plus currency totals.\nUses the same asOf and inclusive date filters as account balances. Drafts\nnever contribute; Storno contributes its ordinary opposite lines. accountNo comes from the latest participating posted line by seq/lineNo,\nincluding opening history. Renumbering without a new posting cannot alter\na report, and all numbers of one account aggregate together. Rows sort by accountNo,\naccountId and currency; totals sort by currency. Unused accounts/currencies\nare omitted, including with a currency filter; empty views use empty arrays.\nPositive balances are debit, negative credit. This is cumulative history,\nnot a fiscal-year report; use financial-statements for year-scoped reporting.\nA maximum of 10000 rows including totals is returned atomically; exceeding\nthe bound is 413 report-too-large. Every amount must fit signed int64 minor\nunits, including gross currency totals; otherwise 422 balance-overflow.\nNo partial or rounded report is returned.\n",
+        "tags": [
+          "accounts"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PostingSnapshot"
+          },
+          {
+            "$ref": "#/components/parameters/ReportCurrency"
+          },
+          {
+            "$ref": "#/components/parameters/ReportDateFrom"
+          },
+          {
+            "$ref": "#/components/parameters/ReportDateTo"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Complete account rows and per-currency control totals.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrialBalance"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/accounts": {
+      "get": {
+        "operationId": "listAccounts",
+        "x-d0-machine-scopes": [
+          "accounting.read"
+        ],
+        "summary": "List accounts",
+        "description": "Accounts of the calling tenant, ordered by Kontonummer.",
+        "tags": [
+          "accounts"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/AccountCursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of accounts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createAccount",
+        "x-d0-machine-scopes": [
+          "accounting.write"
+        ],
+        "summary": "Create an account",
+        "description": "Adds a Konto to the tenant's chart of accounts. `accountNo` is unique per\ntenant; creating a duplicate is `409 account-already-exists`.\n",
+        "tags": [
+          "accounts"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The Konto to add.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            },
+            "description": "The created account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/accounts/{accountId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/AccountId"
+        }
+      ],
+      "get": {
+        "operationId": "getAccount",
+        "x-d0-machine-scopes": [
+          "accounting.read"
+        ],
+        "summary": "Fetch one account",
+        "description": "Returns the account if it belongs to the calling tenant, else 404.",
+        "tags": [
+          "accounts"
+        ],
+        "responses": {
+          "200": {
+            "description": "The account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/periods": {
+      "get": {
+        "operationId": "listPeriods",
+        "x-d0-machine-scopes": [
+          "accounting.read"
+        ],
+        "summary": "List accounting periods",
+        "description": "Periods of the calling tenant, ordered by start date.",
+        "tags": [
+          "periods"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/PeriodCursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of periods.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PeriodPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createPeriod",
+        "x-d0-machine-scopes": [
+          "accounting.write"
+        ],
+        "summary": "Create an accounting period",
+        "description": "Periods of one tenant may not overlap; an overlapping range is\n`409 period-overlap`. A new period starts `open`.\n",
+        "tags": [
+          "periods"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The period to open.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeriodCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            },
+            "description": "The created period.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Period"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/periods/{periodId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/PeriodId"
+        }
+      ],
+      "get": {
+        "operationId": "getPeriod",
+        "x-d0-machine-scopes": [
+          "accounting.read"
+        ],
+        "summary": "Fetch one period",
+        "description": "Returns the period if it belongs to the calling tenant, else 404.",
+        "tags": [
+          "periods"
+        ],
+        "responses": {
+          "200": {
+            "description": "The period.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Period"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/journal-entries": {
+      "get": {
+        "operationId": "listJournalEntries",
+        "x-d0-machine-scopes": [
+          "accounting.read"
+        ],
+        "summary": "List journal entries and drafts",
+        "description": "Entries of the calling tenant in ascending immutable entry-ID order,\nindependent of booking date and posting sequence. Select `draft` or\n`posted` explicitly. Date bounds are inclusive and combine with periodId.\nOptional documentId restricts results to entries directly linked to that\nBeleg, including Storno entries with inherited links. Requires accounting.read;\nit returns journal data, not document metadata. Unknown or foreign documentId\nis 404 document-not-found. The optional externalReference filter uses an\nexact, case-sensitive match (no wildcards, trimming or Unicode normalization).\nReferences are not unique: an original and its Storno share the reference.\nKeep filters unchanged when passing nextCursor as after. The cursor must\nidentify an entry visible to this tenant, even if it no longer matches\nthe filters; malformed, unknown or foreign cursors are 400 invalid-cursor.\nPagination is not a snapshot: concurrent commits and mutable drafts or\nstatus transitions can change membership between requests. Entries that\nbecome eligible before the cursor are not revisited; restart traversal\nto rediscover them. Unchanged data is traversed without skips or duplicates.\n",
+        "tags": [
+          "journal-entries"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "The nextCursor from the previous page.",
+            "schema": {
+              "$ref": "#/components/schemas/EntryId"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true,
+            "description": "Select drafts or posted entries.",
+            "schema": {
+              "$ref": "#/components/schemas/JournalEntryStatus"
+            }
+          },
+          {
+            "name": "periodId",
+            "in": "query",
+            "description": "Restrict to this tenant's accounting period.",
+            "schema": {
+              "$ref": "#/components/schemas/PeriodId"
+            }
+          },
+          {
+            "name": "documentId",
+            "in": "query",
+            "description": "Only entries directly linked to this tenant's Beleg.",
+            "schema": {
+              "$ref": "#/components/schemas/DocumentId"
+            }
+          },
+          {
+            "name": "bookingDateFrom",
+            "in": "query",
+            "description": "Inclusive earliest booking date.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "bookingDateTo",
+            "in": "query",
+            "description": "Inclusive latest booking date; must not precede bookingDateFrom.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "externalReference",
+            "in": "query",
+            "description": "Exact business reference; combines with all other filters. U+0000 is forbidden.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of journal entries with their lines.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntryPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createJournalEntryDraft",
+        "x-d0-machine-scopes": [
+          "accounting.write"
+        ],
+        "summary": "Create a draft Buchung",
+        "description": "Creates an unposted (draft) Buchung and its lines. The draft is validated\nimmediately — at least two lines, every amount positive, Soll and Haben\nequal, one currency throughout — but it takes no `seq` and enters no hash\nchain until it is posted. A draft in a period that is already\nfestgeschrieben is rejected at post time, not here.\n",
+        "tags": [
+          "journal-entries"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The Buchung to draft, with all of its lines.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JournalEntryCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created draft.",
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/JournalEntryETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntry"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/journal-entries/{entryId}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/EntryId"
+        }
+      ],
+      "get": {
+        "operationId": "getJournalEntry",
+        "x-d0-machine-scopes": [
+          "accounting.read"
+        ],
+        "summary": "Fetch one Buchung with its lines",
+        "description": "Returns the Buchung and its lines in line order. A draft carries no `seq`,\n`entryHash` or `postedAt`; a posted one carries all three.\n",
+        "tags": [
+          "journal-entries"
+        ],
+        "responses": {
+          "200": {
+            "description": "The Buchung.",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/JournalEntryETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntry"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "replaceJournalEntryDraft",
+        "x-d0-machine-scopes": [
+          "accounting.write"
+        ],
+        "summary": "Replace a draft Buchung",
+        "description": "Replaces all draft accounting fields and lines. Omitted optional metadata\nis cleared. Identity, creation evidence and linked Buchungsbelege remain.\nPosted entries reject changes with `409 entry-not-draft`. Requires the\nlatest item ETag; stale versions return `412 precondition-failed`.\n",
+        "tags": [
+          "journal-entries"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          },
+          {
+            "$ref": "#/components/parameters/JournalEntryIfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The complete replacement accounting content and lines of the draft.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JournalEntryCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The replaced draft.",
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              },
+              "ETag": {
+                "$ref": "#/components/headers/JournalEntryETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalEntry"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/PreconditionFailed"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "428": {
+            "$ref": "#/components/responses/PreconditionRequired"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "discardJournalEntryDraft",
+        "x-d0-machine-scopes": [
+          "accounting.write"
+        ],
+        "summary": "Discard a draft Buchung",
+        "description": "Discards an unposted draft from item and list reads. Linked archived\nBuchungsbelege remain preserved. Posted entries reject discard with\n`409 entry-not-draft`. Requires the latest item ETag.\n",
+        "tags": [
+          "journal-entries"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          },
+          {
+            "$ref": "#/components/parameters/JournalEntryIfMatch"
+          }
+        ],
+        "responses": {
+          "204": {
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            },
+            "description": "The draft was discarded."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/PreconditionFailed"
+          },
+          "428": {
+            "$ref": "#/components/responses/PreconditionRequired"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    }
+  },
+  "webhooks": {
+    "asyncResult": {
+      "post": {
+        "operationId": "asyncResultEvent",
+        "summary": "An asynchronous document or e-invoice operation reached a terminal result",
+        "description": "Delivered to active endpoints with `eventTypes: []`. The event-time\nrecipient and route snapshot, HMAC signatures, retry and deduplication\nrules are identical to `journalEntryPosted`. Fetch the named public\nresource for current details; the envelope contains no document bytes,\nvalidation report, internal ID, or sequence number.\n",
+        "tags": [
+          "documents"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "D0-Signature",
+            "in": "header",
+            "required": true,
+            "description": "The published v1 HMAC signature; see `journalEntryPosted`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "D0-Signature-V2",
+            "in": "header",
+            "required": true,
+            "description": "The preferred authenticated-header HMAC; see `journalEntryPosted`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "D0-Webhook-Id",
+            "in": "header",
+            "required": true,
+            "description": "The authenticated `event_id`, stable across redelivery.",
+            "schema": {
+              "$ref": "#/components/schemas/EventId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsyncEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Acknowledged."
+          },
+          "2XX": {
+            "description": "Acknowledged with another 2xx status."
+          },
+          "default": {
+            "description": "Not acknowledged; the delivery may be retried."
+          }
+        }
+      }
+    },
+    "journalEntryPosted": {
+      "post": {
+        "operationId": "journalEntryPostedEvent",
+        "summary": "A Buchung was posted",
+        "description": "When the event is committed, its recipients are snapshotted from the tenant's\nactive endpoints subscribed to `journal_entry.posted`; each selected recipient\nalso pins that endpoint's routing URL. Later URL or subscription changes do\nnot retarget that event. A later deactivation permanently suppresses a selected\nrecipient that a worker has not already loaded, even if the endpoint is then\nreactivated. An attempt already loaded when deactivation commits may complete.\n\nDelivery attempts may be repeated: the same `event_id` can arrive more than\nonce, and events can arrive out of order. Every newly loaded attempt uses the\nendpoint's current signing-secret version. Dedupe on `event_id` and order by\n`resource.seq`. Existing integrations can continue verifying `D0-Signature`.\nNew and upgraded integrations should verify `D0-Signature-V2`, which also\nauthenticates `D0-Webhook-Id`, before trusting the body. Return any 2xx status only after the\nevent is durably recorded; any 2xx marks this recipient successful. Connection\nfailures and non-2xx responses may be retried under the current delivery policy.\nAttempt limits, timing, backoff, and transient/permanent classifications are not\npart of this contract and may evolve. Receivers SHOULD allow at least five minutes\nof signature timestamp tolerance; this covers the bounded fan-out, normal network\ndelay, and ordinary clock skew.\n",
+        "tags": [
+          "journal-entries"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "D0-Signature",
+            "in": "header",
+            "required": true,
+            "description": "Backwards-compatible signature with the published v1 wire format:\n`t=<unix-seconds>,v1=<hex>`, where `v1` is lowercase hexadecimal\nHMAC-SHA256(endpoint secret, `\"<unix-seconds>.\" + raw request body`).\nThe header is retained byte-for-byte for existing consumers. It authenticates\nthe timestamp and exact body, but not the separate `D0-Webhook-Id` header.\nCompare in constant time and reject a timestamp outside your tolerance window.\nA tolerance of at least five minutes is recommended.\n",
+            "schema": {
+              "type": "string",
+              "pattern": "^t=[0-9]+,v1=[0-9a-f]{64}$"
+            }
+          },
+          {
+            "name": "D0-Signature-V2",
+            "in": "header",
+            "required": true,
+            "description": "Preferred signature: `t=<unix-seconds>,v2=<hex>`, where `v2` is the\nlowercase hexadecimal HMAC-SHA256 of the following versioned binary message:\n\n`\"d0.webhook.v2\" || 0x00 || int64be(t) || uint64be(len(id)) || id ||`\n`uint64be(len(body)) || body`\n\nHere `id` is the exact ASCII value of `D0-Webhook-Id`, `body` is the\nexact raw request body, and both lengths count bytes. Compare the MAC in\nconstant time and reject a timestamp outside your tolerance window. The\ntimestamp, webhook ID, and body are all covered by the MAC, so none can be\nsubstituted independently. A tolerance of at least five minutes is recommended.\n",
+            "schema": {
+              "type": "string",
+              "pattern": "^t=[0-9]+,v2=[0-9a-f]{64}$"
+            }
+          },
+          {
+            "name": "D0-Webhook-Id",
+            "in": "header",
+            "required": true,
+            "description": "The envelope's `event_id`, repeated as an authenticated header so a\nreceiver can dedupe a redelivery without parsing the body. It is included\nin the `v2` signature message and is byte-identical to the body field.\n",
+            "schema": {
+              "$ref": "#/components/schemas/EventId"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The event envelope. Verify the signature before parsing it.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Event"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Acknowledged. This recipient is marked successful."
+          },
+          "2XX": {
+            "description": "Acknowledged with another 2xx status. Every 2xx status marks this\nrecipient successful.\n"
+          },
+          "default": {
+            "description": "Not acknowledged. The delivery may be retried under the current policy;\nretry count and schedule are not contractual.\n"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "machineToken": {
+        "type": "http",
+        "scheme": "DPoP",
+        "description": "Machine-only AUTH_MODE=machine. DPoP-bound PS256 access token issued by\nhttps://auth.d0.eu for the sole audience https://api.test.d0.eu/accounting.\nUse Authorization: DPoP <token>; Bearer and internal assertions are denied.\n"
+      },
+      "machineProof": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "DPoP",
+        "description": "ES256 dpop+jwt proof binding the token hash, proof key, actual public\nmethod/URI, current issued-at time, fresh unique jti and server nonce.\nOn 401 use_dpop_nonce, retry with DPoP-Nonce and a fresh proof jti.\n"
+      },
+      "machineTenant": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Accounting-Tenant",
+        "description": "Public ten_ handle selecting the target tenant. It conveys no authority:\nthe active organization-to-partner delegation and exact client membership\nmust permit that tenant and operation.\n"
+      }
+    },
+    "schemas": {
+      "Event": {
+        "type": "object",
+        "description": "The unchanged `devacc.event.v1` journal posting envelope.",
+        "required": [
+          "schema",
+          "event_id",
+          "tenant_id",
+          "type",
+          "occurred_at",
+          "resource"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "schema": {
+            "type": "string",
+            "description": "Envelope version. Branch on this before reading any other field.",
+            "const": "devacc.event.v1"
+          },
+          "event_id": {
+            "type": "string",
+            "description": "Unique per event and stable across redeliveries — the deduplication key.\nRepeated in the `D0-Webhook-Id` header so it can be read without parsing\nthis body.\n",
+            "$ref": "#/components/schemas/EventId"
+          },
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Public opaque UUID of the tenant that owns the event. It is minted\nindependently of, and is not, the tenant's internal primary key.\n"
+          },
+          "type": {
+            "type": "string",
+            "description": "The domain event type.",
+            "enum": [
+              "journal_entry.posted"
+            ]
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the change was committed, in UTC."
+          },
+          "resource": {
+            "type": "object",
+            "required": [
+              "public_id",
+              "seq"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "public_id": {
+                "type": "string",
+                "description": "Public identifier of the affected resource.",
+                "examples": [
+                  "je_9GXQ8W5V4R3P2N1M0KJHGF7ED6"
+                ]
+              },
+              "seq": {
+                "type": "integer",
+                "format": "int64",
+                "description": "The resource's Buchungsnummer. Process events per tenant in\nascending `seq`; delivery order is not guaranteed.\n"
+              }
+            }
+          },
+          "entry_hash": {
+            "type": "string",
+            "description": "Opaque server-side audit fingerprint of the posted Buchung.",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "EventId": {
+        "type": "string",
+        "description": "Opaque event identifier — the deduplication handle for webhook delivery. Like\nevery identifier this API publishes it is minted independently of the row it\nnames, so it encodes neither a primary key nor the order events were created in.\n",
+        "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$",
+        "examples": [
+          "evt_9GXQ8W5V4R3P2N1M0KJHGF7ED6"
+        ]
+      },
+      "AsyncEvent": {
+        "type": "object",
+        "description": "A terminal asynchronous result. `succeeded` means processing completed;\na validation can still report `valid: false` when read through its resource.\n",
+        "required": [
+          "schema",
+          "event_id",
+          "tenant_id",
+          "type",
+          "occurred_at",
+          "resource"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "schema": {
+            "type": "string",
+            "const": "devacc.async-event.v1"
+          },
+          "event_id": {
+            "$ref": "#/components/schemas/EventId"
+          },
+          "tenant_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Opaque public tenant UUID, never its internal database ID."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "document.archived",
+              "document.preservation.applied",
+              "einvoice.validation.succeeded",
+              "einvoice.validation.failed",
+              "einvoice.zugferd-pdf.succeeded",
+              "einvoice.zugferd-pdf.failed"
+            ]
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resource": {
+            "type": "object",
+            "required": [
+              "public_id"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "public_id": {
+                "type": "string",
+                "description": "Typed public handle (`doc_`, `prsv_`, `eiv_`, or `eip_`)."
+              }
+            }
+          }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "description": "RFC 9457 problem detail.",
+        "required": [
+          "type",
+          "title",
+          "status"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "description": "Stable, machine-readable problem identifier. This is the field to\nbranch on; `title` and `detail` are prose and may be reworded.\n",
+            "examples": [
+              "https://api.test.d0.eu/accounting/problems/period-sealed"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Short human-readable summary of the problem type."
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599
+          },
+          "detail": {
+            "type": "string",
+            "description": "Human-readable explanation specific to this occurrence."
+          },
+          "instance": {
+            "type": "string",
+            "format": "uri-reference",
+            "description": "The request path this problem occurred on."
+          },
+          "errors": {
+            "type": "array",
+            "description": "Field-level detail, when the problem is a validation failure.",
+            "items": {
+              "type": "object",
+              "required": [
+                "detail"
+              ],
+              "properties": {
+                "pointer": {
+                  "type": "string",
+                  "description": "JSON Pointer (RFC 6901) into the request body.",
+                  "examples": [
+                    "/lines/0/amount"
+                  ]
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "JournalEntry": {
+        "type": "object",
+        "description": "A Buchung — a draft, or a posted entry in the hash chain.",
+        "required": [
+          "id",
+          "periodId",
+          "status",
+          "bookingDate",
+          "currency",
+          "lines",
+          "createdAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "bookingText": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Buchungstext, preserved exactly and immutable once posted. Null or omitted means absent; U+0000 is forbidden."
+          },
+          "externalReference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Caller business reference, preserved exactly and immutable once posted. Not unique; use Idempotency-Key for retries. Null or omitted means absent; U+0000 is forbidden."
+          },
+          "id": {
+            "$ref": "#/components/schemas/EntryId"
+          },
+          "periodId": {
+            "$ref": "#/components/schemas/PeriodId"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JournalEntryStatus"
+          },
+          "bookingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "seq": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "The legal Buchungsnummer — gapless and strictly increasing per tenant.\nAssigned at posting; null on a draft.\n"
+          },
+          "entryHash": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Opaque server-side audit fingerprint for this chain link. The canonical\npayload intentionally includes private identifiers that are not exposed\nby the public API, so clients must not treat this as a recomputable proof.\nAssigned at posting; null on a draft.\n",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "reversalOf": {
+            "type": "string",
+            "description": "The Buchung this one reverses (Storno), if any.",
+            "$ref": "#/components/schemas/EntryId"
+          },
+          "lines": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/JournalLine"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "postedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "JournalLine": {
+        "type": "object",
+        "description": "One line of a Buchung as booked.",
+        "required": [
+          "lineNo",
+          "accountId",
+          "accountNo",
+          "side",
+          "amount"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "taxRuleId": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "Optional immutable published rule; requires matching taxKey and effective booking date."
+          },
+          "lineNo": {
+            "type": "integer",
+            "description": "Position within the Buchung, starting at 1.",
+            "minimum": 1
+          },
+          "accountId": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "accountNo": {
+            "type": "string",
+            "description": "The Kontonummer as booked — frozen at creation, so it keeps reading\ntrue even if the account is later renumbered (INVARIANT #10).\n"
+          },
+          "side": {
+            "$ref": "#/components/schemas/Side"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "taxKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "Money": {
+        "type": "object",
+        "description": "An exact monetary amount. `amount` is an integer string in the currency's\nMINOR units (cents for EUR) — never a JSON number, so it cannot be rounded\nthrough a binary float. `\"150000\"` with currency `EUR` is 1500,00 €.\n",
+        "required": [
+          "amount",
+          "currency"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "Signed integer count of minor units, no separators, no exponent.",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "examples": [
+              "150000"
+            ]
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          }
+        }
+      },
+      "Currency": {
+        "type": "string",
+        "description": "ISO-4217 alphabetic currency code.",
+        "pattern": "^[A-Z]{3}$",
+        "examples": [
+          "EUR"
+        ]
+      },
+      "Side": {
+        "type": "string",
+        "description": "Buchungsseite — Soll (debit) or Haben (credit).",
+        "enum": [
+          "debit",
+          "credit"
+        ]
+      },
+      "AccountId": {
+        "type": "string",
+        "description": "Opaque account identifier.",
+        "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$",
+        "examples": [
+          "acct_9GXQ8W5V4R3P2N1M0KJHGF7ED6"
+        ]
+      },
+      "EntryId": {
+        "type": "string",
+        "description": "Opaque Buchung identifier. Not the Buchungsnummer — that is `seq`.",
+        "pattern": "^je_[0-9A-HJKMNP-TV-Z]{26}$",
+        "examples": [
+          "je_9GXQ8W5V4R3P2N1M0KJHGF7ED6"
+        ]
+      },
+      "JournalEntryStatus": {
+        "type": "string",
+        "description": "`draft` is mutable and carries no `seq`; `posted` is in the hash chain and\nimmutable — corrections are new reversal entries (Storno).\n",
+        "enum": [
+          "draft",
+          "posted"
+        ]
+      },
+      "PeriodId": {
+        "type": "string",
+        "description": "Opaque period identifier.",
+        "pattern": "^per_[0-9A-HJKMNP-TV-Z]{26}$",
+        "examples": [
+          "per_9GXQ8W5V4R3P2N1M0KJHGF7ED6"
+        ]
+      },
+      "JournalEntryCreate": {
+        "type": "object",
+        "description": "A balanced Buchung to draft.",
+        "required": [
+          "periodId",
+          "bookingDate",
+          "currency",
+          "lines"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "bookingText": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Buchungstext, preserved exactly and immutable once posted. Null or omitted means absent; U+0000 is forbidden."
+          },
+          "externalReference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Caller business reference, preserved exactly and immutable once posted. Not unique; use Idempotency-Key for retries. Null or omitted means absent; U+0000 is forbidden."
+          },
+          "periodId": {
+            "$ref": "#/components/schemas/PeriodId"
+          },
+          "bookingDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Buchungsdatum; must fall inside the period."
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "lines": {
+            "type": "array",
+            "description": "At least two lines. Every line's currency must equal the entry's, and\nthe debit total must equal the credit total.\n",
+            "minItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/JournalLineCreate"
+            }
+          }
+        }
+      },
+      "JournalLineCreate": {
+        "type": "object",
+        "description": "One line of a Buchung to create — a Konto, a side, and an amount.",
+        "required": [
+          "accountId",
+          "side",
+          "amount"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "taxRuleId": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "Optional immutable published rule; requires matching taxKey and effective booking date."
+          },
+          "accountId": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "side": {
+            "$ref": "#/components/schemas/Side"
+          },
+          "amount": {
+            "type": "object",
+            "description": "Always positive; `side` carries the direction.",
+            "$ref": "#/components/schemas/Money"
+          },
+          "taxKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Steuerschlüssel.",
+            "maxLength": 32
+          }
+        }
+      },
+      "JournalEntryPage": {
+        "type": "object",
+        "description": "One page in immutable entry-ID order; not a snapshot across requests.",
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalEntry"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Pass as after with unchanged filters; absent on the last page.",
+            "$ref": "#/components/schemas/EntryId"
+          }
+        }
+      },
+      "DocumentId": {
+        "type": "string",
+        "description": "Opaque Beleg identifier. It does not encode storage identity.",
+        "pattern": "^doc_[0-9A-HJKMNP-TV-Z]{26}$",
+        "examples": [
+          "doc_9GXQ8W5V4R3P2N1M0KJHGF7ED6"
+        ]
+      },
+      "Period": {
+        "type": "object",
+        "description": "An accounting period and its Festschreibung state.",
+        "required": [
+          "id",
+          "label",
+          "startsOn",
+          "endsOn",
+          "status",
+          "createdAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/PeriodId"
+          },
+          "label": {
+            "type": "string",
+            "examples": [
+              "2026-01"
+            ]
+          },
+          "startsOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "endsOn": {
+            "type": "string",
+            "format": "date",
+            "description": "Inclusive last day of the period."
+          },
+          "status": {
+            "$ref": "#/components/schemas/PeriodStatus"
+          },
+          "festgeschriebenAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "When the period was sealed; null while it is open."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PeriodStatus": {
+        "type": "string",
+        "description": "`open` accepts postings; `festgeschrieben` is sealed and immutable\n(Festschreibung, §146 AO).\n",
+        "enum": [
+          "open",
+          "festgeschrieben"
+        ]
+      },
+      "PeriodCreate": {
+        "type": "object",
+        "description": "Fields accepted when opening a period.",
+        "required": [
+          "label",
+          "startsOn",
+          "endsOn"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "examples": [
+              "2026-01"
+            ]
+          },
+          "startsOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "endsOn": {
+            "type": "string",
+            "format": "date",
+            "description": "Inclusive last day; must not precede `startsOn`."
+          }
+        }
+      },
+      "PeriodPage": {
+        "type": "object",
+        "description": "One page of periods, earliest start date first.",
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Period"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Pass as the `after` query parameter to fetch the next page of periods.\nAbsent once the last page has been returned.\n",
+            "$ref": "#/components/schemas/PeriodId"
+          }
+        }
+      },
+      "Account": {
+        "type": "object",
+        "description": "A Konto in the tenant's chart of accounts.",
+        "required": [
+          "id",
+          "accountNo",
+          "name",
+          "createdAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "retiredAt": {
+            "description": "Retirement prevents new ordinary postings; historical Storno remains available.",
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "id": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "accountNo": {
+            "type": "string",
+            "description": "Kontonummer within the tenant's chart of accounts.",
+            "examples": [
+              "1200"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "examples": [
+              "Bank"
+            ]
+          },
+          "accountType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional account classification supplied by the consumer."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AccountCreate": {
+        "type": "object",
+        "description": "Fields accepted when adding a Konto.",
+        "required": [
+          "accountNo",
+          "name"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "accountNo": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "examples": [
+              "1200"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "examples": [
+              "Bank"
+            ]
+          },
+          "accountType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          }
+        }
+      },
+      "AccountPage": {
+        "type": "object",
+        "description": "One page of accounts, oldest Kontonummer first.",
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Account"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Pass as the `after` query parameter to fetch the next page of accounts.\nAbsent once the last page has been returned.\n",
+            "$ref": "#/components/schemas/AccountId"
+          }
+        }
+      },
+      "TrialBalance": {
+        "type": "object",
+        "description": "Summen- und Saldenliste with exact currency control totals.",
+        "required": [
+          "asOf",
+          "data",
+          "totals"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "asOf": {
+            "$ref": "#/components/schemas/PostingSnapshot"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrialBalanceRow"
+            }
+          },
+          "totals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountBalance"
+            }
+          }
+        }
+      },
+      "AccountBalance": {
+        "type": "object",
+        "description": "Exact debit/credit totals and signed balances in one currency.",
+        "required": [
+          "currency",
+          "openingBalance",
+          "debitTotal",
+          "creditTotal",
+          "closingBalance"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "openingBalance": {
+            "description": "Signed debit minus credit before bookingDateFrom, or zero without it.",
+            "$ref": "#/components/schemas/Money"
+          },
+          "debitTotal": {
+            "description": "Nonnegative debit sum within the inclusive date range.",
+            "$ref": "#/components/schemas/Money"
+          },
+          "creditTotal": {
+            "description": "Nonnegative credit sum within the inclusive date range.",
+            "$ref": "#/components/schemas/Money"
+          },
+          "closingBalance": {
+            "description": "Signed debit minus credit through bookingDateTo at asOf.",
+            "$ref": "#/components/schemas/Money"
+          }
+        }
+      },
+      "TrialBalanceRow": {
+        "type": "object",
+        "description": "Exact totals for one account and currency.",
+        "required": [
+          "accountId",
+          "accountNo",
+          "currency",
+          "openingBalance",
+          "debitTotal",
+          "creditTotal",
+          "closingBalance"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "accountNo": {
+            "type": "string",
+            "description": "Account number from the latest participating posted line."
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "openingBalance": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "debitTotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "creditTotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "closingBalance": {
+            "$ref": "#/components/schemas/Money"
+          }
+        }
+      },
+      "PostingSnapshot": {
+        "type": "string",
+        "description": "A posted tenant entry's public ID, or empty for the permanent zero cutoff.",
+        "pattern": "^(empty|je_[0-9A-HJKMNP-TV-Z]{26})$",
+        "examples": [
+          "empty"
+        ]
+      }
+    },
+    "responses": {
+      "Problem": {
+        "description": "An error. Branch on `type`.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "PreconditionRequired": {
+        "description": "This mutation requires the latest item `ETag` in `If-Match`; no\nresource state or audit evidence was changed.\n",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "PreconditionFailed": {
+        "description": "The supplied `If-Match` validator is well-formed but stale. No resource\nstate or audit evidence was changed. Fetch the item and retry the\nintended change with its new `ETag` and a fresh `Idempotency-Key`.\n",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "The request conflicts with current state — a duplicate, a sealed period, an\nentry that is no longer a draft, or an in-flight request with this\n`Idempotency-Key`.\n",
+        "headers": {
+          "Retry-After": {
+            "description": "Present only on `request-in-progress`, where the conflict is transient:\na duplicate of this request is still running and retrying after the\ngiven number of seconds will succeed. Absent on the other conflicts,\nwhich retrying cannot resolve.\n",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "No such resource in the calling tenant.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "The caller is authenticated for the tenant but lacks the explicit permission\nrequired for this operation. No data is read or written.\n",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "No valid tenant assertion. No data is read or written.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "The request is malformed or violates the contract.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Unprocessable": {
+        "description": "The request is well-formed but cannot be carried out — an unbalanced\nBuchung, or an `Idempotency-Key` reused with a different request (including\na different `Content-Type` or `If-Match` validator).\n",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "ActingUserRecorded": {
+        "required": false,
+        "description": "Present with exactly v1 on successfully committed partner-attributed\nmachine writes and their idempotent replays. Absent on unattributed writes.\nAn attributed consumer must qualify this acknowledgment before presenting\nsuccess. Missing acknowledgment leaves an unknown attribution outcome.\n",
+        "schema": {
+          "type": "string",
+          "const": "v1"
+        }
+      },
+      "JournalEntryETag": {
+        "required": true,
+        "description": "Strong opaque validator bound to the entry identity and revision.",
+        "schema": {
+          "type": "string",
+          "pattern": "^\"je-v1-[A-Za-z0-9_-]{32}\"$"
+        }
+      }
+    },
+    "parameters": {
+      "JournalEntryIfMatch": {
+        "name": "If-Match",
+        "in": "header",
+        "required": true,
+        "description": "Exactly one strong item ETag observed from create, GET or replacement.\nWeak tags, wildcards and lists are rejected with 400. Missing tags return\n428; stale tags return 412. Fetch again and retry with a fresh\nIdempotency-Key after a stale version.\n",
+        "schema": {
+          "type": "string",
+          "pattern": "^\"je-v1-[A-Za-z0-9_-]{32}\"$"
+        }
+      },
+      "ActingUserSubject": {
+        "name": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "description": "Stable opaque person reference in the issuer namespace, asserted by the\nauthenticated partner. Send exactly one value together with\nX-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or\ncommas. Use technical references, not names or email addresses. A different\nattributed human or asserting machine under the same Idempotency-Key is\na different request (422). Neither header is an Accounting membership ID.\n",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+        },
+        "example": "person-42"
+      },
+      "ActingUserIssuer": {
+        "name": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "description": "Optional partner-attested human attribution, machine authentication only.\nSend exactly one value together with X-Accounting-Acting-User-Subject.\nAbsolute HTTPS issuer URI without credentials, query or fragment; ASCII\nwithout whitespace or commas. The authenticated partner asserts this\nidentity; Accounting does not independently verify a human login token.\nThis metadata grants no tenant access or permissions and never replaces\nthe authenticated machine membership. Retained as immutable same-transaction\nevidence with the write and included in the idempotency fingerprint.\nSuccessful attributed writes and their replays return\nX-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling\nattributed writes; a missing acknowledgment leaves the outcome unqualified.\n",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+        },
+        "example": "https://auth.d0.eu"
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "description": "Client-generated key that makes this mutation replay-safe. Send exactly\none field value. Use a fresh value (a UUID or equivalent) per logical\noperation and reuse it verbatim when retrying that operation.\n\nOne layer of surrounding double quotes is stripped before the key is\ncompared, so the RFC 8941 structured-field form (`\"k\"`) and the bare form\n(`k`) name the same key.\n",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "example": "2f1c7f6e-5f0b-4a3a-8f8f-2b8f6c1f9a11"
+      },
+      "EntryId": {
+        "name": "entryId",
+        "in": "path",
+        "required": true,
+        "description": "Identifier of the Buchung.",
+        "schema": {
+          "$ref": "#/components/schemas/EntryId"
+        }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "description": "Maximum number of items to return.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 50
+        }
+      },
+      "PeriodId": {
+        "name": "periodId",
+        "in": "path",
+        "required": true,
+        "description": "Identifier of the accounting period.",
+        "schema": {
+          "$ref": "#/components/schemas/PeriodId"
+        }
+      },
+      "PeriodCursor": {
+        "name": "after",
+        "in": "query",
+        "required": false,
+        "description": "Return items after this period — the `nextCursor` of the previous page.",
+        "schema": {
+          "$ref": "#/components/schemas/PeriodId"
+        }
+      },
+      "AccountId": {
+        "name": "accountId",
+        "in": "path",
+        "required": true,
+        "description": "Identifier of the account, as returned when it was created.",
+        "schema": {
+          "$ref": "#/components/schemas/AccountId"
+        }
+      },
+      "AccountCursor": {
+        "name": "after",
+        "in": "query",
+        "required": false,
+        "description": "Return items after this account — the `nextCursor` of the previous page.",
+        "schema": {
+          "$ref": "#/components/schemas/AccountId"
+        }
+      },
+      "ReportDateTo": {
+        "name": "bookingDateTo",
+        "in": "query",
+        "description": "Inclusive latest booking date; must not precede bookingDateFrom.",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "ReportDateFrom": {
+        "name": "bookingDateFrom",
+        "in": "query",
+        "description": "Inclusive earliest booking date for movements; earlier history forms openingBalance.",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "ReportCurrency": {
+        "name": "currency",
+        "in": "query",
+        "description": "Restrict to one currency without conversion; omit to include each separately.",
+        "schema": {
+          "$ref": "#/components/schemas/Currency"
+        }
+      },
+      "PostingSnapshot": {
+        "name": "asOf",
+        "in": "query",
+        "description": "Inclusive posted-entry cutoff; omit for latest, or reuse a prior response's asOf.",
+        "schema": {
+          "$ref": "#/components/schemas/PostingSnapshot"
+        }
+      }
+    }
+  },
+  "x-d0-environment": "test",
+  "x-d0-resource": "https://api.test.d0.eu/accounting"
+}

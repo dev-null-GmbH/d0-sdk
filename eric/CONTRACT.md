@@ -1,0 +1,18 @@
+# ERiC machine SDK contract pin
+
+Go, TypeScript, and Python clients cover all **49 production** and exactly **2 isolated test** customer machine operations. They exclude human Console, internal/native/ELSTER endpoints, provider callbacks, and blocked filing routes. Named methods, request/result models, and the profile allowlist are generated from the public catalog; no private service schema or endpoint list is needed at customer install time.
+
+Source: `d0-api-standards` commit `4f64277e35b339ffdad79f4794c27b6575bc6cc9`, ERiC bundles `2026-10-15-console` and `2026-10-15-test`. Vendored `public-openapi.json` SHA-256:
+
+- production: `2154a43c9b71432b175c586e8c311d1cb632128d62cfb2b90086cef1b1aa85a3`
+- test: `912bbc8d7d5d37960d12c85bed9f3abb514f05b807186221a6b103ae56d16d0c`
+
+`sdk/generate.py` verifies those hashes and generates all 51 operation descriptors, TypeScript schema/request/result types, Python `TypedDict`/named methods, and Go named wrappers. Pinned repository `oapi-codegen v2.8.0` regenerates the Go schema and HTTP clients for both profiles. Its runtime `v1.7.0` and nullable `v1.2.0` match the ERiC service; their current supported GitHub releases were verified on 2026-10-15. Never edit generated files directly.
+
+The production OAuth resource is `https://api.d0.eu/eric`, HTTP base `https://api.d0.eu/eric/v1`. The test resource and HTTP base are `https://api.test.d0.eu/eric`, where only the two `/v1/tenants/{tenantId}/products/{productId}/simulations` operations exist. Bind one canonical tenant UUID per client; the SDK sends `X-ERIC-Tenant` and binds the test tenant path to the same UUID. A test client refuses all production methods before transport and vice versa. The test fixtures are `validation-accepted-v1` and `validation-rejected-v1`; their completed outcomes are simulated only.
+
+Every contracted mutation accepts a caller-owned `Idempotency-Key` of 1–128 `[A-Za-z0-9._:-]` characters; callers must preserve it on retry. `PlanEBilanzForm` is a read-only POST without a key. The SDK passes contractual actor status and other headers through, and exposes bounded problem status/type/title/request ID without raw detail. Artifact methods verify the exact RFC 9530 SHA-256 `Content-Digest`; retrieval artifact content also verifies `Content-Length`, including zero. Responses are capped at 40 MiB. No redirect is followed. Bounded async poll helpers stop within 1–120 seconds.
+
+The shared d0-auth machine transport is pinned for source qualification at commit `427beab15ee4ba6d6487a85120d920f028a1cee5` and owns private-key JWT, DPoP proof, nonce retry, token refresh, HTTPS and redirect rejection. Its canonical Go module is `github.com/dev-null-GmbH/d0-sdk/auth/go v0.1.0`. The local Go replace, npm file dependency and uv path override qualify against sibling source only. **Do not publish** until the public `d0-sdk` distribution and immutable shared-auth packages exist, local overrides are removed in the release assembly, and each published artifact is checked against these hashes. Do not put machine signing keys in browser code or log tax payloads, credentials, or certificates.
+
+Run `sdk/check.sh` in this sibling workspace. It regenerates both catalogs, verifies source drift, runs Go race/vet and both offline fixtures, TypeScript type/test/build and fixture, Python mypy/ruff/tests/build and fixture, and checks `py.typed` in the wheel. The repository CI job checks catalog regeneration without depending on private sibling repositories; public distribution CI will qualify the full three-language build.
