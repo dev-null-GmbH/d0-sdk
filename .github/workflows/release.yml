@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: Publish the qualified 0.1.0 packages and Go module tags
+        description: Publish the qualified package versions and Go module tags
         required: true
         type: boolean
         default: false
@@ -45,7 +45,7 @@ jobs:
       - run: npm audit --audit-level=high
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: sdk-0.1.0-${{ github.sha }}
+          name: sdk-${{ github.sha }}
           path: dist/
           if-no-files-found: error
           retention-days: 30
@@ -67,7 +67,7 @@ jobs:
           persist-credentials: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: sdk-0.1.0-${{ github.sha }}
+          name: sdk-${{ github.sha }}
           path: dist/
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -85,22 +85,10 @@ jobs:
           sha256sum --strict --check SHA256SUMS
       - run: python3 tools/verify_export.py
       - run: python3 tools/verify_packages.py
-      - name: Refuse conflicting immutable Go tags before publishing any package
-        env:
-          RELEASE_SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          for product in auth platform accounting einvoice eric; do
-            current=$(git ls-remote --refs https://github.com/dev-null-GmbH/d0-sdk.git "refs/tags/$product/go/v0.1.0" | cut -f1)
-            if [ -n "$current" ]; then test "$current" = "$RELEASE_SHA"; fi
-          done
+      - name: Refuse conflicting immutable Go module trees before publishing
+        run: python3 tools/go_tags.py
       - run: python3 tools/publish_npm.py
-      - name: Publish Python with per-project OIDC identity
-        run: |
-          uv publish --trusted-publishing always dist/python/d0_auth_machine-0.1.0*
-          for product in platform accounting einvoice eric; do
-            uv publish --trusted-publishing always "dist/python/d0_${product}-0.1.0"*
-          done
+      - run: python3 tools/publish_python.py
 
   go-tags:
     needs: publish
@@ -109,21 +97,14 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Publish immutable module tags for the same qualified source
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Publish immutable module tags for qualified module trees
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          for product in auth platform accounting einvoice eric; do
-            ref="refs/tags/$product/go/v0.1.0"
-            current=$(git ls-remote --refs https://github.com/dev-null-GmbH/d0-sdk.git "$ref" | cut -f1)
-            if [ -n "$current" ]; then
-              test "$current" = "$RELEASE_SHA"
-            else
-              gh api --method POST repos/dev-null-GmbH/d0-sdk/git/refs -f "ref=$ref" -f "sha=$RELEASE_SHA" >/dev/null
-            fi
-          done
+        run: python3 tools/go_tags.py --publish
 
   verify-public:
     needs: go-tags

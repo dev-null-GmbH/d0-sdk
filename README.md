@@ -4,10 +4,10 @@ Typed Go, TypeScript and Python clients for d0 Platform, Accounting, EInvoice an
 ERiC, with the shared d0 machine OAuth/DPoP transport. These clients are for
 trusted server applications. Private signing keys never belong in browser code.
 
-**Release state:** version 0.1.0 source is public and its
-[GitHub qualification passed](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38725343029).
-Registry publication and live product availability are separate; installation
-from the public registries is not claimed yet.
+**Release state:** all five Go modules at v0.1.0 are public and verified through
+anonymous Go proxy and checksum-database downloads. Accounting and ERiC contract
+updates are prepared as 0.1.1. npm and PyPI publication is pending account setup.
+Live product availability is reported separately in the Developer Console.
 
 | Product | Production operations | Isolated test operations | Package directories |
 | --- | ---: | ---: | --- |
@@ -17,10 +17,11 @@ from the public registries is not claimed yet.
 | EInvoice | 7 | 7 | [Go](einvoice/go), [TypeScript](einvoice/typescript), [Python](einvoice/python) |
 | ERiC | 49 | 2 | [Go](eric/go), [TypeScript](eric/typescript), [Python](eric/python) |
 
-The future registry package names are `@dev-null-gmbh/{product}`,
+The registry package names are `@dev-null-gmbh/{product}`,
 `d0-{product}` and `github.com/dev-null-GmbH/d0-sdk/{product}/go`.
 The auth packages are `@dev-null-gmbh/auth-machine`, `d0-auth-machine` and
-`github.com/dev-null-GmbH/d0-sdk/auth/go`. All are pinned to 0.1.0 in this release.
+`github.com/dev-null-GmbH/d0-sdk/auth/go`. Auth, Platform and EInvoice use 0.1.0; the updated Accounting and ERiC SDKs use
+0.1.1 and retains the exact auth dependency at 0.1.0.
 
 Select `production` or `test` explicitly, use separate client credentials for
 each, and grant only the product scopes your integration needs. Each machine

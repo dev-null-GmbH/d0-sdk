@@ -1,4 +1,4 @@
-# Publishing 0.1.0
+# Publishing the SDKs
 
 The repository is the public SDK boundary. Do not change any application
 repository's visibility. Publish only reviewed exported SDK files, the license,
@@ -9,7 +9,7 @@ public contracts, examples and distribution tooling in this repository.
    as its default branch. Qualification run
    [38725343029](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/38725343029)
    passed. Require its `qualify` job for changes and protect main and the five
-   `{auth,platform,accounting,einvoice,eric}/go/v0.1.0` tags from replacement.
+   `{auth,platform,accounting,einvoice,eric}/go/v*` tags from replacement.
    The `public-sdk-release` environment is restricted to `main`.
 2. Configure npm ownership of `@dev-null-gmbh` and the five package names.
    Configure each trusted publisher for owner `dev-null-GmbH`, repository
@@ -26,11 +26,19 @@ public contracts, examples and distribution tooling in this repository.
    packages and obtains registry credentials through OIDC. Existing identical
    versions can resume; different bytes at the same version fail closed. No
    customer or API requests are sent by this workflow.
-5. The tag job creates all five immutable Go module tags at the same source
-   commit. The final job verifies anonymous registry downloads and runs all
+5. Package versions come from each product’s matching TypeScript and Python
+   metadata; Go uses the same product version. The tag job creates missing tags
+   at the qualified source commit. An existing tag is accepted only when its
+   complete Go module tree is identical, allowing unrelated products and release
+   documentation to change without moving published tags. The final job verifies anonymous registry downloads and runs all
    product examples from installed packages. After it succeeds,
    update the Console SDK catalog's publication evidence and this release state.
    A successful build alone is not evidence that registries serve the package.
+
+The five Go modules at v0.1.0 are already published and have passed anonymous
+installation through proxy.golang.org and sum.golang.org. The refreshed
+Accounting and ERiC contracts are released separately as 0.1.1; v0.1.0 remains immutable. npm and PyPI
+publication still require company account and publisher setup.
 
 The workflow retains npm/Python artifacts and a Go module-proxy fixture with
 SHA-256 checksums. Upstream source commits and original/exported file hashes

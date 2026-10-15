@@ -663,16 +663,19 @@ func (e EBilanzFormFieldSelectionValue) Valid() bool {
 
 // Defines values for EBilanzFormFieldValueLiteral.
 const (
-	False        EBilanzFormFieldValueLiteral = "false"
-	SieheFußnote EBilanzFormFieldValueLiteral = "siehe Fußnote"
+	EBilanzFormFieldValueLiteralFalse        EBilanzFormFieldValueLiteral = "false"
+	EBilanzFormFieldValueLiteralSieheFußnote EBilanzFormFieldValueLiteral = "siehe Fußnote"
+	EBilanzFormFieldValueLiteralTrue         EBilanzFormFieldValueLiteral = "true"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzFormFieldValueLiteral enum.
 func (e EBilanzFormFieldValueLiteral) Valid() bool {
 	switch e {
-	case False:
+	case EBilanzFormFieldValueLiteralFalse:
 		return true
-	case SieheFußnote:
+	case EBilanzFormFieldValueLiteralSieheFußnote:
+		return true
+	case EBilanzFormFieldValueLiteralTrue:
 		return true
 	default:
 		return false
@@ -753,22 +756,25 @@ func (e EBilanzFormPlanCaseIncomeStatementFormat) Valid() bool {
 
 // Defines values for EBilanzFormPlanCaseLegalForm.
 const (
-	EBilanzFormPlanCaseLegalFormAG    EBilanzFormPlanCaseLegalForm = "AG"
-	EBilanzFormPlanCaseLegalFormAGKG  EBilanzFormPlanCaseLegalForm = "AGKG"
-	EBilanzFormPlanCaseLegalFormAGOHG EBilanzFormPlanCaseLegalForm = "AGOHG"
-	EBilanzFormPlanCaseLegalFormASG   EBilanzFormPlanCaseLegalForm = "ASG"
-	EBilanzFormPlanCaseLegalFormEU    EBilanzFormPlanCaseLegalForm = "EU"
-	EBilanzFormPlanCaseLegalFormEUF   EBilanzFormPlanCaseLegalForm = "EUF"
-	EBilanzFormPlanCaseLegalFormEUN   EBilanzFormPlanCaseLegalForm = "EUN"
-	EBilanzFormPlanCaseLegalFormGBR   EBilanzFormPlanCaseLegalForm = "GBR"
-	EBilanzFormPlanCaseLegalFormGKG   EBilanzFormPlanCaseLegalForm = "GKG"
-	EBilanzFormPlanCaseLegalFormGOHG  EBilanzFormPlanCaseLegalForm = "GOHG"
-	EBilanzFormPlanCaseLegalFormGmbH  EBilanzFormPlanCaseLegalForm = "GmbH"
-	EBilanzFormPlanCaseLegalFormKG    EBilanzFormPlanCaseLegalForm = "KG"
-	EBilanzFormPlanCaseLegalFormOHG   EBilanzFormPlanCaseLegalForm = "OHG"
-	EBilanzFormPlanCaseLegalFormPG    EBilanzFormPlanCaseLegalForm = "PG"
-	EBilanzFormPlanCaseLegalFormSoPG  EBilanzFormPlanCaseLegalForm = "soPG"
-	EBilanzFormPlanCaseLegalFormUG    EBilanzFormPlanCaseLegalForm = "UG"
+	EBilanzFormPlanCaseLegalFormAG       EBilanzFormPlanCaseLegalForm = "AG"
+	EBilanzFormPlanCaseLegalFormAGKG     EBilanzFormPlanCaseLegalForm = "AGKG"
+	EBilanzFormPlanCaseLegalFormAGOHG    EBilanzFormPlanCaseLegalForm = "AGOHG"
+	EBilanzFormPlanCaseLegalFormASG      EBilanzFormPlanCaseLegalForm = "ASG"
+	EBilanzFormPlanCaseLegalFormEU       EBilanzFormPlanCaseLegalForm = "EU"
+	EBilanzFormPlanCaseLegalFormEUF      EBilanzFormPlanCaseLegalForm = "EUF"
+	EBilanzFormPlanCaseLegalFormEUN      EBilanzFormPlanCaseLegalForm = "EUN"
+	EBilanzFormPlanCaseLegalFormEWI      EBilanzFormPlanCaseLegalForm = "EWI"
+	EBilanzFormPlanCaseLegalFormGBR      EBilanzFormPlanCaseLegalForm = "GBR"
+	EBilanzFormPlanCaseLegalFormGKG      EBilanzFormPlanCaseLegalForm = "GKG"
+	EBilanzFormPlanCaseLegalFormGOHG     EBilanzFormPlanCaseLegalForm = "GOHG"
+	EBilanzFormPlanCaseLegalFormGmbH     EBilanzFormPlanCaseLegalForm = "GmbH"
+	EBilanzFormPlanCaseLegalFormKG       EBilanzFormPlanCaseLegalForm = "KG"
+	EBilanzFormPlanCaseLegalFormMU       EBilanzFormPlanCaseLegalForm = "MU"
+	EBilanzFormPlanCaseLegalFormOHG      EBilanzFormPlanCaseLegalForm = "OHG"
+	EBilanzFormPlanCaseLegalFormOtherMUN EBilanzFormPlanCaseLegalForm = "Other.MUN"
+	EBilanzFormPlanCaseLegalFormPG       EBilanzFormPlanCaseLegalForm = "PG"
+	EBilanzFormPlanCaseLegalFormSoPG     EBilanzFormPlanCaseLegalForm = "soPG"
+	EBilanzFormPlanCaseLegalFormUG       EBilanzFormPlanCaseLegalForm = "UG"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzFormPlanCaseLegalForm enum.
@@ -788,6 +794,8 @@ func (e EBilanzFormPlanCaseLegalForm) Valid() bool {
 		return true
 	case EBilanzFormPlanCaseLegalFormEUN:
 		return true
+	case EBilanzFormPlanCaseLegalFormEWI:
+		return true
 	case EBilanzFormPlanCaseLegalFormGBR:
 		return true
 	case EBilanzFormPlanCaseLegalFormGKG:
@@ -798,7 +806,11 @@ func (e EBilanzFormPlanCaseLegalForm) Valid() bool {
 		return true
 	case EBilanzFormPlanCaseLegalFormKG:
 		return true
+	case EBilanzFormPlanCaseLegalFormMU:
+		return true
 	case EBilanzFormPlanCaseLegalFormOHG:
+		return true
+	case EBilanzFormPlanCaseLegalFormOtherMUN:
 		return true
 	case EBilanzFormPlanCaseLegalFormPG:
 		return true
@@ -888,8 +900,15 @@ func (e EBilanzFormPlanCaseRevisionStatus) Valid() bool {
 
 // Defines values for EBilanzFormPlanCaseStatementType.
 const (
-	EBilanzFormPlanCaseStatementTypeE  EBilanzFormPlanCaseStatementType = "E"
-	EBilanzFormPlanCaseStatementTypeEB EBilanzFormPlanCaseStatementType = "EB"
+	EBilanzFormPlanCaseStatementTypeE      EBilanzFormPlanCaseStatementType = "E"
+	EBilanzFormPlanCaseStatementTypeEB     EBilanzFormPlanCaseStatementType = "EB"
+	EBilanzFormPlanCaseStatementTypeLAB    EBilanzFormPlanCaseStatementType = "LAB"
+	EBilanzFormPlanCaseStatementTypeLSB    EBilanzFormPlanCaseStatementType = "LSB"
+	EBilanzFormPlanCaseStatementTypeLZB    EBilanzFormPlanCaseStatementType = "LZB"
+	EBilanzFormPlanCaseStatementTypeUB     EBilanzFormPlanCaseStatementType = "UB"
+	EBilanzFormPlanCaseStatementTypeUBandE EBilanzFormPlanCaseStatementType = "UBandE"
+	EBilanzFormPlanCaseStatementTypeUJ     EBilanzFormPlanCaseStatementType = "UJ"
+	EBilanzFormPlanCaseStatementTypeZW     EBilanzFormPlanCaseStatementType = "ZW"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzFormPlanCaseStatementType enum.
@@ -899,6 +918,38 @@ func (e EBilanzFormPlanCaseStatementType) Valid() bool {
 		return true
 	case EBilanzFormPlanCaseStatementTypeEB:
 		return true
+	case EBilanzFormPlanCaseStatementTypeLAB:
+		return true
+	case EBilanzFormPlanCaseStatementTypeLSB:
+		return true
+	case EBilanzFormPlanCaseStatementTypeLZB:
+		return true
+	case EBilanzFormPlanCaseStatementTypeUB:
+		return true
+	case EBilanzFormPlanCaseStatementTypeUBandE:
+		return true
+	case EBilanzFormPlanCaseStatementTypeUJ:
+		return true
+	case EBilanzFormPlanCaseStatementTypeZW:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for EBilanzFormPlanCaseTaxStatementType.
+const (
+	EBilanzFormPlanCaseTaxStatementTypeEB EBilanzFormPlanCaseTaxStatementType = "EB"
+	EBilanzFormPlanCaseTaxStatementTypeSB EBilanzFormPlanCaseTaxStatementType = "SB"
+)
+
+// Valid indicates whether the value is a known member of the EBilanzFormPlanCaseTaxStatementType enum.
+func (e EBilanzFormPlanCaseTaxStatementType) Valid() bool {
+	switch e {
+	case EBilanzFormPlanCaseTaxStatementTypeEB:
+		return true
+	case EBilanzFormPlanCaseTaxStatementTypeSB:
+		return true
 	default:
 		return false
 	}
@@ -906,8 +957,9 @@ func (e EBilanzFormPlanCaseStatementType) Valid() bool {
 
 // Defines values for EBilanzFormPlanPeriodRulesClosingDateBinding.
 const (
-	EBilanzFormPlanPeriodRulesClosingDateBindingFiscalEnd   EBilanzFormPlanPeriodRulesClosingDateBinding = "fiscal_end"
-	EBilanzFormPlanPeriodRulesClosingDateBindingFiscalStart EBilanzFormPlanPeriodRulesClosingDateBinding = "fiscal_start"
+	EBilanzFormPlanPeriodRulesClosingDateBindingFiscalEnd        EBilanzFormPlanPeriodRulesClosingDateBinding = "fiscal_end"
+	EBilanzFormPlanPeriodRulesClosingDateBindingFiscalStart      EBilanzFormPlanPeriodRulesClosingDateBinding = "fiscal_start"
+	EBilanzFormPlanPeriodRulesClosingDateBindingWithinFiscalYear EBilanzFormPlanPeriodRulesClosingDateBinding = "within_fiscal_year"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzFormPlanPeriodRulesClosingDateBinding enum.
@@ -916,6 +968,8 @@ func (e EBilanzFormPlanPeriodRulesClosingDateBinding) Valid() bool {
 	case EBilanzFormPlanPeriodRulesClosingDateBindingFiscalEnd:
 		return true
 	case EBilanzFormPlanPeriodRulesClosingDateBindingFiscalStart:
+		return true
+	case EBilanzFormPlanPeriodRulesClosingDateBindingWithinFiscalYear:
 		return true
 	default:
 		return false
@@ -931,6 +985,21 @@ const (
 func (e EBilanzFormPlanPeriodRulesMaximumMonths) Valid() bool {
 	switch e {
 	case N12:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for EBilanzFormPlanPeriodRulesReportingPeriodBinding.
+const (
+	EBilanzFormPlanPeriodRulesReportingPeriodBindingWithinFiscalYear EBilanzFormPlanPeriodRulesReportingPeriodBinding = "within_fiscal_year"
+)
+
+// Valid indicates whether the value is a known member of the EBilanzFormPlanPeriodRulesReportingPeriodBinding enum.
+func (e EBilanzFormPlanPeriodRulesReportingPeriodBinding) Valid() bool {
+	switch e {
+	case EBilanzFormPlanPeriodRulesReportingPeriodBindingWithinFiscalYear:
 		return true
 	default:
 		return false
@@ -973,6 +1042,13 @@ const (
 	EbilanzFormPlanV11 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v11"
 	EbilanzFormPlanV12 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v12"
 	EbilanzFormPlanV13 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v13"
+	EbilanzFormPlanV14 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v14"
+	EbilanzFormPlanV15 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v15"
+	EbilanzFormPlanV16 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v16"
+	EbilanzFormPlanV17 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v17"
+	EbilanzFormPlanV18 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v18"
+	EbilanzFormPlanV19 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v19"
+	EbilanzFormPlanV20 EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v20"
 	EbilanzFormPlanV7  EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v7"
 	EbilanzFormPlanV8  EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v8"
 	EbilanzFormPlanV9  EBilanzFormPlanSchemaVersion = "ebilanz-form-plan-v9"
@@ -988,6 +1064,20 @@ func (e EBilanzFormPlanSchemaVersion) Valid() bool {
 	case EbilanzFormPlanV12:
 		return true
 	case EbilanzFormPlanV13:
+		return true
+	case EbilanzFormPlanV14:
+		return true
+	case EbilanzFormPlanV15:
+		return true
+	case EbilanzFormPlanV16:
+		return true
+	case EbilanzFormPlanV17:
+		return true
+	case EbilanzFormPlanV18:
+		return true
+	case EbilanzFormPlanV19:
+		return true
+	case EbilanzFormPlanV20:
 		return true
 	case EbilanzFormPlanV7:
 		return true
@@ -1056,22 +1146,25 @@ func (e EBilanzFormPlanInputIncomeStatementFormat) Valid() bool {
 
 // Defines values for EBilanzFormPlanInputLegalForm.
 const (
-	EBilanzFormPlanInputLegalFormAG    EBilanzFormPlanInputLegalForm = "AG"
-	EBilanzFormPlanInputLegalFormAGKG  EBilanzFormPlanInputLegalForm = "AGKG"
-	EBilanzFormPlanInputLegalFormAGOHG EBilanzFormPlanInputLegalForm = "AGOHG"
-	EBilanzFormPlanInputLegalFormASG   EBilanzFormPlanInputLegalForm = "ASG"
-	EBilanzFormPlanInputLegalFormEU    EBilanzFormPlanInputLegalForm = "EU"
-	EBilanzFormPlanInputLegalFormEUF   EBilanzFormPlanInputLegalForm = "EUF"
-	EBilanzFormPlanInputLegalFormEUN   EBilanzFormPlanInputLegalForm = "EUN"
-	EBilanzFormPlanInputLegalFormGBR   EBilanzFormPlanInputLegalForm = "GBR"
-	EBilanzFormPlanInputLegalFormGKG   EBilanzFormPlanInputLegalForm = "GKG"
-	EBilanzFormPlanInputLegalFormGOHG  EBilanzFormPlanInputLegalForm = "GOHG"
-	EBilanzFormPlanInputLegalFormGmbH  EBilanzFormPlanInputLegalForm = "GmbH"
-	EBilanzFormPlanInputLegalFormKG    EBilanzFormPlanInputLegalForm = "KG"
-	EBilanzFormPlanInputLegalFormOHG   EBilanzFormPlanInputLegalForm = "OHG"
-	EBilanzFormPlanInputLegalFormPG    EBilanzFormPlanInputLegalForm = "PG"
-	EBilanzFormPlanInputLegalFormSoPG  EBilanzFormPlanInputLegalForm = "soPG"
-	EBilanzFormPlanInputLegalFormUG    EBilanzFormPlanInputLegalForm = "UG"
+	EBilanzFormPlanInputLegalFormAG       EBilanzFormPlanInputLegalForm = "AG"
+	EBilanzFormPlanInputLegalFormAGKG     EBilanzFormPlanInputLegalForm = "AGKG"
+	EBilanzFormPlanInputLegalFormAGOHG    EBilanzFormPlanInputLegalForm = "AGOHG"
+	EBilanzFormPlanInputLegalFormASG      EBilanzFormPlanInputLegalForm = "ASG"
+	EBilanzFormPlanInputLegalFormEU       EBilanzFormPlanInputLegalForm = "EU"
+	EBilanzFormPlanInputLegalFormEUF      EBilanzFormPlanInputLegalForm = "EUF"
+	EBilanzFormPlanInputLegalFormEUN      EBilanzFormPlanInputLegalForm = "EUN"
+	EBilanzFormPlanInputLegalFormEWI      EBilanzFormPlanInputLegalForm = "EWI"
+	EBilanzFormPlanInputLegalFormGBR      EBilanzFormPlanInputLegalForm = "GBR"
+	EBilanzFormPlanInputLegalFormGKG      EBilanzFormPlanInputLegalForm = "GKG"
+	EBilanzFormPlanInputLegalFormGOHG     EBilanzFormPlanInputLegalForm = "GOHG"
+	EBilanzFormPlanInputLegalFormGmbH     EBilanzFormPlanInputLegalForm = "GmbH"
+	EBilanzFormPlanInputLegalFormKG       EBilanzFormPlanInputLegalForm = "KG"
+	EBilanzFormPlanInputLegalFormMU       EBilanzFormPlanInputLegalForm = "MU"
+	EBilanzFormPlanInputLegalFormOHG      EBilanzFormPlanInputLegalForm = "OHG"
+	EBilanzFormPlanInputLegalFormOtherMUN EBilanzFormPlanInputLegalForm = "Other.MUN"
+	EBilanzFormPlanInputLegalFormPG       EBilanzFormPlanInputLegalForm = "PG"
+	EBilanzFormPlanInputLegalFormSoPG     EBilanzFormPlanInputLegalForm = "soPG"
+	EBilanzFormPlanInputLegalFormUG       EBilanzFormPlanInputLegalForm = "UG"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzFormPlanInputLegalForm enum.
@@ -1091,6 +1184,8 @@ func (e EBilanzFormPlanInputLegalForm) Valid() bool {
 		return true
 	case EBilanzFormPlanInputLegalFormEUN:
 		return true
+	case EBilanzFormPlanInputLegalFormEWI:
+		return true
 	case EBilanzFormPlanInputLegalFormGBR:
 		return true
 	case EBilanzFormPlanInputLegalFormGKG:
@@ -1101,7 +1196,11 @@ func (e EBilanzFormPlanInputLegalForm) Valid() bool {
 		return true
 	case EBilanzFormPlanInputLegalFormKG:
 		return true
+	case EBilanzFormPlanInputLegalFormMU:
+		return true
 	case EBilanzFormPlanInputLegalFormOHG:
+		return true
+	case EBilanzFormPlanInputLegalFormOtherMUN:
 		return true
 	case EBilanzFormPlanInputLegalFormPG:
 		return true
@@ -1146,8 +1245,15 @@ func (e EBilanzFormPlanInputRevisionStatus) Valid() bool {
 
 // Defines values for EBilanzFormPlanInputStatementType.
 const (
-	EBilanzFormPlanInputStatementTypeE  EBilanzFormPlanInputStatementType = "E"
-	EBilanzFormPlanInputStatementTypeEB EBilanzFormPlanInputStatementType = "EB"
+	EBilanzFormPlanInputStatementTypeE      EBilanzFormPlanInputStatementType = "E"
+	EBilanzFormPlanInputStatementTypeEB     EBilanzFormPlanInputStatementType = "EB"
+	EBilanzFormPlanInputStatementTypeLAB    EBilanzFormPlanInputStatementType = "LAB"
+	EBilanzFormPlanInputStatementTypeLSB    EBilanzFormPlanInputStatementType = "LSB"
+	EBilanzFormPlanInputStatementTypeLZB    EBilanzFormPlanInputStatementType = "LZB"
+	EBilanzFormPlanInputStatementTypeUB     EBilanzFormPlanInputStatementType = "UB"
+	EBilanzFormPlanInputStatementTypeUBandE EBilanzFormPlanInputStatementType = "UBandE"
+	EBilanzFormPlanInputStatementTypeUJ     EBilanzFormPlanInputStatementType = "UJ"
+	EBilanzFormPlanInputStatementTypeZW     EBilanzFormPlanInputStatementType = "ZW"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzFormPlanInputStatementType enum.
@@ -1156,6 +1262,38 @@ func (e EBilanzFormPlanInputStatementType) Valid() bool {
 	case EBilanzFormPlanInputStatementTypeE:
 		return true
 	case EBilanzFormPlanInputStatementTypeEB:
+		return true
+	case EBilanzFormPlanInputStatementTypeLAB:
+		return true
+	case EBilanzFormPlanInputStatementTypeLSB:
+		return true
+	case EBilanzFormPlanInputStatementTypeLZB:
+		return true
+	case EBilanzFormPlanInputStatementTypeUB:
+		return true
+	case EBilanzFormPlanInputStatementTypeUBandE:
+		return true
+	case EBilanzFormPlanInputStatementTypeUJ:
+		return true
+	case EBilanzFormPlanInputStatementTypeZW:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for EBilanzFormPlanInputTaxStatementType.
+const (
+	EBilanzFormPlanInputTaxStatementTypeEB EBilanzFormPlanInputTaxStatementType = "EB"
+	EBilanzFormPlanInputTaxStatementTypeSB EBilanzFormPlanInputTaxStatementType = "SB"
+)
+
+// Valid indicates whether the value is a known member of the EBilanzFormPlanInputTaxStatementType enum.
+func (e EBilanzFormPlanInputTaxStatementType) Valid() bool {
+	switch e {
+	case EBilanzFormPlanInputTaxStatementTypeEB:
+		return true
+	case EBilanzFormPlanInputTaxStatementTypeSB:
 		return true
 	default:
 		return false
@@ -1380,18 +1518,21 @@ func (e EBilanzMappingCatalogScopeIncomeStatementFormat) Valid() bool {
 
 // Defines values for EBilanzMappingCatalogScopeLegalForms.
 const (
-	EBilanzMappingCatalogScopeLegalFormsAGKG  EBilanzMappingCatalogScopeLegalForms = "AGKG"
-	EBilanzMappingCatalogScopeLegalFormsAGOHG EBilanzMappingCatalogScopeLegalForms = "AGOHG"
-	EBilanzMappingCatalogScopeLegalFormsASG   EBilanzMappingCatalogScopeLegalForms = "ASG"
-	EBilanzMappingCatalogScopeLegalFormsEU    EBilanzMappingCatalogScopeLegalForms = "EU"
-	EBilanzMappingCatalogScopeLegalFormsGBR   EBilanzMappingCatalogScopeLegalForms = "GBR"
-	EBilanzMappingCatalogScopeLegalFormsGKG   EBilanzMappingCatalogScopeLegalForms = "GKG"
-	EBilanzMappingCatalogScopeLegalFormsGOHG  EBilanzMappingCatalogScopeLegalForms = "GOHG"
-	EBilanzMappingCatalogScopeLegalFormsGmbH  EBilanzMappingCatalogScopeLegalForms = "GmbH"
-	EBilanzMappingCatalogScopeLegalFormsKG    EBilanzMappingCatalogScopeLegalForms = "KG"
-	EBilanzMappingCatalogScopeLegalFormsOHG   EBilanzMappingCatalogScopeLegalForms = "OHG"
-	EBilanzMappingCatalogScopeLegalFormsPG    EBilanzMappingCatalogScopeLegalForms = "PG"
-	EBilanzMappingCatalogScopeLegalFormsSoPG  EBilanzMappingCatalogScopeLegalForms = "soPG"
+	EBilanzMappingCatalogScopeLegalFormsAGKG     EBilanzMappingCatalogScopeLegalForms = "AGKG"
+	EBilanzMappingCatalogScopeLegalFormsAGOHG    EBilanzMappingCatalogScopeLegalForms = "AGOHG"
+	EBilanzMappingCatalogScopeLegalFormsASG      EBilanzMappingCatalogScopeLegalForms = "ASG"
+	EBilanzMappingCatalogScopeLegalFormsEU       EBilanzMappingCatalogScopeLegalForms = "EU"
+	EBilanzMappingCatalogScopeLegalFormsEWI      EBilanzMappingCatalogScopeLegalForms = "EWI"
+	EBilanzMappingCatalogScopeLegalFormsGBR      EBilanzMappingCatalogScopeLegalForms = "GBR"
+	EBilanzMappingCatalogScopeLegalFormsGKG      EBilanzMappingCatalogScopeLegalForms = "GKG"
+	EBilanzMappingCatalogScopeLegalFormsGOHG     EBilanzMappingCatalogScopeLegalForms = "GOHG"
+	EBilanzMappingCatalogScopeLegalFormsGmbH     EBilanzMappingCatalogScopeLegalForms = "GmbH"
+	EBilanzMappingCatalogScopeLegalFormsKG       EBilanzMappingCatalogScopeLegalForms = "KG"
+	EBilanzMappingCatalogScopeLegalFormsMU       EBilanzMappingCatalogScopeLegalForms = "MU"
+	EBilanzMappingCatalogScopeLegalFormsOHG      EBilanzMappingCatalogScopeLegalForms = "OHG"
+	EBilanzMappingCatalogScopeLegalFormsOtherMUN EBilanzMappingCatalogScopeLegalForms = "Other.MUN"
+	EBilanzMappingCatalogScopeLegalFormsPG       EBilanzMappingCatalogScopeLegalForms = "PG"
+	EBilanzMappingCatalogScopeLegalFormsSoPG     EBilanzMappingCatalogScopeLegalForms = "soPG"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzMappingCatalogScopeLegalForms enum.
@@ -1405,6 +1546,8 @@ func (e EBilanzMappingCatalogScopeLegalForms) Valid() bool {
 		return true
 	case EBilanzMappingCatalogScopeLegalFormsEU:
 		return true
+	case EBilanzMappingCatalogScopeLegalFormsEWI:
+		return true
 	case EBilanzMappingCatalogScopeLegalFormsGBR:
 		return true
 	case EBilanzMappingCatalogScopeLegalFormsGKG:
@@ -1415,7 +1558,11 @@ func (e EBilanzMappingCatalogScopeLegalForms) Valid() bool {
 		return true
 	case EBilanzMappingCatalogScopeLegalFormsKG:
 		return true
+	case EBilanzMappingCatalogScopeLegalFormsMU:
+		return true
 	case EBilanzMappingCatalogScopeLegalFormsOHG:
+		return true
+	case EBilanzMappingCatalogScopeLegalFormsOtherMUN:
 		return true
 	case EBilanzMappingCatalogScopeLegalFormsPG:
 		return true
@@ -1491,22 +1638,25 @@ func (e EBilanzMappingEntryContextKind) Valid() bool {
 
 // Defines values for EBilanzMappingMemberValueLegalForms.
 const (
-	EBilanzMappingMemberValueLegalFormsAG    EBilanzMappingMemberValueLegalForms = "AG"
-	EBilanzMappingMemberValueLegalFormsAGKG  EBilanzMappingMemberValueLegalForms = "AGKG"
-	EBilanzMappingMemberValueLegalFormsAGOHG EBilanzMappingMemberValueLegalForms = "AGOHG"
-	EBilanzMappingMemberValueLegalFormsASG   EBilanzMappingMemberValueLegalForms = "ASG"
-	EBilanzMappingMemberValueLegalFormsEU    EBilanzMappingMemberValueLegalForms = "EU"
-	EBilanzMappingMemberValueLegalFormsEUF   EBilanzMappingMemberValueLegalForms = "EUF"
-	EBilanzMappingMemberValueLegalFormsEUN   EBilanzMappingMemberValueLegalForms = "EUN"
-	EBilanzMappingMemberValueLegalFormsGBR   EBilanzMappingMemberValueLegalForms = "GBR"
-	EBilanzMappingMemberValueLegalFormsGKG   EBilanzMappingMemberValueLegalForms = "GKG"
-	EBilanzMappingMemberValueLegalFormsGOHG  EBilanzMappingMemberValueLegalForms = "GOHG"
-	EBilanzMappingMemberValueLegalFormsGmbH  EBilanzMappingMemberValueLegalForms = "GmbH"
-	EBilanzMappingMemberValueLegalFormsKG    EBilanzMappingMemberValueLegalForms = "KG"
-	EBilanzMappingMemberValueLegalFormsOHG   EBilanzMappingMemberValueLegalForms = "OHG"
-	EBilanzMappingMemberValueLegalFormsPG    EBilanzMappingMemberValueLegalForms = "PG"
-	EBilanzMappingMemberValueLegalFormsSoPG  EBilanzMappingMemberValueLegalForms = "soPG"
-	EBilanzMappingMemberValueLegalFormsUG    EBilanzMappingMemberValueLegalForms = "UG"
+	EBilanzMappingMemberValueLegalFormsAG       EBilanzMappingMemberValueLegalForms = "AG"
+	EBilanzMappingMemberValueLegalFormsAGKG     EBilanzMappingMemberValueLegalForms = "AGKG"
+	EBilanzMappingMemberValueLegalFormsAGOHG    EBilanzMappingMemberValueLegalForms = "AGOHG"
+	EBilanzMappingMemberValueLegalFormsASG      EBilanzMappingMemberValueLegalForms = "ASG"
+	EBilanzMappingMemberValueLegalFormsEU       EBilanzMappingMemberValueLegalForms = "EU"
+	EBilanzMappingMemberValueLegalFormsEUF      EBilanzMappingMemberValueLegalForms = "EUF"
+	EBilanzMappingMemberValueLegalFormsEUN      EBilanzMappingMemberValueLegalForms = "EUN"
+	EBilanzMappingMemberValueLegalFormsEWI      EBilanzMappingMemberValueLegalForms = "EWI"
+	EBilanzMappingMemberValueLegalFormsGBR      EBilanzMappingMemberValueLegalForms = "GBR"
+	EBilanzMappingMemberValueLegalFormsGKG      EBilanzMappingMemberValueLegalForms = "GKG"
+	EBilanzMappingMemberValueLegalFormsGOHG     EBilanzMappingMemberValueLegalForms = "GOHG"
+	EBilanzMappingMemberValueLegalFormsGmbH     EBilanzMappingMemberValueLegalForms = "GmbH"
+	EBilanzMappingMemberValueLegalFormsKG       EBilanzMappingMemberValueLegalForms = "KG"
+	EBilanzMappingMemberValueLegalFormsMU       EBilanzMappingMemberValueLegalForms = "MU"
+	EBilanzMappingMemberValueLegalFormsOHG      EBilanzMappingMemberValueLegalForms = "OHG"
+	EBilanzMappingMemberValueLegalFormsOtherMUN EBilanzMappingMemberValueLegalForms = "Other.MUN"
+	EBilanzMappingMemberValueLegalFormsPG       EBilanzMappingMemberValueLegalForms = "PG"
+	EBilanzMappingMemberValueLegalFormsSoPG     EBilanzMappingMemberValueLegalForms = "soPG"
+	EBilanzMappingMemberValueLegalFormsUG       EBilanzMappingMemberValueLegalForms = "UG"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzMappingMemberValueLegalForms enum.
@@ -1526,6 +1676,8 @@ func (e EBilanzMappingMemberValueLegalForms) Valid() bool {
 		return true
 	case EBilanzMappingMemberValueLegalFormsEUN:
 		return true
+	case EBilanzMappingMemberValueLegalFormsEWI:
+		return true
 	case EBilanzMappingMemberValueLegalFormsGBR:
 		return true
 	case EBilanzMappingMemberValueLegalFormsGKG:
@@ -1536,7 +1688,11 @@ func (e EBilanzMappingMemberValueLegalForms) Valid() bool {
 		return true
 	case EBilanzMappingMemberValueLegalFormsKG:
 		return true
+	case EBilanzMappingMemberValueLegalFormsMU:
+		return true
 	case EBilanzMappingMemberValueLegalFormsOHG:
+		return true
+	case EBilanzMappingMemberValueLegalFormsOtherMUN:
 		return true
 	case EBilanzMappingMemberValueLegalFormsPG:
 		return true
@@ -1638,22 +1794,25 @@ func (e EBilanzMappingTargetPeriod) Valid() bool {
 
 // Defines values for EBilanzMappingTargetValueLegalForms.
 const (
-	EBilanzMappingTargetValueLegalFormsAG    EBilanzMappingTargetValueLegalForms = "AG"
-	EBilanzMappingTargetValueLegalFormsAGKG  EBilanzMappingTargetValueLegalForms = "AGKG"
-	EBilanzMappingTargetValueLegalFormsAGOHG EBilanzMappingTargetValueLegalForms = "AGOHG"
-	EBilanzMappingTargetValueLegalFormsASG   EBilanzMappingTargetValueLegalForms = "ASG"
-	EBilanzMappingTargetValueLegalFormsEU    EBilanzMappingTargetValueLegalForms = "EU"
-	EBilanzMappingTargetValueLegalFormsEUF   EBilanzMappingTargetValueLegalForms = "EUF"
-	EBilanzMappingTargetValueLegalFormsEUN   EBilanzMappingTargetValueLegalForms = "EUN"
-	EBilanzMappingTargetValueLegalFormsGBR   EBilanzMappingTargetValueLegalForms = "GBR"
-	EBilanzMappingTargetValueLegalFormsGKG   EBilanzMappingTargetValueLegalForms = "GKG"
-	EBilanzMappingTargetValueLegalFormsGOHG  EBilanzMappingTargetValueLegalForms = "GOHG"
-	EBilanzMappingTargetValueLegalFormsGmbH  EBilanzMappingTargetValueLegalForms = "GmbH"
-	EBilanzMappingTargetValueLegalFormsKG    EBilanzMappingTargetValueLegalForms = "KG"
-	EBilanzMappingTargetValueLegalFormsOHG   EBilanzMappingTargetValueLegalForms = "OHG"
-	EBilanzMappingTargetValueLegalFormsPG    EBilanzMappingTargetValueLegalForms = "PG"
-	EBilanzMappingTargetValueLegalFormsSoPG  EBilanzMappingTargetValueLegalForms = "soPG"
-	EBilanzMappingTargetValueLegalFormsUG    EBilanzMappingTargetValueLegalForms = "UG"
+	EBilanzMappingTargetValueLegalFormsAG       EBilanzMappingTargetValueLegalForms = "AG"
+	EBilanzMappingTargetValueLegalFormsAGKG     EBilanzMappingTargetValueLegalForms = "AGKG"
+	EBilanzMappingTargetValueLegalFormsAGOHG    EBilanzMappingTargetValueLegalForms = "AGOHG"
+	EBilanzMappingTargetValueLegalFormsASG      EBilanzMappingTargetValueLegalForms = "ASG"
+	EBilanzMappingTargetValueLegalFormsEU       EBilanzMappingTargetValueLegalForms = "EU"
+	EBilanzMappingTargetValueLegalFormsEUF      EBilanzMappingTargetValueLegalForms = "EUF"
+	EBilanzMappingTargetValueLegalFormsEUN      EBilanzMappingTargetValueLegalForms = "EUN"
+	EBilanzMappingTargetValueLegalFormsEWI      EBilanzMappingTargetValueLegalForms = "EWI"
+	EBilanzMappingTargetValueLegalFormsGBR      EBilanzMappingTargetValueLegalForms = "GBR"
+	EBilanzMappingTargetValueLegalFormsGKG      EBilanzMappingTargetValueLegalForms = "GKG"
+	EBilanzMappingTargetValueLegalFormsGOHG     EBilanzMappingTargetValueLegalForms = "GOHG"
+	EBilanzMappingTargetValueLegalFormsGmbH     EBilanzMappingTargetValueLegalForms = "GmbH"
+	EBilanzMappingTargetValueLegalFormsKG       EBilanzMappingTargetValueLegalForms = "KG"
+	EBilanzMappingTargetValueLegalFormsMU       EBilanzMappingTargetValueLegalForms = "MU"
+	EBilanzMappingTargetValueLegalFormsOHG      EBilanzMappingTargetValueLegalForms = "OHG"
+	EBilanzMappingTargetValueLegalFormsOtherMUN EBilanzMappingTargetValueLegalForms = "Other.MUN"
+	EBilanzMappingTargetValueLegalFormsPG       EBilanzMappingTargetValueLegalForms = "PG"
+	EBilanzMappingTargetValueLegalFormsSoPG     EBilanzMappingTargetValueLegalForms = "soPG"
+	EBilanzMappingTargetValueLegalFormsUG       EBilanzMappingTargetValueLegalForms = "UG"
 )
 
 // Valid indicates whether the value is a known member of the EBilanzMappingTargetValueLegalForms enum.
@@ -1673,6 +1832,8 @@ func (e EBilanzMappingTargetValueLegalForms) Valid() bool {
 		return true
 	case EBilanzMappingTargetValueLegalFormsEUN:
 		return true
+	case EBilanzMappingTargetValueLegalFormsEWI:
+		return true
 	case EBilanzMappingTargetValueLegalFormsGBR:
 		return true
 	case EBilanzMappingTargetValueLegalFormsGKG:
@@ -1683,7 +1844,11 @@ func (e EBilanzMappingTargetValueLegalForms) Valid() bool {
 		return true
 	case EBilanzMappingTargetValueLegalFormsKG:
 		return true
+	case EBilanzMappingTargetValueLegalFormsMU:
+		return true
 	case EBilanzMappingTargetValueLegalFormsOHG:
+		return true
+	case EBilanzMappingTargetValueLegalFormsOtherMUN:
 		return true
 	case EBilanzMappingTargetValueLegalFormsPG:
 		return true
@@ -3327,7 +3492,10 @@ type EBilanzFormBasisName string
 
 // EBilanzFormBinding defines model for EBilanzFormBinding.
 type EBilanzFormBinding struct {
-	Concept   string                      `json:"concept"`
+	Concept string `json:"concept"`
+
+	// TuplePath Exact outermost-to-innermost tuple ancestry for this binding, excluding the leaf. Explicit empty array means root fact. Present in v17; omitted historical bindings retain their original interpretation.
+	TuplePath *[]string                   `json:"tuple_path,omitempty"`
 	ValueFrom EBilanzFormBindingValueFrom `json:"value_from"`
 }
 
@@ -3381,7 +3549,7 @@ type EBilanzFormField struct {
 	ValidSince     *[]string                       `json:"valid_since,omitempty"`
 	ValidThrough   *[]string                       `json:"valid_through,omitempty"`
 
-	// ValueLiteral Exact current-case lexical value when reported with state value. The explanation pointer additionally requires explicit source footnote text; the corporate-tax option is not supported as true.
+	// ValueLiteral Exact current-case lexical value when reported with state value. The explanation pointer additionally requires explicit source footnote text; the corporate-tax option is bound to the selected case.
 	ValueLiteral *EBilanzFormFieldValueLiteral `json:"value_literal,omitempty"`
 }
 
@@ -3409,10 +3577,10 @@ type EBilanzFormFieldRequiredWhen string
 // EBilanzFormFieldSelectionValue Exact empty lexical marker for a caller-selected string choice item; supplied only after explicit selection, never for a NIL fact.
 type EBilanzFormFieldSelectionValue string
 
-// EBilanzFormFieldValueLiteral Exact current-case lexical value when reported with state value. The explanation pointer additionally requires explicit source footnote text; the corporate-tax option is not supported as true.
+// EBilanzFormFieldValueLiteral Exact current-case lexical value when reported with state value. The explanation pointer additionally requires explicit source footnote text; the corporate-tax option is bound to the selected case.
 type EBilanzFormFieldValueLiteral string
 
-// EBilanzFormPartnership OHG/KG/GKG/AGKG/GOHG/AGOHG/GBR/PG/ASG/soPG AO/HAOE/HGBM GKV/UKV annual GHB shareholder/KKE linkage. KKE supports tax values only; commercial and transition columns remain unsupported. Typed partner-axis values equal the declared shareholder ID. Required cells apply to each selected concrete equity member and its source presentation ancestors; clients supply all final amounts and NIL decisions. Preparation enforces complete equations.
+// EBilanzFormPartnership OHG/KG/GKG/AGKG/GOHG/AGOHG/GBR/PG/ASG/soPG AO/HAOE/HGBM GKV/UKV annual or AO/HAOE opening GHB shareholder/KKE linkage. KKE supports tax values only; commercial and transition columns remain unsupported. Typed partner-axis values equal the declared shareholder ID. Required cells apply to each selected concrete equity member and its source presentation ancestors; clients supply all final amounts and NIL decisions. Preparation enforces complete equations.
 type EBilanzFormPartnership struct {
 	EquityAxis       string `json:"equity_axis"`
 	EquityMemberRoot string `json:"equity_member_root"`
@@ -3449,7 +3617,10 @@ type EBilanzFormPlan struct {
 		AccountingStandardLabel string                                  `json:"accounting_standard_label"`
 		ClosingDate             openapi_types.Date                      `json:"closing_date"`
 
-		// FiscalEnd Defaults to closing_date. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later.
+		// CorporationTaxOption Explicit section 1a KStG case assertion, bound to the GCD option. Omitted/false retains the ordinary case; true currently permits eligible domestic annual AO/GKV or UKV core reports without EV/MicroBilG. Filing remains denied.
+		CorporationTaxOption *bool `json:"corporation_tax_option,omitempty"`
+
+		// FiscalEnd Defaults to closing_date for existing cases; UB/LZB/ZW/UJ require explicit fiscal_end. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later.
 		FiscalEnd                  openapi_types.Date                       `json:"fiscal_end"`
 		FiscalStart                openapi_types.Date                       `json:"fiscal_start"`
 		IncomeStatementFormat      EBilanzFormPlanCaseIncomeStatementFormat `json:"income_statement_format"`
@@ -3457,12 +3628,23 @@ type EBilanzFormPlan struct {
 		LegalForm                  EBilanzFormPlanCaseLegalForm             `json:"legal_form"`
 		LegalFormLabel             string                                   `json:"legal_form_label"`
 		MicroBilgPrepared          bool                                     `json:"micro_bilg_prepared"`
-		RequiredComponents         []EBilanzFormPlanCaseRequiredComponents  `json:"required_components"`
-		ResultAppropriation        bool                                     `json:"result_appropriation"`
-		RevisionStatus             EBilanzFormPlanCaseRevisionStatus        `json:"revision_status"`
-		RevisionStatusLabel        string                                   `json:"revision_status_label"`
-		StatementType              EBilanzFormPlanCaseStatementType         `json:"statement_type"`
-		StatementTypeLabel         string                                   `json:"statement_type_label"`
+
+		// ReportingEnd Explicit current reporting duration end inside fiscal year, required only for UB/LZB/ZW/UJ.
+		ReportingEnd *openapi_types.Date `json:"reporting_end,omitempty"`
+
+		// ReportingStart Explicit current reporting duration start inside fiscal year, required only for UB/LZB/ZW/UJ.
+		ReportingStart        *openapi_types.Date                     `json:"reporting_start,omitempty"`
+		RequiredComponents    []EBilanzFormPlanCaseRequiredComponents `json:"required_components"`
+		ResultAppropriation   bool                                    `json:"result_appropriation"`
+		RevisionStatus        EBilanzFormPlanCaseRevisionStatus       `json:"revision_status"`
+		RevisionStatusLabel   string                                  `json:"revision_status_label"`
+		StatementType         EBilanzFormPlanCaseStatementType        `json:"statement_type"`
+		StatementTypeLabel    string                                  `json:"statement_type_label"`
+		TaxStatementType      *EBilanzFormPlanCaseTaxStatementType    `json:"tax_statement_type,omitempty"`
+		TaxStatementTypeLabel *string                                 `json:"tax_statement_type_label,omitempty"`
+
+		// UbIncomeStatement UB-only explicit GuV/BVV component choice, including explicit false. Omit for all other statement types.
+		UbIncomeStatement *bool `json:"ub_income_statement,omitempty"`
 	} `json:"case"`
 	CaseBindings  []EBilanzFormBinding         `json:"case_bindings"`
 	Contexts      []EBilanzContext             `json:"contexts"`
@@ -3473,7 +3655,7 @@ type EBilanzFormPlan struct {
 	Fields      []EBilanzFormField `json:"fields"`
 	Limits      []string           `json:"limits"`
 
-	// Partnership OHG/KG/GKG/AGKG/GOHG/AGOHG/GBR/PG/ASG/soPG AO/HAOE/HGBM GKV/UKV annual GHB shareholder/KKE linkage. KKE supports tax values only; commercial and transition columns remain unsupported. Typed partner-axis values equal the declared shareholder ID. Required cells apply to each selected concrete equity member and its source presentation ancestors; clients supply all final amounts and NIL decisions. Preparation enforces complete equations.
+	// Partnership OHG/KG/GKG/AGKG/GOHG/AGOHG/GBR/PG/ASG/soPG AO/HAOE/HGBM GKV/UKV annual or AO/HAOE opening GHB shareholder/KKE linkage. KKE supports tax values only; commercial and transition columns remain unsupported. Typed partner-axis values equal the declared shareholder ID. Required cells apply to each selected concrete equity member and its source presentation ancestors; clients supply all final amounts and NIL decisions. Preparation enforces complete equations.
 	Partnership *EBilanzFormPartnership `json:"partnership,omitempty"`
 	PeriodRules struct {
 		ClosingDateBinding             EBilanzFormPlanPeriodRulesClosingDateBinding             `json:"closing_date_binding"`
@@ -3482,6 +3664,7 @@ type EBilanzFormPlan struct {
 		FiscalStartMax                 openapi_types.Date                                       `json:"fiscal_start_max"`
 		FiscalStartMin                 openapi_types.Date                                       `json:"fiscal_start_min"`
 		MaximumMonths                  EBilanzFormPlanPeriodRulesMaximumMonths                  `json:"maximum_months"`
+		ReportingPeriodBinding         *EBilanzFormPlanPeriodRulesReportingPeriodBinding        `json:"reporting_period_binding,omitempty"`
 		SelfEmploymentSameCalendarYear EBilanzFormPlanPeriodRulesSelfEmploymentSameCalendarYear `json:"self_employment_same_calendar_year"`
 	} `json:"period_rules"`
 	PresentationEdges            []EBilanzFormEdge              `json:"presentation_edges"`
@@ -3518,11 +3701,17 @@ type EBilanzFormPlanCaseRevisionStatus string
 // EBilanzFormPlanCaseStatementType defines model for EBilanzFormPlan.Case.StatementType.
 type EBilanzFormPlanCaseStatementType string
 
+// EBilanzFormPlanCaseTaxStatementType defines model for EBilanzFormPlan.Case.TaxStatementType.
+type EBilanzFormPlanCaseTaxStatementType string
+
 // EBilanzFormPlanPeriodRulesClosingDateBinding defines model for EBilanzFormPlan.PeriodRules.ClosingDateBinding.
 type EBilanzFormPlanPeriodRulesClosingDateBinding string
 
 // EBilanzFormPlanPeriodRulesMaximumMonths defines model for EBilanzFormPlan.PeriodRules.MaximumMonths.
 type EBilanzFormPlanPeriodRulesMaximumMonths int
+
+// EBilanzFormPlanPeriodRulesReportingPeriodBinding defines model for EBilanzFormPlan.PeriodRules.ReportingPeriodBinding.
+type EBilanzFormPlanPeriodRulesReportingPeriodBinding string
 
 // EBilanzFormPlanPeriodRulesSelfEmploymentSameCalendarYear defines model for EBilanzFormPlan.PeriodRules.SelfEmploymentSameCalendarYear.
 type EBilanzFormPlanPeriodRulesSelfEmploymentSameCalendarYear bool
@@ -3541,7 +3730,10 @@ type EBilanzFormPlanInput struct {
 	AccountingStandard *EBilanzFormPlanInputAccountingStandard `json:"accounting_standard,omitempty"`
 	ClosingDate        openapi_types.Date                      `json:"closing_date"`
 
-	// FiscalEnd Defaults to closing_date. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later.
+	// CorporationTaxOption Explicit section 1a KStG case assertion, bound to the GCD option. Omitted/false retains the ordinary case; true currently permits eligible domestic annual AO/GKV or UKV core reports without EV/MicroBilG. Filing remains denied.
+	CorporationTaxOption *bool `json:"corporation_tax_option,omitempty"`
+
+	// FiscalEnd Defaults to closing_date for existing cases; UB/LZB/ZW/UJ require explicit fiscal_end. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later.
 	FiscalEnd             *openapi_types.Date                        `json:"fiscal_end,omitempty"`
 	FiscalStart           openapi_types.Date                         `json:"fiscal_start"`
 	IncomeStatementFormat *EBilanzFormPlanInputIncomeStatementFormat `json:"income_statement_format,omitempty"`
@@ -3550,10 +3742,22 @@ type EBilanzFormPlanInput struct {
 	// MicroBilgPrepared Explicit MicroBilG preparation assertion for eligible corporation GKV cases.
 	MicroBilgPrepared *bool `json:"micro_bilg_prepared,omitempty"`
 
+	// ReportingEnd Explicit current reporting duration end inside fiscal year, required only for UB/LZB/ZW/UJ.
+	ReportingEnd *openapi_types.Date `json:"reporting_end,omitempty"`
+
+	// ReportingStart Explicit current reporting duration start inside fiscal year, required only for UB/LZB/ZW/UJ.
+	ReportingStart *openapi_types.Date `json:"reporting_start,omitempty"`
+
 	// ResultAppropriation Select annual corporation balance-profit presentation with EV.
 	ResultAppropriation *bool                               `json:"result_appropriation,omitempty"`
 	RevisionStatus      *EBilanzFormPlanInputRevisionStatus `json:"revision_status,omitempty"`
 	StatementType       *EBilanzFormPlanInputStatementType  `json:"statement_type,omitempty"`
+
+	// TaxStatementType MU annual tax statement selection: SB special or EB supplementary, distinct from opening statement_type EB. Omit for other legal forms.
+	TaxStatementType *EBilanzFormPlanInputTaxStatementType `json:"tax_statement_type,omitempty"`
+
+	// UbIncomeStatement UB-only explicit GuV/BVV component choice, including explicit false. Omit for all other statement types.
+	UbIncomeStatement *bool `json:"ub_income_statement,omitempty"`
 }
 
 // EBilanzFormPlanInputAccountingStandard defines model for EBilanzFormPlanInput.AccountingStandard.
@@ -3570,6 +3774,9 @@ type EBilanzFormPlanInputRevisionStatus string
 
 // EBilanzFormPlanInputStatementType defines model for EBilanzFormPlanInput.StatementType.
 type EBilanzFormPlanInputStatementType string
+
+// EBilanzFormPlanInputTaxStatementType MU annual tax statement selection: SB special or EB supplementary, distinct from opening statement_type EB. Omit for other legal forms.
+type EBilanzFormPlanInputTaxStatementType string
 
 // EBilanzFormReconciliation defines model for EBilanzFormReconciliation.
 type EBilanzFormReconciliation struct {
@@ -3610,11 +3817,14 @@ type EBilanzFormTupleMode string
 
 // EBilanzInput Final reported facts and explicitly mapped Kontensalden under pinned E-Bilanz 6.9 artifacts. No caller-supplied profile, runtime, catalog or procedure overrides. Official semantic/taxonomy relationships, byte bounds and source mapping consistency are validated by the module; this shape is not qualification evidence.
 type EBilanzInput struct {
-	Accounts       *[]EBilanzAccount  `json:"accounts,omitempty"`
-	ClosingDate    openapi_types.Date `json:"closing_date"`
-	Contexts       []EBilanzContext   `json:"contexts"`
-	Facts          []EBilanzFact      `json:"facts"`
-	MappingVersion string             `json:"mapping_version"`
+	Accounts    *[]EBilanzAccount  `json:"accounts,omitempty"`
+	ClosingDate openapi_types.Date `json:"closing_date"`
+	Contexts    []EBilanzContext   `json:"contexts"`
+
+	// CorporationTaxOption Explicit section 1a KStG case assertion, bound to the GCD option. Omitted/false retains the ordinary case; true currently permits eligible domestic annual AO/GKV or UKV core reports without EV/MicroBilG. Filing remains denied.
+	CorporationTaxOption *bool         `json:"corporation_tax_option,omitempty"`
+	Facts                []EBilanzFact `json:"facts"`
+	MappingVersion       string        `json:"mapping_version"`
 
 	// MicroBilgPrepared Explicit customer assertion that this corporation's statements were prepared under MicroBilG. True selects the fiscal-microbilg entry schema; absent or false selects the ordinary fiscal schema.
 	MicroBilgPrepared *bool                     `json:"micro_bilg_prepared,omitempty"`

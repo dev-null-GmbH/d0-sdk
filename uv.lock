@@ -174,7 +174,7 @@ wheels = [
 
 [[package]]
 name = "d0-accounting"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "accounting/python" }
 dependencies = [
     { name = "d0-auth-machine" },
@@ -249,7 +249,7 @@ dev = [
 
 [[package]]
 name = "d0-eric"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "eric/python" }
 dependencies = [
     { name = "d0-auth-machine" },

@@ -12,6 +12,7 @@ test "$(uv --version | cut -d ' ' -f 2)" = 0.13.1
 npm ci --ignore-scripts
 uv sync --locked --all-packages --all-groups
 npm run build --workspace @dev-null-gmbh/auth-machine
+rm -rf dist/npm dist/python dist/go
 mkdir -p dist/npm dist/python
 
 for product in auth platform accounting einvoice eric; do

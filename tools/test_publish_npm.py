@@ -16,7 +16,15 @@ class PublishTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         (self.root / "dist/npm").mkdir(parents=True)
         for name in ("auth-machine", "platform", "accounting", "einvoice", "eric"):
-            (self.root / f"dist/npm/dev-null-gmbh-{name}-0.1.0.tgz").write_bytes(b"qualified fixture")
+            version = "0.1.1" if name == "eric" else "0.1.0"
+            (self.root / f"dist/npm/dev-null-gmbh-{name}-{version}.tgz").write_bytes(b"qualified fixture")
+        for product in ("auth", "platform", "accounting", "einvoice", "eric"):
+            base = self.root / product
+            (base / "typescript").mkdir(parents=True)
+            (base / "python").mkdir()
+            version = "0.1.1" if product == "eric" else "0.1.0"
+            (base / "typescript/package.json").write_text(json.dumps({"version": version}))
+            (base / "python/pyproject.toml").write_text(f'[project]\nversion = "{version}"\n')
         self.environment = {"GITHUB_REPOSITORY": "dev-null-GmbH/d0-sdk", "GITHUB_REF": "refs/heads/main", "ACTIONS_ID_TOKEN_REQUEST_URL": "https://oidc.invalid"}
 
     def test_never_publishes_outside_release_context(self):
@@ -38,6 +46,7 @@ class PublishTests(unittest.TestCase):
             publish_npm.main()
             self.assertEqual(publish.call_count, 5)
             self.assertIn("auth-machine", publish.call_args_list[0].args[0][2])
+            self.assertTrue(publish.call_args_list[-1].args[0][2].endswith("eric-0.1.1.tgz"))
             self.assertTrue(all("--ignore-scripts" in call.args[0] for call in publish.call_args_list))
 
 

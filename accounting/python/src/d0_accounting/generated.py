@@ -401,7 +401,7 @@ class Membership(TypedDict):
 
 type MembershipStatus = Literal['active', 'inactive']
 type AccessPermissions = list[AccessPermission]
-type AccessPermission = Literal['accounting.read', 'accounting.write', 'documents.read', 'documents.write', 'periods.close', 'webhooks.manage', 'access.manage', 'exports.read']
+type AccessPermission = Literal['accounting.read', 'accounting.write', 'documents.read', 'documents.write', 'periods.close', 'webhooks.manage', 'access.manage', 'exports.read', 'audit.read']
 class MembershipReplace(TypedDict):
     permissions: AccessPermissions
     status: MembershipStatus

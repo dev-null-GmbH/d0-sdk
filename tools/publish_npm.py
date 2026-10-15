@@ -10,6 +10,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from verify_export import versions
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -22,10 +23,11 @@ def main():
     if os.environ.get("GITHUB_REPOSITORY") != "dev-null-GmbH/d0-sdk" or os.environ.get("GITHUB_REF") != "refs/heads/main" or not os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL"):
         raise SystemExit("publication requires the configured main-branch OIDC workflow")
     pending = []
-    for product in ("auth-machine", "platform", "accounting", "einvoice", "eric"):
-        name = f"@dev-null-gmbh/{product}"
-        archive = ROOT / f"dist/npm/dev-null-gmbh-{product}-0.1.0.tgz"
-        url = f"https://registry.npmjs.org/{urllib.parse.quote(name, safe='')}/0.1.0"
+    for product, version in versions(ROOT).items():
+        suffix = "auth-machine" if product == "auth" else product
+        name = f"@dev-null-gmbh/{suffix}"
+        archive = ROOT / f"dist/npm/dev-null-gmbh-{suffix}-{version}.tgz"
+        url = f"https://registry.npmjs.org/{urllib.parse.quote(name, safe='')}/{version}"
         try:
             with urllib.request.urlopen(url, timeout=30) as response:
                 body = response.read(1_048_577)
@@ -38,8 +40,8 @@ def main():
             pending.append(archive)
             continue
         if metadata.get("dist", {}).get("integrity") != integrity(archive.read_bytes()):
-            raise SystemExit(f"immutable package collision: {name}@0.1.0")
-        print(f"already published identical {name}@0.1.0")
+            raise SystemExit(f"immutable package collision: {name}@{version}")
+        print(f"already published identical {name}@{version}")
     for archive in pending:
         subprocess.run(["npm", "publish", str(archive), "--access", "public", "--provenance", "--ignore-scripts", "--registry", "https://registry.npmjs.org"], cwd=ROOT, check=True)
 
