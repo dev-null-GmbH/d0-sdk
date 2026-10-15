@@ -5,8 +5,8 @@ ERiC, with the shared d0 machine OAuth/DPoP transport. These clients are for
 trusted server applications. Private signing keys never belong in browser code.
 
 **Release state:** all five Go modules at v0.1.0 are public and verified through
-anonymous Go proxy and checksum-database downloads. Accounting and ERiC contract
-updates are prepared as 0.1.1. npm and PyPI publication is pending account setup.
+anonymous Go proxy and checksum-database downloads. Accounting and ERiC 0.1.1
+are also published and passed fresh anonymous downloads and installed examples. npm and PyPI publication is pending account setup.
 Live product availability is reported separately in the Developer Console.
 
 | Product | Production operations | Isolated test operations | Package directories |
