@@ -13,7 +13,7 @@
     },
     "accounting": {
       "repository": "devacc-api",
-      "commit": "9725d58f26c058ae422b48b86be9029e61fe6bae",
+      "commit": "73c37684eb96379edaca9080aba4032ea08475f7",
       "prefix": "sdk"
     },
     "einvoice": {
@@ -23,21 +23,21 @@
     },
     "eric": {
       "repository": "devacc-eric-svc",
-      "commit": "20fd055b1f6bc14d188d9685d43b7bffe7a4328a",
+      "commit": "849d22d216d382e3b022bf1f02eab985160a1aa2",
       "prefix": "sdk"
     }
   },
   "files": {
     "accounting/CONTRACT.md": {
       "sourcePath": "sdk/CONTRACT.md",
-      "sourceSha256": "c3e1b04894b385f5ef219c142e44df80557f9fdb4db1ce4388381dcd3208e409",
-      "sha256": "c3e1b04894b385f5ef219c142e44df80557f9fdb4db1ce4388381dcd3208e409",
+      "sourceSha256": "5aef6ad4662b530796fac3e5d86b98abe40cde4cf581a068f4ac60e622144306",
+      "sha256": "5aef6ad4662b530796fac3e5d86b98abe40cde4cf581a068f4ac60e622144306",
       "transformed": false
     },
     "accounting/contracts/production/public-openapi.json": {
       "sourcePath": "sdk/contracts/production/public-openapi.json",
-      "sourceSha256": "5b1262c6d3cf959ae2543b349ec5591cb491b54b416e803a209b12863f174eae",
-      "sha256": "5b1262c6d3cf959ae2543b349ec5591cb491b54b416e803a209b12863f174eae",
+      "sourceSha256": "7bfa5ed6234f1303dc90edb7e65f4214f285217b36f814b4740fb77ff9ef2011",
+      "sha256": "7bfa5ed6234f1303dc90edb7e65f4214f285217b36f814b4740fb77ff9ef2011",
       "transformed": false
     },
     "accounting/contracts/test/public-openapi.json": {
@@ -78,8 +78,8 @@
     },
     "accounting/go/gen/api.gen.go": {
       "sourcePath": "sdk/go/gen/api.gen.go",
-      "sourceSha256": "3628523e37c9c4f281d66ac2e8610fc09920a7a8d80167d91c1a1e0a66098c08",
-      "sha256": "3628523e37c9c4f281d66ac2e8610fc09920a7a8d80167d91c1a1e0a66098c08",
+      "sourceSha256": "9de8d2458c46767e3cc759d11544d6bc72d963b7e12acbf220d6a3220ee7f8a4",
+      "sha256": "9de8d2458c46767e3cc759d11544d6bc72d963b7e12acbf220d6a3220ee7f8a4",
       "transformed": false
     },
     "accounting/go/go.mod": {
@@ -126,8 +126,8 @@
     },
     "accounting/python/pyproject.toml": {
       "sourcePath": "sdk/python/pyproject.toml",
-      "sourceSha256": "a6c257313d88bdd3f3c5d37db2a8326fc9b820f7062fb93b4bec55655d710eb7",
-      "sha256": "b32863b7c2e10f1127c20c3533d4ac94098bbebf35d118355d9389f5232db360",
+      "sourceSha256": "7d272a72a48e0b0b2cf66d6cbccc99c0cde9a80c16cf0e1a15cc19e5c8cd0050",
+      "sha256": "c77ad855c88b9a6ccf04a41823c8dea1bd1459ec87bcda41668aea85c9ee0c17",
       "transformed": true
     },
     "accounting/python/src/d0_accounting/__init__.py": {
@@ -138,8 +138,8 @@
     },
     "accounting/python/src/d0_accounting/generated.py": {
       "sourcePath": "sdk/python/src/d0_accounting/generated.py",
-      "sourceSha256": "2883a38642642b278d718f74d6a2a92b7d82045dd0e3a7422f5af412f0d85c66",
-      "sha256": "2883a38642642b278d718f74d6a2a92b7d82045dd0e3a7422f5af412f0d85c66",
+      "sourceSha256": "2dc6e06e39f5ca52ef159d434e3c8fd0f15a8bb59e95028a06a46e90f5668221",
+      "sha256": "2dc6e06e39f5ca52ef159d434e3c8fd0f15a8bb59e95028a06a46e90f5668221",
       "transformed": false
     },
     "accounting/python/src/d0_accounting/methods.py": {
@@ -180,14 +180,14 @@
     },
     "accounting/typescript/package.json": {
       "sourcePath": "sdk/typescript/package.json",
-      "sourceSha256": "e24d61edddd59f2578dc3759321db34ff44a28485cd8db141f27e9f6c806b3fc",
-      "sha256": "0b277a9198e9babac952901707d69a8d5b6132045e67662c76b203c33d0a5b54",
+      "sourceSha256": "f2a785c07e27d7d41bce4ee5b1d2de6840721a765ee90023c27646abc12cd42e",
+      "sha256": "aeef27af6a62a2b0a16b6be66c764429e1afbb3207f369ad28705edb240200bc",
       "transformed": true
     },
     "accounting/typescript/src/generated.ts": {
       "sourcePath": "sdk/typescript/src/generated.ts",
-      "sourceSha256": "84b1016d2064bea887f4cb3bbcd853844612e2a4e37dd2eb9015ab03303abbbb",
-      "sha256": "84b1016d2064bea887f4cb3bbcd853844612e2a4e37dd2eb9015ab03303abbbb",
+      "sourceSha256": "1f334021b945e2677cb501f9ca3b3ffe4486e320a99948ee7e83c3268431ac98",
+      "sha256": "1f334021b945e2677cb501f9ca3b3ffe4486e320a99948ee7e83c3268431ac98",
       "transformed": false
     },
     "accounting/typescript/src/index.test.ts": {
@@ -507,14 +507,14 @@
     },
     "eric/CONTRACT.md": {
       "sourcePath": "sdk/CONTRACT.md",
-      "sourceSha256": "5e8d2b324fc2f2a7f96d21102148fe81ac6126132a8dcfdf09efa1cfe466e40d",
-      "sha256": "5e8d2b324fc2f2a7f96d21102148fe81ac6126132a8dcfdf09efa1cfe466e40d",
+      "sourceSha256": "ff6972fc33e37abe466bc60f9252e569fbf18746c627130c7e47e1dddbc81e48",
+      "sha256": "ff6972fc33e37abe466bc60f9252e569fbf18746c627130c7e47e1dddbc81e48",
       "transformed": false
     },
     "eric/contracts/production/public-openapi.json": {
       "sourcePath": "sdk/contracts/production/public-openapi.json",
-      "sourceSha256": "2154a43c9b71432b175c586e8c311d1cb632128d62cfb2b90086cef1b1aa85a3",
-      "sha256": "2154a43c9b71432b175c586e8c311d1cb632128d62cfb2b90086cef1b1aa85a3",
+      "sourceSha256": "6ef5556b460050eb8917280b67705b7c9a1db04f21ccb816cb5202a81e36278f",
+      "sha256": "6ef5556b460050eb8917280b67705b7c9a1db04f21ccb816cb5202a81e36278f",
       "transformed": false
     },
     "eric/contracts/test/public-openapi.json": {
@@ -543,8 +543,8 @@
     },
     "eric/go/genprod/api.gen.go": {
       "sourcePath": "sdk/go/genprod/api.gen.go",
-      "sourceSha256": "41d5a9fa1d36fcc3217127d421d008505f3858ee0f070f13f4f3e5a51788d526",
-      "sha256": "41d5a9fa1d36fcc3217127d421d008505f3858ee0f070f13f4f3e5a51788d526",
+      "sourceSha256": "76fe7dc73299a183e7adb051033632666fdd16b308a2347f8d20f56c6f600927",
+      "sha256": "76fe7dc73299a183e7adb051033632666fdd16b308a2347f8d20f56c6f600927",
       "transformed": false
     },
     "eric/go/gentest/api.gen.go": {
@@ -603,8 +603,8 @@
     },
     "eric/python/pyproject.toml": {
       "sourcePath": "sdk/python/pyproject.toml",
-      "sourceSha256": "12d5f99ce3e2c676771bcd4703b6c0b506097fac427211f7f74f74adf92ca4d0",
-      "sha256": "b585ec2f83dc518d4d1bf0911e93183bcc6f20e3c369a9f26809d004fad8cd94",
+      "sourceSha256": "dd88b9350b6b2856c2680ba772ab7c96e061a4550a6b00b8a0e5ef00dd7758c0",
+      "sha256": "45dee733ed8e84aee1a9635d5133c5efd78f46ff29e8c05a6fd126791c9877f4",
       "transformed": true
     },
     "eric/python/src/d0_eric/__init__.py": {
@@ -615,8 +615,8 @@
     },
     "eric/python/src/d0_eric/generated.py": {
       "sourcePath": "sdk/python/src/d0_eric/generated.py",
-      "sourceSha256": "d06170d245770537f0808d47c8df5a0e3fed8beaf537ad26ccdb51003e96c432",
-      "sha256": "d06170d245770537f0808d47c8df5a0e3fed8beaf537ad26ccdb51003e96c432",
+      "sourceSha256": "9d5a241c7b3920893fe88e8124b739d559719979762fc264f8b279836bf3d5e6",
+      "sha256": "9d5a241c7b3920893fe88e8124b739d559719979762fc264f8b279836bf3d5e6",
       "transformed": false
     },
     "eric/python/src/d0_eric/methods.py": {
@@ -657,14 +657,14 @@
     },
     "eric/typescript/package.json": {
       "sourcePath": "sdk/typescript/package.json",
-      "sourceSha256": "67fa2c7a8e4e26dfb15a0b95f8ae179537c417f697a0aca223bb9056b8164746",
-      "sha256": "f2cb1bddb6ce79ffcdadd278f0a40b3342f414348bf3b24a87cbbf7b7f303c20",
+      "sourceSha256": "bbb25f8efe45dbe8645bf513edd3588a4b36e33f2eaa97a6de476303834883f6",
+      "sha256": "e5e906d7fd436932e6b3c2c103f0fcdeae3cbd20b55d9bc662aabeca57a0332b",
       "transformed": true
     },
     "eric/typescript/src/generated.ts": {
       "sourcePath": "sdk/typescript/src/generated.ts",
-      "sourceSha256": "50214faa9c20badabbdc55a64a526ccf62bd89e27aa67367e2d3826b23139313",
-      "sha256": "50214faa9c20badabbdc55a64a526ccf62bd89e27aa67367e2d3826b23139313",
+      "sourceSha256": "97dfa01a7dfb71bb63359ee0238241e099d1655e63d8e71855639592b7040407",
+      "sha256": "97dfa01a7dfb71bb63359ee0238241e099d1655e63d8e71855639592b7040407",
       "transformed": false
     },
     "eric/typescript/src/index.test.ts": {

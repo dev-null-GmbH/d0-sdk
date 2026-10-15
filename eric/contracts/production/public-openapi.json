@@ -3308,6 +3308,32 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "reporting_start": {
+            "type": "string",
+            "format": "date",
+            "description": "Explicit current reporting duration start inside fiscal year, required only for UB/LZB/ZW/UJ."
+          },
+          "reporting_end": {
+            "type": "string",
+            "format": "date",
+            "description": "Explicit current reporting duration end inside fiscal year, required only for UB/LZB/ZW/UJ."
+          },
+          "ub_income_statement": {
+            "type": "boolean",
+            "description": "UB-only explicit GuV/BVV component choice, including explicit false. Omit for all other statement types."
+          },
+          "tax_statement_type": {
+            "type": "string",
+            "enum": [
+              "SB",
+              "EB"
+            ],
+            "description": "MU annual tax statement selection: SB special or EB supplementary, distinct from opening statement_type EB. Omit for other legal forms."
+          },
+          "corporation_tax_option": {
+            "type": "boolean",
+            "description": "Explicit section 1a KStG case assertion, bound to the GCD option. Omitted/false retains the ordinary case; true currently permits eligible domestic annual AO/GKV or UKV core reports without EV/MicroBilG. Filing remains denied."
+          },
           "micro_bilg_prepared": {
             "type": "boolean",
             "description": "Explicit MicroBilG preparation assertion for eligible corporation GKV cases."
@@ -3334,7 +3360,10 @@
               "GBR",
               "PG",
               "ASG",
-              "soPG"
+              "soPG",
+              "EWI",
+              "Other.MUN",
+              "MU"
             ]
           },
           "income_statement_format": {
@@ -3359,7 +3388,14 @@
             "type": "string",
             "enum": [
               "E",
-              "EB"
+              "EB",
+              "UBandE",
+              "LSB",
+              "LAB",
+              "UB",
+              "LZB",
+              "ZW",
+              "UJ"
             ],
             "default": "E"
           },
@@ -3378,7 +3414,7 @@
           "fiscal_end": {
             "type": "string",
             "format": "date",
-            "description": "Defaults to closing_date. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later."
+            "description": "Defaults to closing_date for existing cases; UB/LZB/ZW/UJ require explicit fiscal_end. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later."
           },
           "accounting_standard": {
             "type": "string",
@@ -3439,7 +3475,14 @@
               "ebilanz-form-plan-v10",
               "ebilanz-form-plan-v11",
               "ebilanz-form-plan-v12",
-              "ebilanz-form-plan-v13"
+              "ebilanz-form-plan-v13",
+              "ebilanz-form-plan-v14",
+              "ebilanz-form-plan-v15",
+              "ebilanz-form-plan-v16",
+              "ebilanz-form-plan-v17",
+              "ebilanz-form-plan-v18",
+              "ebilanz-form-plan-v19",
+              "ebilanz-form-plan-v20"
             ]
           },
           "procedure": {
@@ -3467,6 +3510,34 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+              "reporting_start": {
+                "type": "string",
+                "format": "date",
+                "description": "Explicit current reporting duration start inside fiscal year, required only for UB/LZB/ZW/UJ."
+              },
+              "reporting_end": {
+                "type": "string",
+                "format": "date",
+                "description": "Explicit current reporting duration end inside fiscal year, required only for UB/LZB/ZW/UJ."
+              },
+              "ub_income_statement": {
+                "type": "boolean",
+                "description": "UB-only explicit GuV/BVV component choice, including explicit false. Omit for all other statement types."
+              },
+              "tax_statement_type": {
+                "type": "string",
+                "enum": [
+                  "SB",
+                  "EB"
+                ]
+              },
+              "tax_statement_type_label": {
+                "type": "string"
+              },
+              "corporation_tax_option": {
+                "type": "boolean",
+                "description": "Explicit section 1a KStG case assertion, bound to the GCD option. Omitted/false retains the ordinary case; true currently permits eligible domestic annual AO/GKV or UKV core reports without EV/MicroBilG. Filing remains denied."
+              },
               "micro_bilg_prepared": {
                 "type": "boolean"
               },
@@ -3491,7 +3562,10 @@
                   "GBR",
                   "PG",
                   "ASG",
-                  "soPG"
+                  "soPG",
+                  "EWI",
+                  "Other.MUN",
+                  "MU"
                 ]
               },
               "legal_form_label": {
@@ -3553,7 +3627,14 @@
                 "type": "string",
                 "enum": [
                   "E",
-                  "EB"
+                  "EB",
+                  "UBandE",
+                  "LSB",
+                  "LAB",
+                  "UB",
+                  "LZB",
+                  "ZW",
+                  "UJ"
                 ],
                 "default": "E"
               },
@@ -3572,7 +3653,7 @@
               "fiscal_end": {
                 "type": "string",
                 "format": "date",
-                "description": "Defaults to closing_date. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later."
+                "description": "Defaults to closing_date for existing cases; UB/LZB/ZW/UJ require explicit fiscal_end. Opening reports have closing_date equal fiscal_start; their fiscal_end may be later."
               },
               "statement_type_label": {
                 "type": "string"
@@ -3723,6 +3804,12 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+              "reporting_period_binding": {
+                "type": "string",
+                "enum": [
+                  "within_fiscal_year"
+                ]
+              },
               "fiscal_start_min": {
                 "type": "string",
                 "format": "date"
@@ -3743,7 +3830,8 @@
                 "type": "string",
                 "enum": [
                   "fiscal_start",
-                  "fiscal_end"
+                  "fiscal_end",
+                  "within_fiscal_year"
                 ]
               },
               "self_employment_same_calendar_year": {
@@ -3853,7 +3941,7 @@
           "kke_partner_groups",
           "required_kke_fields"
         ],
-        "description": "OHG/KG/GKG/AGKG/GOHG/AGOHG/GBR/PG/ASG/soPG AO/HAOE/HGBM GKV/UKV annual GHB shareholder/KKE linkage. KKE supports tax values only; commercial and transition columns remain unsupported. Typed partner-axis values equal the declared shareholder ID. Required cells apply to each selected concrete equity member and its source presentation ancestors; clients supply all final amounts and NIL decisions. Preparation enforces complete equations."
+        "description": "OHG/KG/GKG/AGKG/GOHG/AGOHG/GBR/PG/ASG/soPG AO/HAOE/HGBM GKV/UKV annual or AO/HAOE opening GHB shareholder/KKE linkage. KKE supports tax values only; commercial and transition columns remain unsupported. Typed partner-axis values equal the declared shareholder ID. Required cells apply to each selected concrete equity member and its source presentation ancestors; clients supply all final amounts and NIL decisions. Preparation enforces complete equations."
       },
       "EBilanzFormReconciliation": {
         "type": "object",
@@ -4094,10 +4182,13 @@
                 "GBR",
                 "PG",
                 "ASG",
-                "soPG"
+                "soPG",
+                "EWI",
+                "Other.MUN",
+                "MU"
               ]
             },
-            "maxItems": 16
+            "maxItems": 19
           },
           "valid_since": {
             "type": "array",
@@ -4253,9 +4344,10 @@
             "type": "string",
             "enum": [
               "siehe Fußnote",
-              "false"
+              "false",
+              "true"
             ],
-            "description": "Exact current-case lexical value when reported with state value. The explanation pointer additionally requires explicit source footnote text; the corporate-tax option is not supported as true."
+            "description": "Exact current-case lexical value when reported with state value. The explanation pointer additionally requires explicit source footnote text; the corporate-tax option is bound to the selected case."
           },
           "footnote_required": {
             "type": "boolean",
@@ -4451,6 +4543,15 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "tuple_path": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9._-]*:[A-Za-z_][A-Za-z0-9._-]*$"
+            },
+            "description": "Exact outermost-to-innermost tuple ancestry for this binding, excluding the leaf. Explicit empty array means root fact. Present in v17; omitted historical bindings retain their original interpretation."
+          },
           "concept": {
             "type": "string",
             "pattern": "^[A-Za-z_][A-Za-z0-9._-]*:[A-Za-z_][A-Za-z0-9._-]*$"
@@ -4605,7 +4706,10 @@
                     "GBR",
                     "PG",
                     "ASG",
-                    "soPG"
+                    "soPG",
+                    "EWI",
+                    "Other.MUN",
+                    "MU"
                   ]
                 },
                 "maxItems": 2
@@ -4716,10 +4820,13 @@
                 "GBR",
                 "PG",
                 "ASG",
-                "soPG"
+                "soPG",
+                "EWI",
+                "Other.MUN",
+                "MU"
               ]
             },
-            "maxItems": 16
+            "maxItems": 19
           },
           "dimension_set_ids": {
             "type": "array",
@@ -7567,6 +7674,10 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "corporation_tax_option": {
+            "type": "boolean",
+            "description": "Explicit section 1a KStG case assertion, bound to the GCD option. Omitted/false retains the ordinary case; true currently permits eligible domestic annual AO/GKV or UKV core reports without EV/MicroBilG. Filing remains denied."
+          },
           "micro_bilg_prepared": {
             "type": "boolean",
             "description": "Explicit customer assertion that this corporation's statements were prepared under MicroBilG. True selects the fiscal-microbilg entry schema; absent or false selects the ordinary fiscal schema."

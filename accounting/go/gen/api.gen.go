@@ -25,6 +25,7 @@ const (
 	AccessManage    AccessPermission = "access.manage"
 	AccountingRead  AccessPermission = "accounting.read"
 	AccountingWrite AccessPermission = "accounting.write"
+	AuditRead       AccessPermission = "audit.read"
 	DocumentsRead   AccessPermission = "documents.read"
 	DocumentsWrite  AccessPermission = "documents.write"
 	ExportsRead     AccessPermission = "exports.read"
@@ -40,6 +41,8 @@ func (e AccessPermission) Valid() bool {
 	case AccountingRead:
 		return true
 	case AccountingWrite:
+		return true
+	case AuditRead:
 		return true
 	case DocumentsRead:
 		return true

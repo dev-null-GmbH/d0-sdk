@@ -10,11 +10,10 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from verify_export import main as verify_export
+from verify_export import main as verify_export, versions
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCTS = ("auth", "platform", "accounting", "einvoice", "eric")
-VERSION = "v0.1.0"
 
 
 def run(*args, cwd, env=None):
@@ -24,21 +23,23 @@ def run(*args, cwd, env=None):
 def go_proxy():
     proxy = ROOT / "dist/go"
     manifest = json.loads((ROOT / "export-manifest.json").read_text())
+    release_versions = versions()
     for product in PRODUCTS:
+        version = "v" + release_versions[product]
         module = f"github.com/dev-null-GmbH/d0-sdk/{product}/go"
         escaped = "".join("!" + char.lower() if char.isupper() else char for char in module)
         target = proxy / escaped / "@v"
         target.mkdir(parents=True, exist_ok=True)
         source = ROOT / product / "go"
-        (target / f"{VERSION}.mod").write_bytes((source / "go.mod").read_bytes())
-        (target / f"{VERSION}.info").write_text(json.dumps({"Version": VERSION, "Time": "2026-10-15T00:00:00Z"}) + "\n")
-        (target / "list").write_text(VERSION + "\n")
-        with zipfile.ZipFile(target / f"{VERSION}.zip", "w", zipfile.ZIP_DEFLATED) as archive:
+        (target / f"{version}.mod").write_bytes((source / "go.mod").read_bytes())
+        (target / f"{version}.info").write_text(json.dumps({"Version": version, "Time": "2026-10-15T00:00:00Z"}) + "\n")
+        (target / "list").write_text(version + "\n")
+        with zipfile.ZipFile(target / f"{version}.zip", "w", zipfile.ZIP_DEFLATED) as archive:
             for name in sorted(manifest["files"]):
                 if not name.startswith(f"{product}/go/"):
                     continue
                 path = ROOT / name
-                entry = zipfile.ZipInfo(f"{module}@{VERSION}/{path.relative_to(source).as_posix()}", (2026, 10, 15, 0, 0, 0))
+                entry = zipfile.ZipInfo(f"{module}@{version}/{path.relative_to(source).as_posix()}", (2026, 10, 15, 0, 0, 0))
                 entry.external_attr = 0o100644 << 16
                 archive.writestr(entry, path.read_bytes(), compress_type=zipfile.ZIP_DEFLATED)
     return proxy
@@ -49,18 +50,19 @@ def main():
     parser.add_argument("--public", action="store_true", help="install anonymous published versions instead of local artifacts")
     args = parser.parse_args()
     verify_export()
+    release_versions = versions()
     proxy = None if args.public else go_proxy()
     with tempfile.TemporaryDirectory(prefix="d0-sdk-customer-") as directory:
         customer = Path(directory)
         node = customer / "node"
         node.mkdir()
         (node / "package.json").write_text('{"private":true,"type":"module"}\n')
-        npm_packages = [f"@dev-null-gmbh/{'auth-machine' if product == 'auth' else product}@0.1.0" for product in PRODUCTS] if args.public else list(map(str, sorted((ROOT / "dist/npm").glob("*.tgz"))))
+        npm_packages = [f"@dev-null-gmbh/{'auth-machine' if product == 'auth' else product}@{release_versions[product]}" for product in PRODUCTS] if args.public else list(map(str, sorted((ROOT / "dist/npm").glob("*.tgz"))))
         run("npm", "install", "--ignore-scripts", "--no-audit", "--no-fund", "--registry", "https://registry.npmjs.org", *npm_packages, cwd=node)
         python = customer / "python"
         run("uv", "venv", "--python", "3.14.8", str(python), cwd=customer)
         interpreter = python / "bin/python"
-        python_packages = [f"d0-{'auth-machine' if product == 'auth' else product}==0.1.0" for product in PRODUCTS] if args.public else list(map(str, sorted((ROOT / "dist/python").glob("*.whl"))))
+        python_packages = [f"d0-{'auth-machine' if product == 'auth' else product}=={release_versions[product]}" for product in PRODUCTS] if args.public else list(map(str, sorted((ROOT / "dist/python").glob("*.whl"))))
         run("uv", "pip", "install", "--python", str(interpreter), "--default-index", "https://pypi.org/simple", *python_packages, cwd=customer)
         go = customer / "go"
         go.mkdir()
@@ -80,7 +82,7 @@ def main():
             destination = go / product
             destination.mkdir()
             shutil.copyfile(ROOT / product / "go/examples/fixture/main.go", destination / "main.go")
-            run("go", "mod", "edit", f"-require=github.com/dev-null-GmbH/d0-sdk/{product}/go@{VERSION}", cwd=go, env=env)
+            run("go", "mod", "edit", f"-require=github.com/dev-null-GmbH/d0-sdk/{product}/go@v{release_versions[product]}", cwd=go, env=env)
         run("go", "mod", "tidy", cwd=go, env=env)
         for product in PRODUCTS[1:]:
             run("go", "run", f"./{product}", cwd=go, env=env)

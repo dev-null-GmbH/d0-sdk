@@ -10,13 +10,18 @@ class Artifact(TypedDict):
     contentDigest: str
 
 class EBilanzFormPlanInput(TypedDict):
+    reporting_start: NotRequired[str]
+    reporting_end: NotRequired[str]
+    ub_income_statement: NotRequired[bool]
+    tax_statement_type: NotRequired[Literal['SB', 'EB']]
+    corporation_tax_option: NotRequired[bool]
     micro_bilg_prepared: NotRequired[bool]
     result_appropriation: NotRequired[bool]
-    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG']
+    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']
     income_statement_format: NotRequired[Literal['GKV', 'UKV']]
     fiscal_start: str
     closing_date: str
-    statement_type: NotRequired[Literal['E', 'EB']]
+    statement_type: NotRequired[Literal['E', 'EB', 'UBandE', 'LSB', 'LAB', 'UB', 'LZB', 'ZW', 'UJ']]
     revision_status: NotRequired[Literal['E', 'B', 'G', 'BG', 'I', 'sK']]
     fiscal_end: NotRequired[str]
     accounting_standard: NotRequired[Literal['AO', 'HAOE', 'HGBM']]
@@ -28,7 +33,7 @@ class Problem(TypedDict):
 
 class EBilanzFormPlan(TypedDict):
     entry_schema: str
-    schema_version: Literal['ebilanz-form-plan-v7', 'ebilanz-form-plan-v8', 'ebilanz-form-plan-v9', 'ebilanz-form-plan-v10', 'ebilanz-form-plan-v11', 'ebilanz-form-plan-v12', 'ebilanz-form-plan-v13']
+    schema_version: Literal['ebilanz-form-plan-v7', 'ebilanz-form-plan-v8', 'ebilanz-form-plan-v9', 'ebilanz-form-plan-v10', 'ebilanz-form-plan-v11', 'ebilanz-form-plan-v12', 'ebilanz-form-plan-v13', 'ebilanz-form-plan-v14', 'ebilanz-form-plan-v15', 'ebilanz-form-plan-v16', 'ebilanz-form-plan-v17', 'ebilanz-form-plan-v18', 'ebilanz-form-plan-v19', 'ebilanz-form-plan-v20']
     procedure: Literal['Bilanz_6.9']
     taxonomy_version: Literal['6.9']
     taxonomy_archive_sha256: Digest
@@ -105,7 +110,7 @@ class EBilanzMappingAxis(TypedDict):
 class EBilanzMappingMember(TypedDict):
     name: str
     label: str
-    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG']]
+    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']]
     valid_since: NotRequired[list[str]]
     valid_through: NotRequired[list[str]]
     fiscal_valid_since: NotRequired[str]
@@ -132,7 +137,7 @@ class EBilanzFormField(TypedDict):
     fiscal_valid_since: NotRequired[str]
     fiscal_valid_through: NotRequired[str]
     selection_value: NotRequired[Literal['']]
-    value_literal: NotRequired[Literal['siehe Fußnote', 'false']]
+    value_literal: NotRequired[Literal['siehe Fußnote', 'false', 'true']]
     footnote_required: NotRequired[Literal[True]]
     repeatable: NotRequired[bool]
 
@@ -148,6 +153,7 @@ class EBilanzFormTuple(TypedDict):
 type EBilanzContext = InlineObject4 | InlineObject5
 type EBilanzDimension = InlineObject6 | InlineObject7
 class EBilanzFormBinding(TypedDict):
+    tuple_path: NotRequired[list[str]]
     concept: str
     value_from: Literal['fiscal_start', 'closing_date', 'tax_number', 'tax_office', 'literal_false', 'literal_true', 'company_name', 'street', 'postcode', 'city', 'fiscal_end']
 
@@ -182,7 +188,7 @@ class EBilanzMappingTarget(TypedDict):
     period: Literal['instant', 'duration']
     nillable: bool
     components: list[Literal['B', 'GuV', 'BVV', 'SGE', 'SGEP', 'BAL', 'KKE']]
-    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG']]
+    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']]
     dimension_set_ids: list[Digest]
     valid_since: NotRequired[list[str]]
     valid_through: NotRequired[list[str]]
@@ -598,6 +604,7 @@ class EBilanzAccount(TypedDict):
 
 type EBilanzFact = InlineObject27 | InlineObject28 | InlineObject29 | InlineObject30
 class EBilanzInput(TypedDict):
+    corporation_tax_option: NotRequired[bool]
     micro_bilg_prepared: NotRequired[bool]
     schema_version: Literal['ebilanz-core-6.9-v1']
     source_revision: str
@@ -1215,9 +1222,15 @@ class GetEricTestSimulationRequest(TypedDict):
 type GetEricTestSimulationResult = EricTestSimulation
 
 class InlineObject1(TypedDict):
+    reporting_start: NotRequired[str]
+    reporting_end: NotRequired[str]
+    ub_income_statement: NotRequired[bool]
+    tax_statement_type: NotRequired[Literal['SB', 'EB']]
+    tax_statement_type_label: NotRequired[str]
+    corporation_tax_option: NotRequired[bool]
     micro_bilg_prepared: bool
     result_appropriation: bool
-    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG']
+    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']
     legal_form_label: str
     income_statement_format: Literal['GKV', 'UKV']
     income_statement_format_label: str
@@ -1226,7 +1239,7 @@ class InlineObject1(TypedDict):
     required_components: list[Literal['B', 'GuV', 'GuVMicroBilG', 'EV', 'BVV', 'SGE', 'SGEP', 'BAL', 'KS', 'STU', 'KKE']]
     account_details_required: bool
     account_detail_modes: list[Literal['provided', 'unavailable_with_footnote']]
-    statement_type: Literal['E', 'EB']
+    statement_type: Literal['E', 'EB', 'UBandE', 'LSB', 'LAB', 'UB', 'LZB', 'ZW', 'UJ']
     revision_status: Literal['E', 'B', 'G', 'BG', 'I', 'sK']
     fiscal_end: str
     statement_type_label: str
@@ -1245,11 +1258,12 @@ class InlineObject2(TypedDict):
     calculation_edges: list[EBilanzFormCalculation]
 
 class InlineObject3(TypedDict):
+    reporting_period_binding: NotRequired[Literal['within_fiscal_year']]
     fiscal_start_min: str
     fiscal_start_max: str
     fiscal_end_min: str
     fiscal_end_max: str
-    closing_date_binding: Literal['fiscal_start', 'fiscal_end']
+    closing_date_binding: Literal['fiscal_start', 'fiscal_end', 'within_fiscal_year']
     self_employment_same_calendar_year: Literal[True]
     maximum_months: Literal[12]
 
@@ -1273,7 +1287,7 @@ class InlineObject7(TypedDict):
     typed_value: str
 
 class InlineObject8(TypedDict):
-    legal_forms: list[Literal['EU', 'GmbH', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG']]
+    legal_forms: list[Literal['EU', 'GmbH', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']]
     accounting_standard: Literal['AO']
     income_statement_format: Literal['GKV']
     annual: Literal[True]

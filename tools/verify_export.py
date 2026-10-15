@@ -17,7 +17,21 @@ DISTRIBUTION_FILES = {
     "tools/check.sh", "tools/check_install.py", "tools/import_sources.py",
     "tools/publish_npm.py", "tools/verify_export.py", "tools/verify_packages.py",
     "tools/test_import_sources.py", "tools/test_publish_npm.py",
+    "tools/go_tags.py", "tools/test_go_tags.py", "tools/publish_python.py",
+    "tools/test_publish_python.py",
 }
+
+
+def versions(root=ROOT):
+    result = {}
+    for product in PRODUCTS:
+        package = json.loads((root / product / "typescript/package.json").read_text())
+        version = package["version"]
+        assert re.fullmatch(r"\d+\.\d+\.\d+", version), product
+        metadata = tomllib.loads((root / product / "python/pyproject.toml").read_text())
+        assert metadata["project"]["version"] == version, product
+        result[product] = version
+    return result
 
 
 def verify_inventory(actual, expected):
@@ -25,6 +39,7 @@ def verify_inventory(actual, expected):
 
 
 def main():
+    release_versions = versions()
     manifest = json.loads((ROOT / "export-manifest.json").read_text())
     assert manifest["schemaVersion"] == 1
     assert manifest["sources"] == json.loads((ROOT / "sources.json").read_text())
@@ -41,12 +56,12 @@ def main():
         assert re.fullmatch(r"[0-9a-f]{64}", record["sourceSha256"]), name
     for product in PRODUCTS:
         package = json.loads((ROOT / product / "typescript/package.json").read_text())
-        assert package["version"] == "0.1.0" and not package.get("private"), product
+        assert package["version"] == release_versions[product] and not package.get("private"), product
         assert package["license"] == "MIT"
         assert package["publishConfig"] == {"registry": "https://registry.npmjs.org", "access": "public"}
         assert all(re.fullmatch(r"\d+\.\d+\.\d+", value) for value in package["dependencies"].values()), product
         metadata = tomllib.loads((ROOT / product / "python/pyproject.toml").read_text())
-        assert metadata["project"]["version"] == "0.1.0"
+        assert metadata["project"]["version"] == release_versions[product]
         assert metadata["project"]["license"] == "MIT"
         assert metadata["project"]["license-files"] == ["LICENSE"]
         for language in ("go", "typescript", "python"):
