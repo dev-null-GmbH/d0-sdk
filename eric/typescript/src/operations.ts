@@ -808,6 +808,12 @@ export const operations = {
         "pattern": "^[A-Za-z0-9._:-]+$"
       },
       {
+        "name": "xEricReplayOnly",
+        "wire": "X-ERIC-Replay-Only",
+        "in": "header",
+        "required": false
+      },
+      {
         "name": "body",
         "wire": "body",
         "in": "body",

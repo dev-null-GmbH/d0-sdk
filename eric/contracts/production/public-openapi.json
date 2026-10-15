@@ -1563,7 +1563,7 @@
       "post": {
         "operationId": "CreateFilingConsent",
         "summary": "Create filing consent",
-        "description": "Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.",
+        "description": "Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.",
         "security": [
           {
             "dpop": [
@@ -1599,6 +1599,17 @@
           },
           {
             "$ref": "#/components/parameters/Idempotency"
+          },
+          {
+            "name": "X-ERIC-Replay-Only",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            }
           }
         ],
         "responses": {

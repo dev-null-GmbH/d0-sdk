@@ -3130,6 +3130,21 @@ func (e GetPreparationArtifactParamsKind) Valid() bool {
 	}
 }
 
+// Defines values for CreateFilingConsentParamsXERICReplayOnly.
+const (
+	CreateFilingConsentParamsXERICReplayOnlyTrue CreateFilingConsentParamsXERICReplayOnly = "true"
+)
+
+// Valid indicates whether the value is a known member of the CreateFilingConsentParamsXERICReplayOnly enum.
+func (e CreateFilingConsentParamsXERICReplayOnly) Valid() bool {
+	switch e {
+	case CreateFilingConsentParamsXERICReplayOnlyTrue:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for GetRetrievalArtifactContentParamsKind.
 const (
 	Content        GetRetrievalArtifactContentParamsKind = "content"
@@ -5282,9 +5297,13 @@ type CreateFilingConsentParams struct {
 	XERICActorStatus DelegatedActorStatus `json:"X-ERIC-Actor-Status"`
 
 	// XERICHumanAuthorization Exactly one Bearer human access token for ebilanz.app. Required for immutable combined_human_required authority versions; rejected for legacy versions. Independently verified alongside the machine DPoP credential, with exact operator binding and current action-specific local human permission through commit. Credentials are never returned.
-	XERICHumanAuthorization *FilingHumanAuthorization `json:"X-ERIC-Human-Authorization,omitempty"`
-	IdempotencyKey          Idempotency               `json:"Idempotency-Key"`
+	XERICHumanAuthorization *FilingHumanAuthorization                 `json:"X-ERIC-Human-Authorization,omitempty"`
+	IdempotencyKey          Idempotency                               `json:"Idempotency-Key"`
+	XERICReplayOnly         *CreateFilingConsentParamsXERICReplayOnly `json:"X-ERIC-Replay-Only,omitempty"`
 }
+
+// CreateFilingConsentParamsXERICReplayOnly defines parameters for CreateFilingConsent.
+type CreateFilingConsentParamsXERICReplayOnly string
 
 // CreateProfileParams defines parameters for CreateProfile.
 type CreateProfileParams struct {
@@ -6841,7 +6860,7 @@ type ClientInterface interface {
 
 	// CreateFilingConsentWithBody Create filing consent
 	//
-	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -6850,7 +6869,7 @@ type ClientInterface interface {
 
 	// CreateFilingConsent Create filing consent
 	//
-	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -7870,7 +7889,7 @@ func (c *Client) CreateDelegatedReview(ctx context.Context, productId ID, prepar
 
 // CreateFilingConsentWithBody Create filing consent
 //
-// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 //
 // Takes any type of body and a specified content type.
 //
@@ -7889,7 +7908,7 @@ func (c *Client) CreateFilingConsentWithBody(ctx context.Context, productId ID, 
 
 // CreateFilingConsent Create filing consent
 //
-// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -10779,6 +10798,17 @@ func NewCreateFilingConsentRequestWithBody(server string, productId ID, preparat
 
 		req.Header.Set("Idempotency-Key", headerParam3)
 
+		if params.XERICReplayOnly != nil {
+			var headerParam4 string
+
+			headerParam4, err = runtime.StyleParamWithOptions("simple", false, "X-ERIC-Replay-Only", *params.XERICReplayOnly, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-ERIC-Replay-Only", headerParam4)
+		}
+
 	}
 
 	return req, nil
@@ -12095,7 +12125,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateFilingConsentWithBodyWithResponse Create filing consent
 	//
-	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -12104,7 +12134,7 @@ type ClientWithResponsesInterface interface {
 
 	// CreateFilingConsentWithResponse Create filing consent
 	//
-	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+	// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -15378,7 +15408,7 @@ func (c *ClientWithResponses) CreateDelegatedReviewWithResponse(ctx context.Cont
 
 // CreateFilingConsentWithBodyWithResponse Create filing consent
 //
-// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -15393,7 +15423,7 @@ func (c *ClientWithResponses) CreateFilingConsentWithBodyWithResponse(ctx contex
 
 // CreateFilingConsentWithResponse Create filing consent
 //
-// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created.
+// Preparation-specific partner-asserted consent for authorized test transmission only. Requires fresh v3/v4 filings.approve actor status. Transmission eligibility remains blocked; no native job or dispatch is created. With X-ERIC-Replay-Only: true, the same exact request and idempotency key only recover a previously committed 201 response under current machine, actor, authority and optional human grants. An unused key or changed request conflicts without creating a consent. Historical mandate or ownership revocation does not block this read-only recovery.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
