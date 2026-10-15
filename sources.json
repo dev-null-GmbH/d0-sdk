@@ -21,7 +21,7 @@
   },
   "eric": {
     "repository": "devacc-eric-svc",
-    "commit": "849d22d216d382e3b022bf1f02eab985160a1aa2",
+    "commit": "15215cc6dc683005868d1f0f0e61e5de7408ab03",
     "prefix": "sdk"
   }
 }

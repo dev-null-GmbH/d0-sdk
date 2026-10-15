@@ -20,8 +20,10 @@ Live product availability is reported separately in the Developer Console.
 The registry package names are `@dev-null-gmbh/{product}`,
 `d0-{product}` and `github.com/dev-null-GmbH/d0-sdk/{product}/go`.
 The auth packages are `@dev-null-gmbh/auth-machine`, `d0-auth-machine` and
-`github.com/dev-null-GmbH/d0-sdk/auth/go`. Auth, Platform and EInvoice use 0.1.0; the updated Accounting and ERiC SDKs use
-0.1.1 and retains the exact auth dependency at 0.1.0.
+`github.com/dev-null-GmbH/d0-sdk/auth/go`. Auth, Platform and EInvoice use 0.1.0, Accounting uses 0.1.1 and the ERiC
+0.1.2 candidate adds the optional filing-consent replay-only header. Product
+packages retain the exact auth dependency at 0.1.0. The candidate is not yet a
+published registry release.
 
 Select `production` or `test` explicitly, use separate client credentials for
 each, and grant only the product scopes your integration needs. Each machine

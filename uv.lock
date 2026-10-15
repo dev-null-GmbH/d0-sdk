@@ -249,7 +249,7 @@ dev = [
 
 [[package]]
 name = "d0-eric"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "eric/python" }
 dependencies = [
     { name = "d0-auth-machine" },

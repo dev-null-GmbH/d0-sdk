@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 license = "MIT"
 license-files = ["LICENSE"]
 name = "d0-eric"
-version = "0.1.1"
+version = "0.1.2"
 description = "Typed Accounting machine API client backed by d0-auth-machine"
 readme = "README.md"
 requires-python = ">=3.14,<3.15"

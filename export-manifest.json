@@ -23,7 +23,7 @@
     },
     "eric": {
       "repository": "devacc-eric-svc",
-      "commit": "849d22d216d382e3b022bf1f02eab985160a1aa2",
+      "commit": "15215cc6dc683005868d1f0f0e61e5de7408ab03",
       "prefix": "sdk"
     }
   },
@@ -507,14 +507,14 @@
     },
     "eric/CONTRACT.md": {
       "sourcePath": "sdk/CONTRACT.md",
-      "sourceSha256": "ff6972fc33e37abe466bc60f9252e569fbf18746c627130c7e47e1dddbc81e48",
-      "sha256": "ff6972fc33e37abe466bc60f9252e569fbf18746c627130c7e47e1dddbc81e48",
+      "sourceSha256": "12a0f5da8af8606840eb377851fd69daccab9969f76da8f1e08efb0bdd83e423",
+      "sha256": "12a0f5da8af8606840eb377851fd69daccab9969f76da8f1e08efb0bdd83e423",
       "transformed": false
     },
     "eric/contracts/production/public-openapi.json": {
       "sourcePath": "sdk/contracts/production/public-openapi.json",
-      "sourceSha256": "6ef5556b460050eb8917280b67705b7c9a1db04f21ccb816cb5202a81e36278f",
-      "sha256": "6ef5556b460050eb8917280b67705b7c9a1db04f21ccb816cb5202a81e36278f",
+      "sourceSha256": "da6ab47fed5fa5e35df6c6b8762274881d395812533e760c2a787839a65678b5",
+      "sha256": "da6ab47fed5fa5e35df6c6b8762274881d395812533e760c2a787839a65678b5",
       "transformed": false
     },
     "eric/contracts/test/public-openapi.json": {
@@ -543,8 +543,8 @@
     },
     "eric/go/genprod/api.gen.go": {
       "sourcePath": "sdk/go/genprod/api.gen.go",
-      "sourceSha256": "76fe7dc73299a183e7adb051033632666fdd16b308a2347f8d20f56c6f600927",
-      "sha256": "76fe7dc73299a183e7adb051033632666fdd16b308a2347f8d20f56c6f600927",
+      "sourceSha256": "f8ced024028a75f2e9a0c0cf8d9947fb287fab325963847ae688d0e94ee28880",
+      "sha256": "f8ced024028a75f2e9a0c0cf8d9947fb287fab325963847ae688d0e94ee28880",
       "transformed": false
     },
     "eric/go/gentest/api.gen.go": {
@@ -585,8 +585,8 @@
     },
     "eric/operations.json": {
       "sourcePath": "sdk/operations.json",
-      "sourceSha256": "bfa8c9191b371240a3c065dd906c98bcefdec87133e2fffa12dfd1f5640d1a2b",
-      "sha256": "bfa8c9191b371240a3c065dd906c98bcefdec87133e2fffa12dfd1f5640d1a2b",
+      "sourceSha256": "02e29cd705d5c319c7e0cd1796eba2cb30486a8cfa83cf5a815d6895a13bbe73",
+      "sha256": "02e29cd705d5c319c7e0cd1796eba2cb30486a8cfa83cf5a815d6895a13bbe73",
       "transformed": false
     },
     "eric/python/README.md": {
@@ -603,8 +603,8 @@
     },
     "eric/python/pyproject.toml": {
       "sourcePath": "sdk/python/pyproject.toml",
-      "sourceSha256": "dd88b9350b6b2856c2680ba772ab7c96e061a4550a6b00b8a0e5ef00dd7758c0",
-      "sha256": "45dee733ed8e84aee1a9635d5133c5efd78f46ff29e8c05a6fd126791c9877f4",
+      "sourceSha256": "137d6d1645b8d9fb31bf93a3280f74dcec618f3fc55fd052a8bca111d0daa15f",
+      "sha256": "2233870bb6f728698e2695b72cb62816bac6707a3ea52422a5118195be1b8d8e",
       "transformed": true
     },
     "eric/python/src/d0_eric/__init__.py": {
@@ -615,8 +615,8 @@
     },
     "eric/python/src/d0_eric/generated.py": {
       "sourcePath": "sdk/python/src/d0_eric/generated.py",
-      "sourceSha256": "9d5a241c7b3920893fe88e8124b739d559719979762fc264f8b279836bf3d5e6",
-      "sha256": "9d5a241c7b3920893fe88e8124b739d559719979762fc264f8b279836bf3d5e6",
+      "sourceSha256": "3ad4e7628e0792373bfbf29986c44545aea2e63968fcc0930fd44e7b307a2722",
+      "sha256": "3ad4e7628e0792373bfbf29986c44545aea2e63968fcc0930fd44e7b307a2722",
       "transformed": false
     },
     "eric/python/src/d0_eric/methods.py": {
@@ -627,8 +627,8 @@
     },
     "eric/python/src/d0_eric/operations.py": {
       "sourcePath": "sdk/python/src/d0_eric/operations.py",
-      "sourceSha256": "87172984617cdc51f2166c2306b9761fcfcefd3a2289d2044b41cf325312fb87",
-      "sha256": "87172984617cdc51f2166c2306b9761fcfcefd3a2289d2044b41cf325312fb87",
+      "sourceSha256": "b9f4ad3a2013feae0907dcd3c1a970524a4f39a00f3683553d4dcfd0060502e8",
+      "sha256": "b9f4ad3a2013feae0907dcd3c1a970524a4f39a00f3683553d4dcfd0060502e8",
       "transformed": false
     },
     "eric/python/src/d0_eric/py.typed": {
@@ -657,14 +657,14 @@
     },
     "eric/typescript/package.json": {
       "sourcePath": "sdk/typescript/package.json",
-      "sourceSha256": "bbb25f8efe45dbe8645bf513edd3588a4b36e33f2eaa97a6de476303834883f6",
-      "sha256": "e5e906d7fd436932e6b3c2c103f0fcdeae3cbd20b55d9bc662aabeca57a0332b",
+      "sourceSha256": "88af3db75bec63d5371bc4c852a161e3c580618afa0ccb9f393aa751bc94fd32",
+      "sha256": "c686e7c6e0f8aee65654d4438f0612ad37c1662195f18a1fc9753cee6db9e9a8",
       "transformed": true
     },
     "eric/typescript/src/generated.ts": {
       "sourcePath": "sdk/typescript/src/generated.ts",
-      "sourceSha256": "97dfa01a7dfb71bb63359ee0238241e099d1655e63d8e71855639592b7040407",
-      "sha256": "97dfa01a7dfb71bb63359ee0238241e099d1655e63d8e71855639592b7040407",
+      "sourceSha256": "f6f37ef0149a0a0e2d3e819a26f982e2aa59274999b11465145958f950ca0131",
+      "sha256": "f6f37ef0149a0a0e2d3e819a26f982e2aa59274999b11465145958f950ca0131",
       "transformed": false
     },
     "eric/typescript/src/index.test.ts": {
@@ -681,8 +681,8 @@
     },
     "eric/typescript/src/operations.ts": {
       "sourcePath": "sdk/typescript/src/operations.ts",
-      "sourceSha256": "a1a88993ec084bd7d24a3b7395aee06e56d8b3fd07ab77a8e14c18d68d01c512",
-      "sha256": "a1a88993ec084bd7d24a3b7395aee06e56d8b3fd07ab77a8e14c18d68d01c512",
+      "sourceSha256": "8da6cee694485c0743e3ef5fa625c94aebca7d8e5cb834b9ea2c264178e72c12",
+      "sha256": "8da6cee694485c0743e3ef5fa625c94aebca7d8e5cb834b9ea2c264178e72c12",
       "transformed": false
     },
     "eric/typescript/tsconfig.build.json": {

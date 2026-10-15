@@ -1010,6 +1010,7 @@ class CreateFilingConsentRequest(TypedDict):
     xEricActorStatus: str
     xEricHumanAuthorization: NotRequired[str]
     idempotencyKey: str
+    xEricReplayOnly: NotRequired[Literal['true']]
     body: FilingConsentInput
 
 type CreateFilingConsentResult = FilingConsentOpened
