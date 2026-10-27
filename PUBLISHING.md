@@ -65,14 +65,21 @@ versions come from each product's matching TypeScript/Python metadata; Go uses
 the same product version. Source commits and original/exported file hashes
 remain in `sources.json` and `export-manifest.json`.
 
-## Pending Accounting banking release
+## Verified Accounting banking release
 
 Accounting 0.1.2 imports the source commit pinned in `sources.json`, with
 80 production operations and twelve isolated test operations. It adds 24
 production banking methods and requires Go 1.27.3. The previous release and
 Accounting v0.1.1 module tag remain immutable. Auth and the other product
-versions remain unchanged. This candidate is not yet a published download;
-complete the release procedure above before updating installation claims.
+versions remain unchanged. The [27 October release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-27)
+contains the original qualified artifact from `41cc1bbd8f2823a4f0d97bde76b91184dfab1aad`,
+[run 40500893314](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/40500893314),
+artifact ID `12732542411`. Its 429529-byte ZIP has SHA-256
+`e5647b2949898c36f71ebf4b7c12ad1a8d3a8a503603b605cb4f83ea06e9101f`.
+The anonymous download matched that ZIP and all 35 inner checksums. Fresh
+TypeScript/Python archive installs and Go proxy/checksum installs ran both
+Accounting profile examples and verified the named banking method. The Go
+`accounting/go/v0.1.2` tag points at the qualified commit.
 
 The Go patch update is the stable release listed by
 [go.dev](https://go.dev/dl/?mode=json), checked on 27 October 2026. The combined

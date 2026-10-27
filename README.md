@@ -13,10 +13,10 @@ GitHub Releases and these public sources are the supported distribution channels
 The SDKs are not published to npm or PyPI; no registry account is needed to install them.
 Live product availability is reported separately in the Developer Console.
 
-Accounting 0.1.2 in this source tree is a pending banking release: 80 production
+Accounting 0.1.2 is published in the [27 October release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-27): 80 production
 operations, including 24 banking methods, and twelve isolated test operations.
-The existing 0.1.1 archives retain their original contents. Publication requires
-the exact-commit qualification and anonymous checks in [PUBLISHING.md](PUBLISHING.md).
+The existing 0.1.1 archives retain their original contents. Exact qualification,
+checksums and anonymous installation evidence are recorded in [PUBLISHING.md](PUBLISHING.md).
 
 | Product | Production operations | Isolated test operations | Package directories |
 | --- | ---: | ---: | --- |
