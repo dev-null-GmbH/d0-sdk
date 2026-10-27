@@ -401,7 +401,7 @@ class Membership(TypedDict):
 
 type MembershipStatus = Literal['active', 'inactive']
 type AccessPermissions = list[AccessPermission]
-type AccessPermission = Literal['accounting.read', 'accounting.write', 'documents.read', 'documents.write', 'periods.close', 'webhooks.manage', 'access.manage', 'exports.read', 'audit.read']
+type AccessPermission = Literal['accounting.read', 'accounting.write', 'documents.read', 'documents.write', 'periods.close', 'webhooks.manage', 'access.manage', 'exports.read', 'audit.read', 'banking.read', 'banking.manage', 'banking.ingest', 'banking.reconcile']
 class MembershipReplace(TypedDict):
     permissions: AccessPermissions
     status: MembershipStatus
@@ -572,6 +572,370 @@ class TaxCalculationInput(TypedDict):
 class TaxRulePage(TypedDict):
     data: list[TaxRule]
     nextCursor: str | None
+
+class BankAllocationRelease(TypedDict):
+    reason: str
+
+class BankAllocation(TypedDict):
+    id: BankAllocationId
+    movementId: BankMovementId
+    movementRevision: int
+    entryId: EntryId
+    lineNo: int
+    amountCents: str
+    createdAt: str
+    releasedAt: str | None
+    releaseReason: str | None
+    stale: bool
+
+type BankMovementId = str
+type BankAllocationId = str
+class BankAllocationCreate(TypedDict):
+    expectedReviewRevision: int
+    expectedRevision: int
+    entryId: EntryId
+    lineNo: int
+    amountCents: str
+
+class BankAllocationPage(TypedDict):
+    data: list[BankAllocation]
+    nextCursor: str | None
+
+class BankResolution(TypedDict):
+    expectedReviewRevision: int
+    expectedRevision: int
+    duplicateOf: NotRequired[str | None]
+    supersedes: NotRequired[str | None]
+    reason: str
+
+class BankMovement(TypedDict):
+    reviewRevision: int
+    id: BankMovementId
+    aliasId: BankAccountSourceId
+    accountId: BankAccountId
+    sourceReference: str
+    status: Literal['pending', 'booked', 'cancelled']
+    amountCents: str
+    currency: Currency
+    bookingDate: str | None
+    valueDate: str | None
+    remittance: str | None
+    counterparty: str | None
+    bankReference: str | None
+    provenance: dict[str, Any]
+    revision: int
+    observedAt: str
+    receivedAt: str
+    reviewRequired: bool
+    duplicateOf: str | None
+    supersededBy: str | None
+    reconciliationStale: bool
+
+type BankAccountId = str
+type BankAccountSourceId = str
+class BankObservationPage(TypedDict):
+    data: list[BankObservation]
+    nextCursor: str | None
+
+class BankObservation(TypedDict):
+    id: BankMovementId
+    aliasId: BankAccountSourceId
+    accountId: BankAccountId
+    batchId: BankBatchId
+    sourceReference: str
+    status: Literal['pending', 'booked', 'cancelled']
+    amountCents: str
+    currency: Currency
+    bookingDate: str | None
+    valueDate: str | None
+    remittance: str | None
+    counterparty: str | None
+    bankReference: str | None
+    provenance: dict[str, Any]
+    revision: int
+    observedAt: str
+    receivedAt: str
+
+type BankBatchId = str
+type BankObservationId = str
+class BankMovementPage(TypedDict):
+    data: list[BankMovement]
+    nextCursor: str | None
+
+class BankBatch(TypedDict):
+    id: BankBatchId
+    aliasId: BankAccountSourceId
+    reference: str
+    observedAt: str
+    successfulSyncAt: str | None
+    coverageFrom: str | None
+    coverageTo: str | None
+    complete: bool
+    error: str | None
+    receivedAt: str
+
+class BankBatchPage(TypedDict):
+    data: list[BankBatch]
+    nextCursor: str | None
+
+class BankImport(TypedDict):
+    reference: str
+    observedAt: str
+    successfulSyncAt: NotRequired[str | None]
+    coverageFrom: NotRequired[str | None]
+    coverageTo: NotRequired[str | None]
+    complete: bool
+    error: NotRequired[str | None]
+    movements: list[BankMovementInput]
+
+class BankMovementInput(TypedDict):
+    expectedRevision: int
+    sourceReference: str
+    status: Literal['pending', 'booked', 'cancelled']
+    amountCents: str
+    currency: Currency
+    bookingDate: NotRequired[str | None]
+    valueDate: NotRequired[str | None]
+    remittance: NotRequired[str | None]
+    counterparty: NotRequired[str | None]
+    bankReference: NotRequired[str | None]
+    provenance: NotRequired[dict[str, Any]]
+
+class BankAccountSourceUpdate(TypedDict):
+    active: bool
+    expectedRevision: int
+
+class BankAccountSource(TypedDict):
+    id: BankAccountSourceId
+    accountId: BankAccountId
+    sourceId: BankSourceId
+    externalAccountRef: str
+    active: bool
+    revision: int
+    createdAt: str
+
+type BankSourceId = str
+class BankAccountSourceCreate(TypedDict):
+    sourceId: BankSourceId
+    externalAccountRef: str
+
+class BankAccountSourcePage(TypedDict):
+    data: list[BankAccountSource]
+    nextCursor: str | None
+
+class BankAccountMapping(TypedDict):
+    ledgerAccountId: str | None
+    expectedRevision: int
+
+class BankAccount(TypedDict):
+    id: BankAccountId
+    name: str
+    currency: Currency
+    ledgerAccountId: str | None
+    revision: int
+    createdAt: str
+
+class BankAccountCreate(TypedDict):
+    name: str
+    currency: Currency
+    ledgerAccountId: NotRequired[str | None]
+
+class BankAccountPage(TypedDict):
+    data: list[BankAccount]
+    nextCursor: str | None
+
+class BankSourceUpdate(TypedDict):
+    writerMembershipId: MembershipId
+    active: bool
+    expectedRevision: int
+
+class BankSource(TypedDict):
+    id: BankSourceId
+    name: str
+    writerMembershipId: MembershipId
+    active: bool
+    revision: int
+    createdAt: str
+
+class BankSourceCreate(TypedDict):
+    name: str
+    writerMembershipId: MembershipId
+
+class BankSourcePage(TypedDict):
+    data: list[BankSource]
+    nextCursor: str | None
+
+class ListBankSourcesRequest(TypedDict):
+    limit: NotRequired[int]
+    after: NotRequired[BankSourceId]
+
+type ListBankSourcesResult = BankSourcePage
+
+class CreateBankSourceRequest(TypedDict):
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankSourceCreate
+
+type CreateBankSourceResult = BankSource
+
+class GetBankSourceRequest(TypedDict):
+    sourceId: BankSourceId
+
+type GetBankSourceResult = BankSource
+
+class UpdateBankSourceRequest(TypedDict):
+    sourceId: BankSourceId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankSourceUpdate
+
+type UpdateBankSourceResult = BankSource
+
+class ListBankAccountsRequest(TypedDict):
+    limit: NotRequired[int]
+    after: NotRequired[BankAccountId]
+
+type ListBankAccountsResult = BankAccountPage
+
+class CreateBankAccountRequest(TypedDict):
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankAccountCreate
+
+type CreateBankAccountResult = BankAccount
+
+class GetBankAccountRequest(TypedDict):
+    bankAccountId: BankAccountId
+
+type GetBankAccountResult = BankAccount
+
+class MapBankAccountRequest(TypedDict):
+    bankAccountId: BankAccountId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankAccountMapping
+
+type MapBankAccountResult = BankAccount
+
+class ListBankAccountSourcesRequest(TypedDict):
+    bankAccountId: BankAccountId
+    limit: NotRequired[int]
+    after: NotRequired[BankAccountSourceId]
+
+type ListBankAccountSourcesResult = BankAccountSourcePage
+
+class CreateBankAccountSourceRequest(TypedDict):
+    bankAccountId: BankAccountId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankAccountSourceCreate
+
+type CreateBankAccountSourceResult = BankAccountSource
+
+class GetBankAccountSourceRequest(TypedDict):
+    aliasId: BankAccountSourceId
+
+type GetBankAccountSourceResult = BankAccountSource
+
+class UpdateBankAccountSourceRequest(TypedDict):
+    aliasId: BankAccountSourceId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankAccountSourceUpdate
+
+type UpdateBankAccountSourceResult = BankAccountSource
+
+class ImportBankMovementsRequest(TypedDict):
+    aliasId: BankAccountSourceId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankImport
+
+type ImportBankMovementsResult = BankBatch
+
+class ListBankImportsRequest(TypedDict):
+    aliasId: BankAccountSourceId
+    limit: NotRequired[int]
+    after: NotRequired[BankBatchId]
+
+type ListBankImportsResult = BankBatchPage
+
+class GetBankImportRequest(TypedDict):
+    batchId: BankBatchId
+
+type GetBankImportResult = BankBatch
+
+class ListBankSourceMovementsRequest(TypedDict):
+    aliasId: BankAccountSourceId
+    limit: NotRequired[int]
+    after: NotRequired[BankMovementId]
+
+type ListBankSourceMovementsResult = BankMovementPage
+
+class ListBankMovementsRequest(TypedDict):
+    bankAccountId: BankAccountId
+    limit: NotRequired[int]
+    after: NotRequired[BankMovementId]
+
+type ListBankMovementsResult = BankMovementPage
+
+class GetBankMovementRequest(TypedDict):
+    movementId: BankMovementId
+
+type GetBankMovementResult = BankMovement
+
+class ListBankObservationsRequest(TypedDict):
+    movementId: BankMovementId
+    limit: NotRequired[int]
+    after: NotRequired[BankObservationId]
+
+type ListBankObservationsResult = BankObservationPage
+
+class ResolveBankMovementRequest(TypedDict):
+    movementId: BankMovementId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankResolution
+
+type ResolveBankMovementResult = BankMovement
+
+class ListBankAllocationsRequest(TypedDict):
+    movementId: BankMovementId
+    limit: NotRequired[int]
+    after: NotRequired[BankAllocationId]
+
+type ListBankAllocationsResult = BankAllocationPage
+
+class CreateBankAllocationRequest(TypedDict):
+    movementId: BankMovementId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankAllocationCreate
+
+type CreateBankAllocationResult = BankAllocation
+
+class GetBankAllocationRequest(TypedDict):
+    allocationId: BankAllocationId
+
+type GetBankAllocationResult = BankAllocation
+
+class ReleaseBankAllocationRequest(TypedDict):
+    allocationId: BankAllocationId
+    idempotencyKey: str
+    xAccountingActingUserIssuer: NotRequired[str]
+    xAccountingActingUserSubject: NotRequired[str]
+    body: BankAllocationRelease
+
+type ReleaseBankAllocationResult = BankAllocation
 
 class ListTaxRulesRequest(TypedDict):
     limit: NotRequired[int]

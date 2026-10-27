@@ -64,3 +64,18 @@ installed examples. Prior tags and release contents remain unchanged. Package
 versions come from each product's matching TypeScript/Python metadata; Go uses
 the same product version. Source commits and original/exported file hashes
 remain in `sources.json` and `export-manifest.json`.
+
+## Pending Accounting banking release
+
+Accounting 0.1.2 imports the source commit pinned in `sources.json`, with
+80 production operations and twelve isolated test operations. It adds 24
+production banking methods and requires Go 1.27.3. The previous release and
+Accounting v0.1.1 module tag remain immutable. Auth and the other product
+versions remain unchanged. This candidate is not yet a published download;
+complete the release procedure above before updating installation claims.
+
+The Go patch update is the stable release listed by
+[go.dev](https://go.dev/dl/?mode=json), checked on 27 October 2026. The combined
+Python development workspace resolves imported Ruff pins through the exact
+[Ruff 0.17.1 release](https://github.com/astral-sh/ruff/releases/tag/0.17.1);
+runtime package dependencies and other product module trees stay unchanged.

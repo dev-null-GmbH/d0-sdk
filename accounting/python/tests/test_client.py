@@ -49,10 +49,10 @@ class FakeMachine(MachineClient):
 
 class SDKTests(unittest.TestCase):
     def test_catalog_coverage(self) -> None:
-        self.assertEqual(len(OPERATIONS), 56)
-        self.assertEqual(Counter(op["test"] for op in OPERATIONS.values()), {False: 44, True: 12})
+        self.assertEqual(len(OPERATIONS), 80)
+        self.assertEqual(Counter(op["test"] for op in OPERATIONS.values()), {False: 68, True: 12})
         public_methods = {name for name, value in vars(AccountingOperations).items() if not name.startswith("_") and callable(value)}
-        self.assertEqual(len(public_methods), 56)
+        self.assertEqual(len(public_methods), 80)
         self.assertIn("create_zugferd_pdf", public_methods)
 
     def test_balanced_draft_both_profiles(self) -> None:
@@ -90,6 +90,25 @@ class SDKTests(unittest.TestCase):
                 {"accountId": "acct_" + SUFFIX, "side": "debit", "amount": {"amount": 150000, "currency": "EUR"}},
                 {"accountId": "acct_" + SUFFIX, "side": "credit", "amount": {"amount": "150000", "currency": "EUR"}},
             ]}})
+        self.assertEqual(transport.calls, [])
+
+    def test_banking_is_production_only(self) -> None:
+        transport = FakeMachine("test")
+        sdk = AccountingClient("test", TENANT, transport)
+        banking = {name: op for name, op in OPERATIONS.items() if op["path"].startswith("/bank")}
+        self.assertEqual(len(banking), 24)
+        for operation in banking:
+            with self.assertRaisesRegex(ValueError, "unavailable"):
+                sdk.call_with_response(operation, {})
+        self.assertEqual(transport.calls, [])
+
+    def test_numeric_bank_money_is_rejected(self) -> None:
+        transport = FakeMachine("production")
+        sdk = AccountingClient("production", TENANT, transport)
+        with self.assertRaisesRegex(ValueError, "decimal strings"):
+            sdk.create_bank_allocation({"movementId": "btxn_" + SUFFIX, "idempotencyKey": KEY, "body": {
+                "expectedRevision": 1, "expectedReviewRevision": 1, "entryId": "je_" + SUFFIX, "lineNo": 1, "amountCents": 1000,
+            }})
         self.assertEqual(transport.calls, [])
 
 

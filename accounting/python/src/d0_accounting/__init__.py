@@ -48,6 +48,8 @@ def _exact_money(value: Any) -> None:
     elif isinstance(value, dict):
         if "amount" in value and "currency" in value and (not isinstance(value["amount"], str) or not re.fullmatch(r"-?(0|[1-9][0-9]{0,18})", value["amount"])):
             raise ValueError("Accounting amounts must be exact minor-unit decimal strings")
+        if "amountCents" in value and (not isinstance(value["amountCents"], str) or not re.fullmatch(r"-?(0|[1-9][0-9]{0,18})", value["amountCents"])):
+            raise ValueError("Accounting amounts must be exact minor-unit decimal strings")
         for item in value.values():
             _exact_money(item)
 

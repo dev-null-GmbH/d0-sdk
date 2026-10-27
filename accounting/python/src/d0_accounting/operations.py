@@ -3,6 +3,750 @@ import json
 
 OPERATIONS = json.loads(r'''
 {
+  "listBankSources": {
+    "method": "GET",
+    "path": "/bank-sources",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^bsrc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "createBankSource": {
+    "method": "POST",
+    "path": "/bank-sources",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "getBankSource": {
+    "method": "GET",
+    "path": "/bank-sources/{sourceId}",
+    "params": [
+      {
+        "name": "sourceId",
+        "wire": "sourceId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bsrc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "updateBankSource": {
+    "method": "PUT",
+    "path": "/bank-sources/{sourceId}",
+    "params": [
+      {
+        "name": "sourceId",
+        "wire": "sourceId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bsrc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "listBankAccounts": {
+    "method": "GET",
+    "path": "/bank-accounts",
+    "params": [
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "createBankAccount": {
+    "method": "POST",
+    "path": "/bank-accounts",
+    "params": [
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "getBankAccount": {
+    "method": "GET",
+    "path": "/bank-accounts/{bankAccountId}",
+    "params": [
+      {
+        "name": "bankAccountId",
+        "wire": "bankAccountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "mapBankAccount": {
+    "method": "PUT",
+    "path": "/bank-accounts/{bankAccountId}/mapping",
+    "params": [
+      {
+        "name": "bankAccountId",
+        "wire": "bankAccountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "listBankAccountSources": {
+    "method": "GET",
+    "path": "/bank-accounts/{bankAccountId}/sources",
+    "params": [
+      {
+        "name": "bankAccountId",
+        "wire": "bankAccountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "createBankAccountSource": {
+    "method": "POST",
+    "path": "/bank-accounts/{bankAccountId}/sources",
+    "params": [
+      {
+        "name": "bankAccountId",
+        "wire": "bankAccountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "getBankAccountSource": {
+    "method": "GET",
+    "path": "/bank-account-sources/{aliasId}",
+    "params": [
+      {
+        "name": "aliasId",
+        "wire": "aliasId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "updateBankAccountSource": {
+    "method": "PUT",
+    "path": "/bank-account-sources/{aliasId}",
+    "params": [
+      {
+        "name": "aliasId",
+        "wire": "aliasId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "importBankMovements": {
+    "method": "POST",
+    "path": "/bank-account-sources/{aliasId}/imports",
+    "params": [
+      {
+        "name": "aliasId",
+        "wire": "aliasId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "listBankImports": {
+    "method": "GET",
+    "path": "/bank-account-sources/{aliasId}/imports",
+    "params": [
+      {
+        "name": "aliasId",
+        "wire": "aliasId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^bbatch_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "getBankImport": {
+    "method": "GET",
+    "path": "/bank-imports/{batchId}",
+    "params": [
+      {
+        "name": "batchId",
+        "wire": "batchId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bbatch_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "listBankSourceMovements": {
+    "method": "GET",
+    "path": "/bank-account-sources/{aliasId}/movements",
+    "params": [
+      {
+        "name": "aliasId",
+        "wire": "aliasId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "listBankMovements": {
+    "method": "GET",
+    "path": "/bank-accounts/{bankAccountId}/movements",
+    "params": [
+      {
+        "name": "bankAccountId",
+        "wire": "bankAccountId",
+        "in": "path",
+        "required": true,
+        "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "getBankMovement": {
+    "method": "GET",
+    "path": "/bank-movements/{movementId}",
+    "params": [
+      {
+        "name": "movementId",
+        "wire": "movementId",
+        "in": "path",
+        "required": true,
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "listBankObservations": {
+    "method": "GET",
+    "path": "/bank-movements/{movementId}/observations",
+    "params": [
+      {
+        "name": "movementId",
+        "wire": "movementId",
+        "in": "path",
+        "required": true,
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^bobs_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "resolveBankMovement": {
+    "method": "POST",
+    "path": "/bank-movements/{movementId}/resolution",
+    "params": [
+      {
+        "name": "movementId",
+        "wire": "movementId",
+        "in": "path",
+        "required": true,
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "listBankAllocations": {
+    "method": "GET",
+    "path": "/bank-movements/{movementId}/allocations",
+    "params": [
+      {
+        "name": "movementId",
+        "wire": "movementId",
+        "in": "path",
+        "required": true,
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "limit",
+        "wire": "limit",
+        "in": "query",
+        "required": false
+      },
+      {
+        "name": "after",
+        "wire": "after",
+        "in": "query",
+        "required": false,
+        "pattern": "^balloc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "createBankAllocation": {
+    "method": "POST",
+    "path": "/bank-movements/{movementId}/allocations",
+    "params": [
+      {
+        "name": "movementId",
+        "wire": "movementId",
+        "in": "path",
+        "required": true,
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 201,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
+  "getBankAllocation": {
+    "method": "GET",
+    "path": "/bank-allocations/{allocationId}",
+    "params": [
+      {
+        "name": "allocationId",
+        "wire": "allocationId",
+        "in": "path",
+        "required": true,
+        "pattern": "^balloc_[0-9A-HJKMNP-TV-Z]{26}$"
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false
+  },
+  "releaseBankAllocation": {
+    "method": "POST",
+    "path": "/bank-allocations/{allocationId}/release",
+    "params": [
+      {
+        "name": "allocationId",
+        "wire": "allocationId",
+        "in": "path",
+        "required": true,
+        "pattern": "^balloc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      {
+        "name": "idempotencyKey",
+        "wire": "Idempotency-Key",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xAccountingActingUserIssuer",
+        "wire": "X-Accounting-Acting-User-Issuer",
+        "in": "header",
+        "required": false,
+        "pattern": "^https://[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "xAccountingActingUserSubject",
+        "wire": "X-Accounting-Acting-User-Subject",
+        "in": "header",
+        "required": false,
+        "pattern": "^[\\x21-\\x2B\\x2D-\\x7E]+$"
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false
+  },
   "listTaxRules": {
     "method": "GET",
     "path": "/tax-rules",

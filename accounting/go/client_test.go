@@ -2,7 +2,10 @@ package accounting
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/dev-null-GmbH/d0-sdk/accounting/go/gen"
@@ -52,4 +55,39 @@ func TestRequiresPublicTenantAndSafeKey(t *testing.T) {
 	if err == nil {
 		t.Fatal("short idempotency key accepted")
 	}
+}
+
+func TestBankingNeverReachesTestTransport(t *testing.T) {
+	raw, err := os.ReadFile("../operations.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var operations []struct {
+		ID   string `json:"id"`
+		Path string `json:"path"`
+	}
+	if err = json.Unmarshal(raw, &operations); err != nil {
+		t.Fatal(err)
+	}
+	transport := &denyTransport{}
+	client, err := NewClient(Test, "ten_9GXQ8W5V4R3P2N1M0KJHGF7ED6", &http.Client{Transport: transport})
+	if err != nil {
+		t.Fatal(err)
+	}
+	count := 0
+	for _, operation := range operations {
+		if strings.HasPrefix(operation.Path, "/bank") {
+			count++
+			if client.allow(operation.ID) == nil {
+				t.Fatalf("banking operation %s allowed in test", operation.ID)
+			}
+		}
+	}
+	if count != 24 || transport.called {
+		t.Fatalf("banking operation count=%d egress=%v", count, transport.called)
+	}
+	if _, err := client.GetBankMovement(context.Background(), "btxn_9GXQ8W5V4R3P2N1M0KJHGF7ED6"); err == nil || transport.called {
+		t.Fatal("production-only banking method reached transport")
+	}
+
 }

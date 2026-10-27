@@ -22,15 +22,19 @@ import (
 
 // Defines values for AccessPermission.
 const (
-	AccessManage    AccessPermission = "access.manage"
-	AccountingRead  AccessPermission = "accounting.read"
-	AccountingWrite AccessPermission = "accounting.write"
-	AuditRead       AccessPermission = "audit.read"
-	DocumentsRead   AccessPermission = "documents.read"
-	DocumentsWrite  AccessPermission = "documents.write"
-	ExportsRead     AccessPermission = "exports.read"
-	PeriodsClose    AccessPermission = "periods.close"
-	WebhooksManage  AccessPermission = "webhooks.manage"
+	AccessManage     AccessPermission = "access.manage"
+	AccountingRead   AccessPermission = "accounting.read"
+	AccountingWrite  AccessPermission = "accounting.write"
+	AuditRead        AccessPermission = "audit.read"
+	BankingIngest    AccessPermission = "banking.ingest"
+	BankingManage    AccessPermission = "banking.manage"
+	BankingRead      AccessPermission = "banking.read"
+	BankingReconcile AccessPermission = "banking.reconcile"
+	DocumentsRead    AccessPermission = "documents.read"
+	DocumentsWrite   AccessPermission = "documents.write"
+	ExportsRead      AccessPermission = "exports.read"
+	PeriodsClose     AccessPermission = "periods.close"
+	WebhooksManage   AccessPermission = "webhooks.manage"
 )
 
 // Valid indicates whether the value is a known member of the AccessPermission enum.
@@ -43,6 +47,14 @@ func (e AccessPermission) Valid() bool {
 	case AccountingWrite:
 		return true
 	case AuditRead:
+		return true
+	case BankingIngest:
+		return true
+	case BankingManage:
+		return true
+	case BankingRead:
+		return true
+	case BankingReconcile:
 		return true
 	case DocumentsRead:
 		return true
@@ -125,6 +137,69 @@ func (e AsyncEventType) Valid() bool {
 	case EinvoiceZugferdPdfFailed:
 		return true
 	case EinvoiceZugferdPdfSucceeded:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for BankMovementStatus.
+const (
+	BankMovementBooked    BankMovementStatus = "booked"
+	BankMovementCancelled BankMovementStatus = "cancelled"
+	BankMovementPending   BankMovementStatus = "pending"
+)
+
+// Valid indicates whether the value is a known member of the BankMovementStatus enum.
+func (e BankMovementStatus) Valid() bool {
+	switch e {
+	case BankMovementBooked:
+		return true
+	case BankMovementCancelled:
+		return true
+	case BankMovementPending:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for BankMovementInputStatus.
+const (
+	BankMovementInputBooked    BankMovementInputStatus = "booked"
+	BankMovementInputCancelled BankMovementInputStatus = "cancelled"
+	BankMovementInputPending   BankMovementInputStatus = "pending"
+)
+
+// Valid indicates whether the value is a known member of the BankMovementInputStatus enum.
+func (e BankMovementInputStatus) Valid() bool {
+	switch e {
+	case BankMovementInputBooked:
+		return true
+	case BankMovementInputCancelled:
+		return true
+	case BankMovementInputPending:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for BankObservationStatus.
+const (
+	BankObservationBooked    BankObservationStatus = "booked"
+	BankObservationCancelled BankObservationStatus = "cancelled"
+	BankObservationPending   BankObservationStatus = "pending"
+)
+
+// Valid indicates whether the value is a known member of the BankObservationStatus enum.
+func (e BankObservationStatus) Valid() bool {
+	switch e {
+	case BankObservationBooked:
+		return true
+	case BankObservationCancelled:
+		return true
+	case BankObservationPending:
 		return true
 	default:
 		return false
@@ -929,6 +1004,347 @@ type AsyncEventSchema string
 
 // AsyncEventType defines model for AsyncEvent.Type.
 type AsyncEventType string
+
+// BankAccount Tenant-scoped banking data.
+type BankAccount struct {
+	CreatedAt time.Time `json:"createdAt"`
+
+	// Currency ISO-4217 alphabetic currency code.
+	//
+	// Examples: EUR
+	Currency Currency `json:"currency"`
+
+	// Id Opaque BankAccount identifier.
+	Id              BankAccountId             `json:"id"`
+	LedgerAccountId nullable.Nullable[string] `json:"ledgerAccountId"`
+	Name            string                    `json:"name"`
+	Revision        int64                     `json:"revision"`
+}
+
+// BankAccountCreate Tenant-scoped banking data.
+type BankAccountCreate struct {
+	// Currency ISO-4217 alphabetic currency code.
+	//
+	// Examples: EUR
+	Currency        Currency                  `json:"currency"`
+	LedgerAccountId nullable.Nullable[string] `json:"ledgerAccountId,omitempty"`
+	Name            string                    `json:"name"`
+}
+
+// BankAccountId Opaque BankAccount identifier.
+type BankAccountId = string
+
+// BankAccountMapping Tenant-scoped banking data.
+type BankAccountMapping struct {
+	ExpectedRevision int64                     `json:"expectedRevision"`
+	LedgerAccountId  nullable.Nullable[string] `json:"ledgerAccountId"`
+}
+
+// BankAccountPage Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.
+type BankAccountPage struct {
+	Data       []BankAccount             `json:"data"`
+	NextCursor nullable.Nullable[string] `json:"nextCursor"`
+}
+
+// BankAccountSource Tenant-scoped banking data.
+type BankAccountSource struct {
+	// AccountId Opaque BankAccount identifier.
+	AccountId          BankAccountId `json:"accountId"`
+	Active             bool          `json:"active"`
+	CreatedAt          time.Time     `json:"createdAt"`
+	ExternalAccountRef string        `json:"externalAccountRef"`
+
+	// Id Opaque BankAccountSource identifier.
+	Id       BankAccountSourceId `json:"id"`
+	Revision int64               `json:"revision"`
+
+	// SourceId Opaque BankSource identifier.
+	SourceId BankSourceId `json:"sourceId"`
+}
+
+// BankAccountSourceCreate Tenant-scoped banking data.
+type BankAccountSourceCreate struct {
+	ExternalAccountRef string `json:"externalAccountRef"`
+
+	// SourceId Opaque BankSource identifier.
+	SourceId BankSourceId `json:"sourceId"`
+}
+
+// BankAccountSourceId Opaque BankAccountSource identifier.
+type BankAccountSourceId = string
+
+// BankAccountSourcePage Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.
+type BankAccountSourcePage struct {
+	Data       []BankAccountSource       `json:"data"`
+	NextCursor nullable.Nullable[string] `json:"nextCursor"`
+}
+
+// BankAccountSourceUpdate Tenant-scoped banking data.
+type BankAccountSourceUpdate struct {
+	Active           bool  `json:"active"`
+	ExpectedRevision int64 `json:"expectedRevision"`
+}
+
+// BankAllocation Tenant-scoped banking data.
+type BankAllocation struct {
+	// AmountCents Exact positive int64 minor units, never a JSON number.
+	AmountCents string    `json:"amountCents"`
+	CreatedAt   time.Time `json:"createdAt"`
+
+	// EntryId Opaque Buchung identifier. Not the Buchungsnummer — that is `seq`.
+	//
+	// Examples: je_9GXQ8W5V4R3P2N1M0KJHGF7ED6
+	EntryId EntryId `json:"entryId"`
+
+	// Id Opaque BankAllocation identifier.
+	Id     BankAllocationId `json:"id"`
+	LineNo int32            `json:"lineNo"`
+
+	// MovementId Opaque BankMovement identifier.
+	MovementId       BankMovementId               `json:"movementId"`
+	MovementRevision int64                        `json:"movementRevision"`
+	ReleaseReason    nullable.Nullable[string]    `json:"releaseReason"`
+	ReleasedAt       nullable.Nullable[time.Time] `json:"releasedAt"`
+	Stale            bool                         `json:"stale"`
+}
+
+// BankAllocationCreate Allocate a booked, reviewed movement to a posted journal line on the mapped ledger account. Both allocation sums are bounded atomically. Reversed entries and stale reconciliation are rejected.
+type BankAllocationCreate struct {
+	// AmountCents Exact positive int64 minor units, never a JSON number.
+	AmountCents string `json:"amountCents"`
+
+	// EntryId Opaque Buchung identifier. Not the Buchungsnummer — that is `seq`.
+	//
+	// Examples: je_9GXQ8W5V4R3P2N1M0KJHGF7ED6
+	EntryId                EntryId `json:"entryId"`
+	ExpectedReviewRevision int64   `json:"expectedReviewRevision"`
+	ExpectedRevision       int64   `json:"expectedRevision"`
+	LineNo                 int32   `json:"lineNo"`
+}
+
+// BankAllocationId Opaque BankAllocation identifier.
+type BankAllocationId = string
+
+// BankAllocationPage Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.
+type BankAllocationPage struct {
+	Data       []BankAllocation          `json:"data"`
+	NextCursor nullable.Nullable[string] `json:"nextCursor"`
+}
+
+// BankAllocationRelease Release an allocation without deleting the allocation or its history.
+type BankAllocationRelease struct {
+	Reason string `json:"reason"`
+}
+
+// BankBatch Immutable ingestion receipt. Completeness and sync times are assertions by the source, not an independent bank verification.
+type BankBatch struct {
+	// AliasId Opaque BankAccountSource identifier.
+	AliasId      BankAccountSourceId                   `json:"aliasId"`
+	Complete     bool                                  `json:"complete"`
+	CoverageFrom nullable.Nullable[openapi_types.Date] `json:"coverageFrom"`
+	CoverageTo   nullable.Nullable[openapi_types.Date] `json:"coverageTo"`
+	Error        nullable.Nullable[string]             `json:"error"`
+
+	// Id Opaque BankBatch identifier.
+	Id               BankBatchId                  `json:"id"`
+	ObservedAt       time.Time                    `json:"observedAt"`
+	ReceivedAt       time.Time                    `json:"receivedAt"`
+	Reference        string                       `json:"reference"`
+	SuccessfulSyncAt nullable.Nullable[time.Time] `json:"successfulSyncAt"`
+}
+
+// BankBatchId Opaque BankBatch identifier.
+type BankBatchId = string
+
+// BankBatchPage Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.
+type BankBatchPage struct {
+	Data       []BankBatch               `json:"data"`
+	NextCursor nullable.Nullable[string] `json:"nextCursor"`
+}
+
+// BankImport Atomic bounded import, at most 500 movements, 1 MiB HTTP request body and 2 MiB normalized JSON. A durable alias/reference identifies the batch beyond the Idempotency-Key window; changed payload under that reference conflicts. Empty batches do not independently prove feed completeness.
+type BankImport struct {
+	Complete         bool                                  `json:"complete"`
+	CoverageFrom     nullable.Nullable[openapi_types.Date] `json:"coverageFrom,omitempty"`
+	CoverageTo       nullable.Nullable[openapi_types.Date] `json:"coverageTo,omitempty"`
+	Error            nullable.Nullable[string]             `json:"error,omitempty"`
+	Movements        []BankMovementInput                   `json:"movements"`
+	ObservedAt       time.Time                             `json:"observedAt"`
+	Reference        string                                `json:"reference"`
+	SuccessfulSyncAt nullable.Nullable[time.Time]          `json:"successfulSyncAt,omitempty"`
+}
+
+// BankMovement Tenant-scoped banking data.
+type BankMovement struct {
+	// AccountId Opaque BankAccount identifier.
+	AccountId BankAccountId `json:"accountId"`
+
+	// AliasId Opaque BankAccountSource identifier.
+	AliasId BankAccountSourceId `json:"aliasId"`
+
+	// AmountCents Exact signed int64 minor units; positive is bank-account inflow. Never a JSON number.
+	AmountCents   string                                `json:"amountCents"`
+	BankReference nullable.Nullable[string]             `json:"bankReference"`
+	BookingDate   nullable.Nullable[openapi_types.Date] `json:"bookingDate"`
+	Counterparty  nullable.Nullable[string]             `json:"counterparty"`
+
+	// Currency ISO-4217 alphabetic currency code.
+	//
+	// Examples: EUR
+	Currency    Currency                  `json:"currency"`
+	DuplicateOf nullable.Nullable[string] `json:"duplicateOf"`
+
+	// Id Opaque BankMovement identifier.
+	Id         BankMovementId `json:"id"`
+	ObservedAt time.Time      `json:"observedAt"`
+
+	// Provenance Bounded source references only, no credentials or raw provider responses; maximum 8 KiB encoded.
+	Provenance          map[string]string                     `json:"provenance"`
+	ReceivedAt          time.Time                             `json:"receivedAt"`
+	ReconciliationStale bool                                  `json:"reconciliationStale"`
+	Remittance          nullable.Nullable[string]             `json:"remittance"`
+	ReviewRequired      bool                                  `json:"reviewRequired"`
+	ReviewRevision      int64                                 `json:"reviewRevision"`
+	Revision            int64                                 `json:"revision"`
+	SourceReference     string                                `json:"sourceReference"`
+	Status              BankMovementStatus                    `json:"status"`
+	SupersededBy        nullable.Nullable[string]             `json:"supersededBy"`
+	ValueDate           nullable.Nullable[openapi_types.Date] `json:"valueDate"`
+}
+
+// BankMovementStatus defines model for BankMovement.Status.
+type BankMovementStatus string
+
+// BankMovementId Opaque BankMovement identifier.
+type BankMovementId = string
+
+// BankMovementInput One source observation. Zero expectedRevision creates a movement. Identical content replays independently of the request key; changed content requires the current revision. Booked movements require bookingDate.
+type BankMovementInput struct {
+	// AmountCents Exact signed int64 minor units; positive is bank-account inflow. Never a JSON number.
+	AmountCents   string                                `json:"amountCents"`
+	BankReference nullable.Nullable[string]             `json:"bankReference,omitempty"`
+	BookingDate   nullable.Nullable[openapi_types.Date] `json:"bookingDate,omitempty"`
+	Counterparty  nullable.Nullable[string]             `json:"counterparty,omitempty"`
+
+	// Currency ISO-4217 alphabetic currency code.
+	//
+	// Examples: EUR
+	Currency         Currency `json:"currency"`
+	ExpectedRevision int64    `json:"expectedRevision"`
+
+	// Provenance Bounded source references only, no credentials or raw provider responses; maximum 8 KiB encoded.
+	Provenance      *map[string]string                    `json:"provenance,omitempty"`
+	Remittance      nullable.Nullable[string]             `json:"remittance,omitempty"`
+	SourceReference string                                `json:"sourceReference"`
+	Status          BankMovementInputStatus               `json:"status"`
+	ValueDate       nullable.Nullable[openapi_types.Date] `json:"valueDate,omitempty"`
+}
+
+// BankMovementInputStatus defines model for BankMovementInput.Status.
+type BankMovementInputStatus string
+
+// BankMovementPage Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.
+type BankMovementPage struct {
+	Data       []BankMovement            `json:"data"`
+	NextCursor nullable.Nullable[string] `json:"nextCursor"`
+}
+
+// BankObservation Immutable source observation; id identifies the movement and revision identifies its observation.
+type BankObservation struct {
+	// AccountId Opaque BankAccount identifier.
+	AccountId BankAccountId `json:"accountId"`
+
+	// AliasId Opaque BankAccountSource identifier.
+	AliasId BankAccountSourceId `json:"aliasId"`
+
+	// AmountCents Exact signed int64 minor units; positive is bank-account inflow. Never a JSON number.
+	AmountCents   string                    `json:"amountCents"`
+	BankReference nullable.Nullable[string] `json:"bankReference"`
+
+	// BatchId Opaque BankBatch identifier.
+	BatchId      BankBatchId                           `json:"batchId"`
+	BookingDate  nullable.Nullable[openapi_types.Date] `json:"bookingDate"`
+	Counterparty nullable.Nullable[string]             `json:"counterparty"`
+
+	// Currency ISO-4217 alphabetic currency code.
+	//
+	// Examples: EUR
+	Currency Currency `json:"currency"`
+
+	// Id Opaque BankMovement identifier.
+	Id         BankMovementId `json:"id"`
+	ObservedAt time.Time      `json:"observedAt"`
+
+	// Provenance Bounded source references only, no credentials or raw provider responses; maximum 8 KiB encoded.
+	Provenance      map[string]string                     `json:"provenance"`
+	ReceivedAt      time.Time                             `json:"receivedAt"`
+	Remittance      nullable.Nullable[string]             `json:"remittance"`
+	Revision        int64                                 `json:"revision"`
+	SourceReference string                                `json:"sourceReference"`
+	Status          BankObservationStatus                 `json:"status"`
+	ValueDate       nullable.Nullable[openapi_types.Date] `json:"valueDate"`
+}
+
+// BankObservationStatus defines model for BankObservation.Status.
+type BankObservationStatus string
+
+// BankObservationId Opaque BankObservation identifier.
+type BankObservationId = string
+
+// BankObservationPage Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.
+type BankObservationPage struct {
+	Data       []BankObservation         `json:"data"`
+	NextCursor nullable.Nullable[string] `json:"nextCursor"`
+}
+
+// BankResolution Explicit review decision. Omit both relations to confirm a distinct movement. A relation must identify an eligible movement of the same bank account; no fuzzy deduplication is performed.
+type BankResolution struct {
+	DuplicateOf            nullable.Nullable[string] `json:"duplicateOf,omitempty"`
+	ExpectedReviewRevision int64                     `json:"expectedReviewRevision"`
+	ExpectedRevision       int64                     `json:"expectedRevision"`
+	Reason                 string                    `json:"reason"`
+	Supersedes             nullable.Nullable[string] `json:"supersedes,omitempty"`
+}
+
+// BankSource Tenant-scoped banking data.
+type BankSource struct {
+	Active    bool      `json:"active"`
+	CreatedAt time.Time `json:"createdAt"`
+
+	// Id Opaque BankSource identifier.
+	Id       BankSourceId `json:"id"`
+	Name     string       `json:"name"`
+	Revision int64        `json:"revision"`
+
+	// WriterMembershipId Opaque public membership identifier.
+	WriterMembershipId MembershipId `json:"writerMembershipId"`
+}
+
+// BankSourceCreate Tenant-scoped banking data.
+type BankSourceCreate struct {
+	Name string `json:"name"`
+
+	// WriterMembershipId Opaque public membership identifier.
+	WriterMembershipId MembershipId `json:"writerMembershipId"`
+}
+
+// BankSourceId Opaque BankSource identifier.
+type BankSourceId = string
+
+// BankSourcePage Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.
+type BankSourcePage struct {
+	Data       []BankSource              `json:"data"`
+	NextCursor nullable.Nullable[string] `json:"nextCursor"`
+}
+
+// BankSourceUpdate Tenant-scoped banking data.
+type BankSourceUpdate struct {
+	Active           bool  `json:"active"`
+	ExpectedRevision int64 `json:"expectedRevision"`
+
+	// WriterMembershipId Opaque public membership identifier.
+	WriterMembershipId MembershipId `json:"writerMembershipId"`
+}
 
 // Currency ISO-4217 alphabetic currency code.
 //
@@ -2592,6 +3008,408 @@ type GetAccountStatementParams struct {
 	After *AccountStatementCursor `form:"after,omitempty" json:"after,omitempty"`
 }
 
+// UpdateBankAccountSourceParams defines parameters for UpdateBankAccountSource.
+type UpdateBankAccountSourceParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// ListBankImportsParams defines parameters for ListBankImports.
+type ListBankImportsParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankBatchId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// ImportBankMovementsParams defines parameters for ImportBankMovements.
+type ImportBankMovementsParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// ListBankSourceMovementsParams defines parameters for ListBankSourceMovements.
+type ListBankSourceMovementsParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankMovementId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// ListBankAccountsParams defines parameters for ListBankAccounts.
+type ListBankAccountsParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankAccountId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// CreateBankAccountParams defines parameters for CreateBankAccount.
+type CreateBankAccountParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// MapBankAccountParams defines parameters for MapBankAccount.
+type MapBankAccountParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// ListBankMovementsParams defines parameters for ListBankMovements.
+type ListBankMovementsParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankMovementId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// ListBankAccountSourcesParams defines parameters for ListBankAccountSources.
+type ListBankAccountSourcesParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankAccountSourceId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// CreateBankAccountSourceParams defines parameters for CreateBankAccountSource.
+type CreateBankAccountSourceParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// ReleaseBankAllocationParams defines parameters for ReleaseBankAllocation.
+type ReleaseBankAllocationParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// ListBankAllocationsParams defines parameters for ListBankAllocations.
+type ListBankAllocationsParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankAllocationId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// CreateBankAllocationParams defines parameters for CreateBankAllocation.
+type CreateBankAllocationParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// ListBankObservationsParams defines parameters for ListBankObservations.
+type ListBankObservationsParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankObservationId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// ResolveBankMovementParams defines parameters for ResolveBankMovement.
+type ResolveBankMovementParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// ListBankSourcesParams defines parameters for ListBankSources.
+type ListBankSourcesParams struct {
+	// Limit Maximum number of items to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// After The preceding page nextCursor; keep the parent collection unchanged.
+	After *BankSourceId `form:"after,omitempty" json:"after,omitempty"`
+}
+
+// CreateBankSourceParams defines parameters for CreateBankSource.
+type CreateBankSourceParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
+// UpdateBankSourceParams defines parameters for UpdateBankSource.
+type UpdateBankSourceParams struct {
+	// IdempotencyKey Client-generated key that makes this mutation replay-safe. Send exactly
+	// one field value. Use a fresh value (a UUID or equivalent) per logical
+	// operation and reuse it verbatim when retrying that operation.
+	//
+	// One layer of surrounding double quotes is stripped before the key is
+	// compared, so the RFC 8941 structured-field form (`"k"`) and the bare form
+	// (`k`) name the same key.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+
+	// XAccountingActingUserIssuer Optional partner-attested human attribution, machine authentication only.
+	// Send exactly one value together with X-Accounting-Acting-User-Subject.
+	// Absolute HTTPS issuer URI without credentials, query or fragment; ASCII
+	// without whitespace or commas. The authenticated partner asserts this
+	// identity; Accounting does not independently verify a human login token.
+	// This metadata grants no tenant access or permissions and never replaces
+	// the authenticated machine membership. Retained as immutable same-transaction
+	// evidence with the write and included in the idempotency fingerprint.
+	// Successful attributed writes and their replays return
+	// X-Accounting-Acting-User-Recorded: v1. Deploy this API before enabling
+	// attributed writes; a missing acknowledgment leaves the outcome unqualified.
+	XAccountingActingUserIssuer *ActingUserIssuer `json:"X-Accounting-Acting-User-Issuer,omitempty"`
+
+	// XAccountingActingUserSubject Stable opaque person reference in the issuer namespace, asserted by the
+	// authenticated partner. Send exactly one value together with
+	// X-Accounting-Acting-User-Issuer; 1–200 ASCII bytes without whitespace or
+	// commas. Use technical references, not names or email addresses. A different
+	// attributed human or asserting machine under the same Idempotency-Key is
+	// a different request (422). Neither header is an Accounting membership ID.
+	XAccountingActingUserSubject *ActingUserSubject `json:"X-Accounting-Acting-User-Subject,omitempty"`
+}
+
 // ListDocumentsParams defines parameters for ListDocuments.
 type ListDocumentsParams struct {
 	// Limit Maximum number of items to return.
@@ -3681,6 +4499,36 @@ type PublishAccountMappingJSONRequestBody = AccountMappingCreate
 // CreateAccountJSONRequestBody defines body for CreateAccount for application/json ContentType.
 type CreateAccountJSONRequestBody = AccountCreate
 
+// UpdateBankAccountSourceJSONRequestBody defines body for UpdateBankAccountSource for application/json ContentType.
+type UpdateBankAccountSourceJSONRequestBody = BankAccountSourceUpdate
+
+// ImportBankMovementsJSONRequestBody defines body for ImportBankMovements for application/json ContentType.
+type ImportBankMovementsJSONRequestBody = BankImport
+
+// CreateBankAccountJSONRequestBody defines body for CreateBankAccount for application/json ContentType.
+type CreateBankAccountJSONRequestBody = BankAccountCreate
+
+// MapBankAccountJSONRequestBody defines body for MapBankAccount for application/json ContentType.
+type MapBankAccountJSONRequestBody = BankAccountMapping
+
+// CreateBankAccountSourceJSONRequestBody defines body for CreateBankAccountSource for application/json ContentType.
+type CreateBankAccountSourceJSONRequestBody = BankAccountSourceCreate
+
+// ReleaseBankAllocationJSONRequestBody defines body for ReleaseBankAllocation for application/json ContentType.
+type ReleaseBankAllocationJSONRequestBody = BankAllocationRelease
+
+// CreateBankAllocationJSONRequestBody defines body for CreateBankAllocation for application/json ContentType.
+type CreateBankAllocationJSONRequestBody = BankAllocationCreate
+
+// ResolveBankMovementJSONRequestBody defines body for ResolveBankMovement for application/json ContentType.
+type ResolveBankMovementJSONRequestBody = BankResolution
+
+// CreateBankSourceJSONRequestBody defines body for CreateBankSource for application/json ContentType.
+type CreateBankSourceJSONRequestBody = BankSourceCreate
+
+// UpdateBankSourceJSONRequestBody defines body for UpdateBankSource for application/json ContentType.
+type UpdateBankSourceJSONRequestBody = BankSourceUpdate
+
 // CreateDocumentJSONRequestBody defines body for CreateDocument for application/json ContentType.
 type CreateDocumentJSONRequestBody = DocumentCreate
 
@@ -4212,6 +5060,284 @@ type ClientInterface interface {
 	// Corresponds with GET /accounts/{accountId}/statement (the `GetAccountStatement` operationId).
 	GetAccountStatement(ctx context.Context, accountId AccountId, params *GetAccountStatementParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetBankAccountSource Fetch a source account binding
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-account-sources/{aliasId} (the `GetBankAccountSource` operationId).
+	GetBankAccountSource(ctx context.Context, aliasId BankAccountSourceId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateBankAccountSourceWithBody Enable or disable a source account binding
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+	UpdateBankAccountSourceWithBody(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateBankAccountSource Enable or disable a source account binding
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+	UpdateBankAccountSource(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, body UpdateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankImports List immutable ingestion receipts
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-account-sources/{aliasId}/imports (the `ListBankImports` operationId).
+	ListBankImports(ctx context.Context, aliasId BankAccountSourceId, params *ListBankImportsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ImportBankMovementsWithBody Import source observations atomically
+	//
+	// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+	ImportBankMovementsWithBody(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ImportBankMovements Import source observations atomically
+	//
+	// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+	ImportBankMovements(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, body ImportBankMovementsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankSourceMovements List movements from one source account
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-account-sources/{aliasId}/movements (the `ListBankSourceMovements` operationId).
+	ListBankSourceMovements(ctx context.Context, aliasId BankAccountSourceId, params *ListBankSourceMovementsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankAccounts List external bank accounts
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-accounts (the `ListBankAccounts` operationId).
+	ListBankAccounts(ctx context.Context, params *ListBankAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankAccountWithBody Register an external bank account
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+	CreateBankAccountWithBody(ctx context.Context, params *CreateBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankAccount Register an external bank account
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+	CreateBankAccount(ctx context.Context, params *CreateBankAccountParams, body CreateBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetBankAccount Fetch an external bank account
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-accounts/{bankAccountId} (the `GetBankAccount` operationId).
+	GetBankAccount(ctx context.Context, bankAccountId BankAccountId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// MapBankAccountWithBody Set an explicit ledger account mapping
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+	MapBankAccountWithBody(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// MapBankAccount Set an explicit ledger account mapping
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+	MapBankAccount(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, body MapBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankMovements List bank movements
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-accounts/{bankAccountId}/movements (the `ListBankMovements` operationId).
+	ListBankMovements(ctx context.Context, bankAccountId BankAccountId, params *ListBankMovementsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankAccountSources List source identities for an account
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-accounts/{bankAccountId}/sources (the `ListBankAccountSources` operationId).
+	ListBankAccountSources(ctx context.Context, bankAccountId BankAccountId, params *ListBankAccountSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankAccountSourceWithBody Bind a source account identity
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+	CreateBankAccountSourceWithBody(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankAccountSource Bind a source account identity
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+	CreateBankAccountSource(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, body CreateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetBankAllocation Fetch an allocation and current validity
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-allocations/{allocationId} (the `GetBankAllocation` operationId).
+	GetBankAllocation(ctx context.Context, allocationId BankAllocationId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ReleaseBankAllocationWithBody Release an allocation with retained history
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+	ReleaseBankAllocationWithBody(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ReleaseBankAllocation Release an allocation with retained history
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+	ReleaseBankAllocation(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, body ReleaseBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetBankImport Fetch an immutable ingestion receipt
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-imports/{batchId} (the `GetBankImport` operationId).
+	GetBankImport(ctx context.Context, batchId BankBatchId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetBankMovement Fetch a bank movement
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-movements/{movementId} (the `GetBankMovement` operationId).
+	GetBankMovement(ctx context.Context, movementId BankMovementId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankAllocations List allocations and releases
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-movements/{movementId}/allocations (the `ListBankAllocations` operationId).
+	ListBankAllocations(ctx context.Context, movementId BankMovementId, params *ListBankAllocationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankAllocationWithBody Allocate a movement to a journal line
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+	CreateBankAllocationWithBody(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankAllocation Allocate a movement to a journal line
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+	CreateBankAllocation(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, body CreateBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankObservations List immutable movement observations
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-movements/{movementId}/observations (the `ListBankObservations` operationId).
+	ListBankObservations(ctx context.Context, movementId BankMovementId, params *ListBankObservationsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ResolveBankMovementWithBody Record an explicit duplicate or distinct decision
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+	ResolveBankMovementWithBody(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ResolveBankMovement Record an explicit duplicate or distinct decision
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+	ResolveBankMovement(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, body ResolveBankMovementJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListBankSources List ingestion sources
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-sources (the `ListBankSources` operationId).
+	ListBankSources(ctx context.Context, params *ListBankSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankSourceWithBody Register an integration-owned ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+	CreateBankSourceWithBody(ctx context.Context, params *CreateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateBankSource Register an integration-owned ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+	CreateBankSource(ctx context.Context, params *CreateBankSourceParams, body CreateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetBankSource Fetch an ingestion source
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Corresponds with GET /bank-sources/{sourceId} (the `GetBankSource` operationId).
+	GetBankSource(ctx context.Context, sourceId BankSourceId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateBankSourceWithBody Delegate or deactivate an ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+	UpdateBankSourceWithBody(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateBankSource Delegate or deactivate an ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+	UpdateBankSource(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, body UpdateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetDocumentPreservation Fetch a preservation decision and its confirmed application state
 	//
 	// Requires documents.read. The request and actor attribution are immutable.
@@ -4520,6 +5646,9 @@ type ClientInterface interface {
 
 	// CloseFiscalYearWithBody Close income and expense accounts
 	//
+	// Requires both periods.close and accounting.write permissions and their
+	// corresponding machine scopes, including when replaying a previous response.
+	//
 	// Derives every currency's income and expense balance from posted entries
 	// inside this year using an immutable caller-selected mapping. Posts inverse
 	// lines against an explicit equity result account with one archived Beleg,
@@ -4533,6 +5662,9 @@ type ClientInterface interface {
 	CloseFiscalYearWithBody(ctx context.Context, yearId FiscalYearId, params *CloseFiscalYearParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CloseFiscalYear Close income and expense accounts
+	//
+	// Requires both periods.close and accounting.write permissions and their
+	// corresponding machine scopes, including when replaying a previous response.
 	//
 	// Derives every currency's income and expense balance from posted entries
 	// inside this year using an immutable caller-selected mapping. Posts inverse
@@ -5289,6 +6421,624 @@ func (c *Client) GetAccountStatement(ctx context.Context, accountId AccountId, p
 	return c.Client.Do(req)
 }
 
+// GetBankAccountSource Fetch a source account binding
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-account-sources/{aliasId} (the `GetBankAccountSource` operationId).
+func (c *Client) GetBankAccountSource(ctx context.Context, aliasId BankAccountSourceId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBankAccountSourceRequest(c.Server, aliasId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateBankAccountSourceWithBody Enable or disable a source account binding
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+func (c *Client) UpdateBankAccountSourceWithBody(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateBankAccountSourceRequestWithBody(c.Server, aliasId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateBankAccountSource Enable or disable a source account binding
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+func (c *Client) UpdateBankAccountSource(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, body UpdateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateBankAccountSourceRequest(c.Server, aliasId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankImports List immutable ingestion receipts
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-account-sources/{aliasId}/imports (the `ListBankImports` operationId).
+func (c *Client) ListBankImports(ctx context.Context, aliasId BankAccountSourceId, params *ListBankImportsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankImportsRequest(c.Server, aliasId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ImportBankMovementsWithBody Import source observations atomically
+//
+// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+func (c *Client) ImportBankMovementsWithBody(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewImportBankMovementsRequestWithBody(c.Server, aliasId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ImportBankMovements Import source observations atomically
+//
+// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+func (c *Client) ImportBankMovements(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, body ImportBankMovementsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewImportBankMovementsRequest(c.Server, aliasId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankSourceMovements List movements from one source account
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-account-sources/{aliasId}/movements (the `ListBankSourceMovements` operationId).
+func (c *Client) ListBankSourceMovements(ctx context.Context, aliasId BankAccountSourceId, params *ListBankSourceMovementsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankSourceMovementsRequest(c.Server, aliasId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankAccounts List external bank accounts
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-accounts (the `ListBankAccounts` operationId).
+func (c *Client) ListBankAccounts(ctx context.Context, params *ListBankAccountsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankAccountsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankAccountWithBody Register an external bank account
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+func (c *Client) CreateBankAccountWithBody(ctx context.Context, params *CreateBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankAccountRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankAccount Register an external bank account
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+func (c *Client) CreateBankAccount(ctx context.Context, params *CreateBankAccountParams, body CreateBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankAccountRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetBankAccount Fetch an external bank account
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-accounts/{bankAccountId} (the `GetBankAccount` operationId).
+func (c *Client) GetBankAccount(ctx context.Context, bankAccountId BankAccountId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBankAccountRequest(c.Server, bankAccountId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// MapBankAccountWithBody Set an explicit ledger account mapping
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+func (c *Client) MapBankAccountWithBody(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewMapBankAccountRequestWithBody(c.Server, bankAccountId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// MapBankAccount Set an explicit ledger account mapping
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+func (c *Client) MapBankAccount(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, body MapBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewMapBankAccountRequest(c.Server, bankAccountId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankMovements List bank movements
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-accounts/{bankAccountId}/movements (the `ListBankMovements` operationId).
+func (c *Client) ListBankMovements(ctx context.Context, bankAccountId BankAccountId, params *ListBankMovementsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankMovementsRequest(c.Server, bankAccountId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankAccountSources List source identities for an account
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-accounts/{bankAccountId}/sources (the `ListBankAccountSources` operationId).
+func (c *Client) ListBankAccountSources(ctx context.Context, bankAccountId BankAccountId, params *ListBankAccountSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankAccountSourcesRequest(c.Server, bankAccountId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankAccountSourceWithBody Bind a source account identity
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+func (c *Client) CreateBankAccountSourceWithBody(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankAccountSourceRequestWithBody(c.Server, bankAccountId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankAccountSource Bind a source account identity
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+func (c *Client) CreateBankAccountSource(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, body CreateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankAccountSourceRequest(c.Server, bankAccountId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetBankAllocation Fetch an allocation and current validity
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-allocations/{allocationId} (the `GetBankAllocation` operationId).
+func (c *Client) GetBankAllocation(ctx context.Context, allocationId BankAllocationId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBankAllocationRequest(c.Server, allocationId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ReleaseBankAllocationWithBody Release an allocation with retained history
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+func (c *Client) ReleaseBankAllocationWithBody(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReleaseBankAllocationRequestWithBody(c.Server, allocationId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ReleaseBankAllocation Release an allocation with retained history
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+func (c *Client) ReleaseBankAllocation(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, body ReleaseBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReleaseBankAllocationRequest(c.Server, allocationId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetBankImport Fetch an immutable ingestion receipt
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-imports/{batchId} (the `GetBankImport` operationId).
+func (c *Client) GetBankImport(ctx context.Context, batchId BankBatchId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBankImportRequest(c.Server, batchId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetBankMovement Fetch a bank movement
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-movements/{movementId} (the `GetBankMovement` operationId).
+func (c *Client) GetBankMovement(ctx context.Context, movementId BankMovementId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBankMovementRequest(c.Server, movementId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankAllocations List allocations and releases
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-movements/{movementId}/allocations (the `ListBankAllocations` operationId).
+func (c *Client) ListBankAllocations(ctx context.Context, movementId BankMovementId, params *ListBankAllocationsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankAllocationsRequest(c.Server, movementId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankAllocationWithBody Allocate a movement to a journal line
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+func (c *Client) CreateBankAllocationWithBody(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankAllocationRequestWithBody(c.Server, movementId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankAllocation Allocate a movement to a journal line
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+func (c *Client) CreateBankAllocation(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, body CreateBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankAllocationRequest(c.Server, movementId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankObservations List immutable movement observations
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-movements/{movementId}/observations (the `ListBankObservations` operationId).
+func (c *Client) ListBankObservations(ctx context.Context, movementId BankMovementId, params *ListBankObservationsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankObservationsRequest(c.Server, movementId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ResolveBankMovementWithBody Record an explicit duplicate or distinct decision
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+func (c *Client) ResolveBankMovementWithBody(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewResolveBankMovementRequestWithBody(c.Server, movementId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ResolveBankMovement Record an explicit duplicate or distinct decision
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+func (c *Client) ResolveBankMovement(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, body ResolveBankMovementJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewResolveBankMovementRequest(c.Server, movementId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListBankSources List ingestion sources
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-sources (the `ListBankSources` operationId).
+func (c *Client) ListBankSources(ctx context.Context, params *ListBankSourcesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListBankSourcesRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankSourceWithBody Register an integration-owned ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+func (c *Client) CreateBankSourceWithBody(ctx context.Context, params *CreateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankSourceRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateBankSource Register an integration-owned ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+func (c *Client) CreateBankSource(ctx context.Context, params *CreateBankSourceParams, body CreateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateBankSourceRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetBankSource Fetch an ingestion source
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Corresponds with GET /bank-sources/{sourceId} (the `GetBankSource` operationId).
+func (c *Client) GetBankSource(ctx context.Context, sourceId BankSourceId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBankSourceRequest(c.Server, sourceId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateBankSourceWithBody Delegate or deactivate an ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+func (c *Client) UpdateBankSourceWithBody(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateBankSourceRequestWithBody(c.Server, sourceId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateBankSource Delegate or deactivate an ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+func (c *Client) UpdateBankSource(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, body UpdateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateBankSourceRequest(c.Server, sourceId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // GetDocumentPreservation Fetch a preservation decision and its confirmed application state
 //
 // Requires documents.read. The request and actor attribution are immutable.
@@ -5817,6 +7567,9 @@ func (c *Client) CarryforwardFiscalYear(ctx context.Context, yearId FiscalYearId
 
 // CloseFiscalYearWithBody Close income and expense accounts
 //
+// Requires both periods.close and accounting.write permissions and their
+// corresponding machine scopes, including when replaying a previous response.
+//
 // Derives every currency's income and expense balance from posted entries
 // inside this year using an immutable caller-selected mapping. Posts inverse
 // lines against an explicit equity result account with one archived Beleg,
@@ -5840,6 +7593,9 @@ func (c *Client) CloseFiscalYearWithBody(ctx context.Context, yearId FiscalYearI
 }
 
 // CloseFiscalYear Close income and expense accounts
+//
+// Requires both periods.close and accounting.write permissions and their
+// corresponding machine scopes, including when replaying a previous response.
 //
 // Derives every currency's income and expense balance from posted entries
 // inside this year using an immutable caller-selected mapping. Posts inverse
@@ -7401,6 +9157,1586 @@ func NewGetAccountStatementRequest(server string, accountId AccountId, params *G
 	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetBankAccountSourceRequest constructs an http.Request for the GetBankAccountSource method
+func NewGetBankAccountSourceRequest(server string, aliasId BankAccountSourceId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "aliasId", aliasId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-account-sources/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateBankAccountSourceRequest calls the generic UpdateBankAccountSource builder with application/json body
+func NewUpdateBankAccountSourceRequest(server string, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, body UpdateBankAccountSourceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateBankAccountSourceRequestWithBody(server, aliasId, params, "application/json", bodyReader)
+}
+
+// NewUpdateBankAccountSourceRequestWithBody constructs an http.Request for the UpdateBankAccountSource method, with any body, and a specified content type
+func NewUpdateBankAccountSourceRequestWithBody(server string, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "aliasId", aliasId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-account-sources/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListBankImportsRequest constructs an http.Request for the ListBankImports method
+func NewListBankImportsRequest(server string, aliasId BankAccountSourceId, params *ListBankImportsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "aliasId", aliasId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-account-sources/%s/imports", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewImportBankMovementsRequest calls the generic ImportBankMovements builder with application/json body
+func NewImportBankMovementsRequest(server string, aliasId BankAccountSourceId, params *ImportBankMovementsParams, body ImportBankMovementsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewImportBankMovementsRequestWithBody(server, aliasId, params, "application/json", bodyReader)
+}
+
+// NewImportBankMovementsRequestWithBody constructs an http.Request for the ImportBankMovements method, with any body, and a specified content type
+func NewImportBankMovementsRequestWithBody(server string, aliasId BankAccountSourceId, params *ImportBankMovementsParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "aliasId", aliasId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-account-sources/%s/imports", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListBankSourceMovementsRequest constructs an http.Request for the ListBankSourceMovements method
+func NewListBankSourceMovementsRequest(server string, aliasId BankAccountSourceId, params *ListBankSourceMovementsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "aliasId", aliasId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-account-sources/%s/movements", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListBankAccountsRequest constructs an http.Request for the ListBankAccounts method
+func NewListBankAccountsRequest(server string, params *ListBankAccountsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-accounts")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateBankAccountRequest calls the generic CreateBankAccount builder with application/json body
+func NewCreateBankAccountRequest(server string, params *CreateBankAccountParams, body CreateBankAccountJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateBankAccountRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateBankAccountRequestWithBody constructs an http.Request for the CreateBankAccount method, with any body, and a specified content type
+func NewCreateBankAccountRequestWithBody(server string, params *CreateBankAccountParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-accounts")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetBankAccountRequest constructs an http.Request for the GetBankAccount method
+func NewGetBankAccountRequest(server string, bankAccountId BankAccountId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "bankAccountId", bankAccountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-accounts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewMapBankAccountRequest calls the generic MapBankAccount builder with application/json body
+func NewMapBankAccountRequest(server string, bankAccountId BankAccountId, params *MapBankAccountParams, body MapBankAccountJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewMapBankAccountRequestWithBody(server, bankAccountId, params, "application/json", bodyReader)
+}
+
+// NewMapBankAccountRequestWithBody constructs an http.Request for the MapBankAccount method, with any body, and a specified content type
+func NewMapBankAccountRequestWithBody(server string, bankAccountId BankAccountId, params *MapBankAccountParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "bankAccountId", bankAccountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-accounts/%s/mapping", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListBankMovementsRequest constructs an http.Request for the ListBankMovements method
+func NewListBankMovementsRequest(server string, bankAccountId BankAccountId, params *ListBankMovementsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "bankAccountId", bankAccountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-accounts/%s/movements", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListBankAccountSourcesRequest constructs an http.Request for the ListBankAccountSources method
+func NewListBankAccountSourcesRequest(server string, bankAccountId BankAccountId, params *ListBankAccountSourcesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "bankAccountId", bankAccountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-accounts/%s/sources", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateBankAccountSourceRequest calls the generic CreateBankAccountSource builder with application/json body
+func NewCreateBankAccountSourceRequest(server string, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, body CreateBankAccountSourceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateBankAccountSourceRequestWithBody(server, bankAccountId, params, "application/json", bodyReader)
+}
+
+// NewCreateBankAccountSourceRequestWithBody constructs an http.Request for the CreateBankAccountSource method, with any body, and a specified content type
+func NewCreateBankAccountSourceRequestWithBody(server string, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "bankAccountId", bankAccountId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-accounts/%s/sources", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetBankAllocationRequest constructs an http.Request for the GetBankAllocation method
+func NewGetBankAllocationRequest(server string, allocationId BankAllocationId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "allocationId", allocationId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-allocations/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewReleaseBankAllocationRequest calls the generic ReleaseBankAllocation builder with application/json body
+func NewReleaseBankAllocationRequest(server string, allocationId BankAllocationId, params *ReleaseBankAllocationParams, body ReleaseBankAllocationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewReleaseBankAllocationRequestWithBody(server, allocationId, params, "application/json", bodyReader)
+}
+
+// NewReleaseBankAllocationRequestWithBody constructs an http.Request for the ReleaseBankAllocation method, with any body, and a specified content type
+func NewReleaseBankAllocationRequestWithBody(server string, allocationId BankAllocationId, params *ReleaseBankAllocationParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "allocationId", allocationId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-allocations/%s/release", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetBankImportRequest constructs an http.Request for the GetBankImport method
+func NewGetBankImportRequest(server string, batchId BankBatchId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "batchId", batchId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-imports/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetBankMovementRequest constructs an http.Request for the GetBankMovement method
+func NewGetBankMovementRequest(server string, movementId BankMovementId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "movementId", movementId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-movements/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListBankAllocationsRequest constructs an http.Request for the ListBankAllocations method
+func NewListBankAllocationsRequest(server string, movementId BankMovementId, params *ListBankAllocationsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "movementId", movementId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-movements/%s/allocations", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateBankAllocationRequest calls the generic CreateBankAllocation builder with application/json body
+func NewCreateBankAllocationRequest(server string, movementId BankMovementId, params *CreateBankAllocationParams, body CreateBankAllocationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateBankAllocationRequestWithBody(server, movementId, params, "application/json", bodyReader)
+}
+
+// NewCreateBankAllocationRequestWithBody constructs an http.Request for the CreateBankAllocation method, with any body, and a specified content type
+func NewCreateBankAllocationRequestWithBody(server string, movementId BankMovementId, params *CreateBankAllocationParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "movementId", movementId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-movements/%s/allocations", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListBankObservationsRequest constructs an http.Request for the ListBankObservations method
+func NewListBankObservationsRequest(server string, movementId BankMovementId, params *ListBankObservationsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "movementId", movementId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-movements/%s/observations", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewResolveBankMovementRequest calls the generic ResolveBankMovement builder with application/json body
+func NewResolveBankMovementRequest(server string, movementId BankMovementId, params *ResolveBankMovementParams, body ResolveBankMovementJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewResolveBankMovementRequestWithBody(server, movementId, params, "application/json", bodyReader)
+}
+
+// NewResolveBankMovementRequestWithBody constructs an http.Request for the ResolveBankMovement method, with any body, and a specified content type
+func NewResolveBankMovementRequestWithBody(server string, movementId BankMovementId, params *ResolveBankMovementParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "movementId", movementId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-movements/%s/resolution", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListBankSourcesRequest constructs an http.Request for the ListBankSources method
+func NewListBankSourcesRequest(server string, params *ListBankSourcesParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-sources")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.After != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "after", *params.After, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateBankSourceRequest calls the generic CreateBankSource builder with application/json body
+func NewCreateBankSourceRequest(server string, params *CreateBankSourceParams, body CreateBankSourceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateBankSourceRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateBankSourceRequestWithBody constructs an http.Request for the CreateBankSource method, with any body, and a specified content type
+func NewCreateBankSourceRequestWithBody(server string, params *CreateBankSourceParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-sources")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetBankSourceRequest constructs an http.Request for the GetBankSource method
+func NewGetBankSourceRequest(server string, sourceId BankSourceId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "sourceId", sourceId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-sources/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateBankSourceRequest calls the generic UpdateBankSource builder with application/json body
+func NewUpdateBankSourceRequest(server string, sourceId BankSourceId, params *UpdateBankSourceParams, body UpdateBankSourceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateBankSourceRequestWithBody(server, sourceId, params, "application/json", bodyReader)
+}
+
+// NewUpdateBankSourceRequestWithBody constructs an http.Request for the UpdateBankSource method, with any body, and a specified content type
+func NewUpdateBankSourceRequestWithBody(server string, sourceId BankSourceId, params *UpdateBankSourceParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "sourceId", sourceId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/bank-sources/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("Idempotency-Key", headerParam0)
+
+		if params.XAccountingActingUserIssuer != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Issuer", *params.XAccountingActingUserIssuer, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Issuer", headerParam1)
+		}
+
+		if params.XAccountingActingUserSubject != nil {
+			var headerParam2 string
+
+			headerParam2, err = runtime.StyleParamWithOptions("simple", false, "X-Accounting-Acting-User-Subject", *params.XAccountingActingUserSubject, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("X-Accounting-Acting-User-Subject", headerParam2)
+		}
+
 	}
 
 	return req, nil
@@ -10840,6 +14176,312 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with GET /accounts/{accountId}/statement (the `GetAccountStatement` operationId).
 	GetAccountStatementWithResponse(ctx context.Context, accountId AccountId, params *GetAccountStatementParams, reqEditors ...RequestEditorFn) (*GetAccountStatementResponse, error)
 
+	// GetBankAccountSourceWithResponse Fetch a source account binding
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-account-sources/{aliasId} (the `GetBankAccountSource` operationId).
+	GetBankAccountSourceWithResponse(ctx context.Context, aliasId BankAccountSourceId, reqEditors ...RequestEditorFn) (*GetBankAccountSourceResponse, error)
+
+	// UpdateBankAccountSourceWithBodyWithResponse Enable or disable a source account binding
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+	UpdateBankAccountSourceWithBodyWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBankAccountSourceResponse, error)
+
+	// UpdateBankAccountSourceWithResponse Enable or disable a source account binding
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+	UpdateBankAccountSourceWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, body UpdateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBankAccountSourceResponse, error)
+
+	// ListBankImportsWithResponse List immutable ingestion receipts
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-account-sources/{aliasId}/imports (the `ListBankImports` operationId).
+	ListBankImportsWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ListBankImportsParams, reqEditors ...RequestEditorFn) (*ListBankImportsResponse, error)
+
+	// ImportBankMovementsWithBodyWithResponse Import source observations atomically
+	//
+	// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+	ImportBankMovementsWithBodyWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportBankMovementsResponse, error)
+
+	// ImportBankMovementsWithResponse Import source observations atomically
+	//
+	// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+	ImportBankMovementsWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, body ImportBankMovementsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportBankMovementsResponse, error)
+
+	// ListBankSourceMovementsWithResponse List movements from one source account
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-account-sources/{aliasId}/movements (the `ListBankSourceMovements` operationId).
+	ListBankSourceMovementsWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ListBankSourceMovementsParams, reqEditors ...RequestEditorFn) (*ListBankSourceMovementsResponse, error)
+
+	// ListBankAccountsWithResponse List external bank accounts
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-accounts (the `ListBankAccounts` operationId).
+	ListBankAccountsWithResponse(ctx context.Context, params *ListBankAccountsParams, reqEditors ...RequestEditorFn) (*ListBankAccountsResponse, error)
+
+	// CreateBankAccountWithBodyWithResponse Register an external bank account
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+	CreateBankAccountWithBodyWithResponse(ctx context.Context, params *CreateBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankAccountResponse, error)
+
+	// CreateBankAccountWithResponse Register an external bank account
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+	CreateBankAccountWithResponse(ctx context.Context, params *CreateBankAccountParams, body CreateBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankAccountResponse, error)
+
+	// GetBankAccountWithResponse Fetch an external bank account
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-accounts/{bankAccountId} (the `GetBankAccount` operationId).
+	GetBankAccountWithResponse(ctx context.Context, bankAccountId BankAccountId, reqEditors ...RequestEditorFn) (*GetBankAccountResponse, error)
+
+	// MapBankAccountWithBodyWithResponse Set an explicit ledger account mapping
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+	MapBankAccountWithBodyWithResponse(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*MapBankAccountResponse, error)
+
+	// MapBankAccountWithResponse Set an explicit ledger account mapping
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+	MapBankAccountWithResponse(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, body MapBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*MapBankAccountResponse, error)
+
+	// ListBankMovementsWithResponse List bank movements
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-accounts/{bankAccountId}/movements (the `ListBankMovements` operationId).
+	ListBankMovementsWithResponse(ctx context.Context, bankAccountId BankAccountId, params *ListBankMovementsParams, reqEditors ...RequestEditorFn) (*ListBankMovementsResponse, error)
+
+	// ListBankAccountSourcesWithResponse List source identities for an account
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-accounts/{bankAccountId}/sources (the `ListBankAccountSources` operationId).
+	ListBankAccountSourcesWithResponse(ctx context.Context, bankAccountId BankAccountId, params *ListBankAccountSourcesParams, reqEditors ...RequestEditorFn) (*ListBankAccountSourcesResponse, error)
+
+	// CreateBankAccountSourceWithBodyWithResponse Bind a source account identity
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+	CreateBankAccountSourceWithBodyWithResponse(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankAccountSourceResponse, error)
+
+	// CreateBankAccountSourceWithResponse Bind a source account identity
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+	CreateBankAccountSourceWithResponse(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, body CreateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankAccountSourceResponse, error)
+
+	// GetBankAllocationWithResponse Fetch an allocation and current validity
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-allocations/{allocationId} (the `GetBankAllocation` operationId).
+	GetBankAllocationWithResponse(ctx context.Context, allocationId BankAllocationId, reqEditors ...RequestEditorFn) (*GetBankAllocationResponse, error)
+
+	// ReleaseBankAllocationWithBodyWithResponse Release an allocation with retained history
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+	ReleaseBankAllocationWithBodyWithResponse(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReleaseBankAllocationResponse, error)
+
+	// ReleaseBankAllocationWithResponse Release an allocation with retained history
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+	ReleaseBankAllocationWithResponse(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, body ReleaseBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*ReleaseBankAllocationResponse, error)
+
+	// GetBankImportWithResponse Fetch an immutable ingestion receipt
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-imports/{batchId} (the `GetBankImport` operationId).
+	GetBankImportWithResponse(ctx context.Context, batchId BankBatchId, reqEditors ...RequestEditorFn) (*GetBankImportResponse, error)
+
+	// GetBankMovementWithResponse Fetch a bank movement
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-movements/{movementId} (the `GetBankMovement` operationId).
+	GetBankMovementWithResponse(ctx context.Context, movementId BankMovementId, reqEditors ...RequestEditorFn) (*GetBankMovementResponse, error)
+
+	// ListBankAllocationsWithResponse List allocations and releases
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-movements/{movementId}/allocations (the `ListBankAllocations` operationId).
+	ListBankAllocationsWithResponse(ctx context.Context, movementId BankMovementId, params *ListBankAllocationsParams, reqEditors ...RequestEditorFn) (*ListBankAllocationsResponse, error)
+
+	// CreateBankAllocationWithBodyWithResponse Allocate a movement to a journal line
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+	CreateBankAllocationWithBodyWithResponse(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankAllocationResponse, error)
+
+	// CreateBankAllocationWithResponse Allocate a movement to a journal line
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+	CreateBankAllocationWithResponse(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, body CreateBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankAllocationResponse, error)
+
+	// ListBankObservationsWithResponse List immutable movement observations
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-movements/{movementId}/observations (the `ListBankObservations` operationId).
+	ListBankObservationsWithResponse(ctx context.Context, movementId BankMovementId, params *ListBankObservationsParams, reqEditors ...RequestEditorFn) (*ListBankObservationsResponse, error)
+
+	// ResolveBankMovementWithBodyWithResponse Record an explicit duplicate or distinct decision
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+	ResolveBankMovementWithBodyWithResponse(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ResolveBankMovementResponse, error)
+
+	// ResolveBankMovementWithResponse Record an explicit duplicate or distinct decision
+	//
+	// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+	ResolveBankMovementWithResponse(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, body ResolveBankMovementJSONRequestBody, reqEditors ...RequestEditorFn) (*ResolveBankMovementResponse, error)
+
+	// ListBankSourcesWithResponse List ingestion sources
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-sources (the `ListBankSources` operationId).
+	ListBankSourcesWithResponse(ctx context.Context, params *ListBankSourcesParams, reqEditors ...RequestEditorFn) (*ListBankSourcesResponse, error)
+
+	// CreateBankSourceWithBodyWithResponse Register an integration-owned ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+	CreateBankSourceWithBodyWithResponse(ctx context.Context, params *CreateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankSourceResponse, error)
+
+	// CreateBankSourceWithResponse Register an integration-owned ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+	CreateBankSourceWithResponse(ctx context.Context, params *CreateBankSourceParams, body CreateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankSourceResponse, error)
+
+	// GetBankSourceWithResponse Fetch an ingestion source
+	//
+	// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /bank-sources/{sourceId} (the `GetBankSource` operationId).
+	GetBankSourceWithResponse(ctx context.Context, sourceId BankSourceId, reqEditors ...RequestEditorFn) (*GetBankSourceResponse, error)
+
+	// UpdateBankSourceWithBodyWithResponse Delegate or deactivate an ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+	UpdateBankSourceWithBodyWithResponse(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBankSourceResponse, error)
+
+	// UpdateBankSourceWithResponse Delegate or deactivate an ingestion source
+	//
+	// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+	UpdateBankSourceWithResponse(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, body UpdateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBankSourceResponse, error)
+
 	// GetDocumentPreservationWithResponse Fetch a preservation decision and its confirmed application state
 	//
 	// Requires documents.read. The request and actor attribution are immutable.
@@ -11172,6 +14814,9 @@ type ClientWithResponsesInterface interface {
 
 	// CloseFiscalYearWithBodyWithResponse Close income and expense accounts
 	//
+	// Requires both periods.close and accounting.write permissions and their
+	// corresponding machine scopes, including when replaying a previous response.
+	//
 	// Derives every currency's income and expense balance from posted entries
 	// inside this year using an immutable caller-selected mapping. Posts inverse
 	// lines against an explicit equity result account with one archived Beleg,
@@ -11185,6 +14830,9 @@ type ClientWithResponsesInterface interface {
 	CloseFiscalYearWithBodyWithResponse(ctx context.Context, yearId FiscalYearId, params *CloseFiscalYearParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloseFiscalYearResponse, error)
 
 	// CloseFiscalYearWithResponse Close income and expense accounts
+	//
+	// Requires both periods.close and accounting.write permissions and their
+	// corresponding machine scopes, including when replaying a previous response.
 	//
 	// Derives every currency's income and expense balance from posted entries
 	// inside this year using an immutable caller-selected mapping. Posts inverse
@@ -12314,6 +15962,2404 @@ func (r GetAccountStatementResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetAccountStatementResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetBankAccountSourceResponse409Headers the declared response headers of an HTTP 409 response for GetBankAccountSource
+type GetBankAccountSourceResponse409Headers struct {
+	RetryAfter *int
+}
+
+type GetBankAccountSourceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAccountSource
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *GetBankAccountSourceResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetBankAccountSourceResponse) GetJSON200() *BankAccountSource {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetBankAccountSourceResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetBankAccountSourceResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetBankAccountSourceResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetBankAccountSourceResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r GetBankAccountSourceResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r GetBankAccountSourceResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r GetBankAccountSourceResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r GetBankAccountSourceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetBankAccountSourceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetBankAccountSourceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetBankAccountSourceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateBankAccountSourceResponse200Headers the declared response headers of an HTTP 200 response for UpdateBankAccountSource
+type UpdateBankAccountSourceResponse200Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// UpdateBankAccountSourceResponse409Headers the declared response headers of an HTTP 409 response for UpdateBankAccountSource
+type UpdateBankAccountSourceResponse409Headers struct {
+	RetryAfter *int
+}
+
+type UpdateBankAccountSourceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAccountSource
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *UpdateBankAccountSourceResponse200Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *UpdateBankAccountSourceResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateBankAccountSourceResponse) GetJSON200() *BankAccountSource {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateBankAccountSourceResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateBankAccountSourceResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateBankAccountSourceResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateBankAccountSourceResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r UpdateBankAccountSourceResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateBankAccountSourceResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r UpdateBankAccountSourceResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateBankAccountSourceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateBankAccountSourceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateBankAccountSourceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateBankAccountSourceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankImportsResponse409Headers the declared response headers of an HTTP 409 response for ListBankImports
+type ListBankImportsResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankImportsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankBatchPage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankImportsResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankImportsResponse) GetJSON200() *BankBatchPage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankImportsResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankImportsResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankImportsResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankImportsResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankImportsResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankImportsResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankImportsResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankImportsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankImportsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankImportsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankImportsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ImportBankMovementsResponse201Headers the declared response headers of an HTTP 201 response for ImportBankMovements
+type ImportBankMovementsResponse201Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// ImportBankMovementsResponse409Headers the declared response headers of an HTTP 409 response for ImportBankMovements
+type ImportBankMovementsResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ImportBankMovementsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *BankBatch
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers201 the parsed response headers for an HTTP 201 response
+	Headers201 *ImportBankMovementsResponse201Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ImportBankMovementsResponse409Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r ImportBankMovementsResponse) GetJSON201() *BankBatch {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ImportBankMovementsResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ImportBankMovementsResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ImportBankMovementsResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ImportBankMovementsResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ImportBankMovementsResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ImportBankMovementsResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ImportBankMovementsResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ImportBankMovementsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ImportBankMovementsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ImportBankMovementsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ImportBankMovementsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankSourceMovementsResponse409Headers the declared response headers of an HTTP 409 response for ListBankSourceMovements
+type ListBankSourceMovementsResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankSourceMovementsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankMovementPage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankSourceMovementsResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankSourceMovementsResponse) GetJSON200() *BankMovementPage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankSourceMovementsResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankSourceMovementsResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankSourceMovementsResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankSourceMovementsResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankSourceMovementsResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankSourceMovementsResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankSourceMovementsResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankSourceMovementsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankSourceMovementsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankSourceMovementsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankSourceMovementsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankAccountsResponse409Headers the declared response headers of an HTTP 409 response for ListBankAccounts
+type ListBankAccountsResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankAccountsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAccountPage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankAccountsResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankAccountsResponse) GetJSON200() *BankAccountPage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankAccountsResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankAccountsResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankAccountsResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankAccountsResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankAccountsResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankAccountsResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankAccountsResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankAccountsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankAccountsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankAccountsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankAccountsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateBankAccountResponse201Headers the declared response headers of an HTTP 201 response for CreateBankAccount
+type CreateBankAccountResponse201Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// CreateBankAccountResponse409Headers the declared response headers of an HTTP 409 response for CreateBankAccount
+type CreateBankAccountResponse409Headers struct {
+	RetryAfter *int
+}
+
+type CreateBankAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *BankAccount
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers201 the parsed response headers for an HTTP 201 response
+	Headers201 *CreateBankAccountResponse201Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *CreateBankAccountResponse409Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateBankAccountResponse) GetJSON201() *BankAccount {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateBankAccountResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateBankAccountResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateBankAccountResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateBankAccountResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateBankAccountResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateBankAccountResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r CreateBankAccountResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateBankAccountResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateBankAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateBankAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateBankAccountResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetBankAccountResponse409Headers the declared response headers of an HTTP 409 response for GetBankAccount
+type GetBankAccountResponse409Headers struct {
+	RetryAfter *int
+}
+
+type GetBankAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAccount
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *GetBankAccountResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetBankAccountResponse) GetJSON200() *BankAccount {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetBankAccountResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetBankAccountResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetBankAccountResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetBankAccountResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r GetBankAccountResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r GetBankAccountResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r GetBankAccountResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r GetBankAccountResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetBankAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetBankAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetBankAccountResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// MapBankAccountResponse200Headers the declared response headers of an HTTP 200 response for MapBankAccount
+type MapBankAccountResponse200Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// MapBankAccountResponse409Headers the declared response headers of an HTTP 409 response for MapBankAccount
+type MapBankAccountResponse409Headers struct {
+	RetryAfter *int
+}
+
+type MapBankAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAccount
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *MapBankAccountResponse200Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *MapBankAccountResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r MapBankAccountResponse) GetJSON200() *BankAccount {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r MapBankAccountResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r MapBankAccountResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r MapBankAccountResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r MapBankAccountResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r MapBankAccountResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r MapBankAccountResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r MapBankAccountResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r MapBankAccountResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r MapBankAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r MapBankAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r MapBankAccountResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankMovementsResponse409Headers the declared response headers of an HTTP 409 response for ListBankMovements
+type ListBankMovementsResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankMovementsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankMovementPage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankMovementsResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankMovementsResponse) GetJSON200() *BankMovementPage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankMovementsResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankMovementsResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankMovementsResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankMovementsResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankMovementsResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankMovementsResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankMovementsResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankMovementsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankMovementsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankMovementsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankMovementsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankAccountSourcesResponse409Headers the declared response headers of an HTTP 409 response for ListBankAccountSources
+type ListBankAccountSourcesResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankAccountSourcesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAccountSourcePage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankAccountSourcesResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankAccountSourcesResponse) GetJSON200() *BankAccountSourcePage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankAccountSourcesResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankAccountSourcesResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankAccountSourcesResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankAccountSourcesResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankAccountSourcesResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankAccountSourcesResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankAccountSourcesResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankAccountSourcesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankAccountSourcesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankAccountSourcesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankAccountSourcesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateBankAccountSourceResponse201Headers the declared response headers of an HTTP 201 response for CreateBankAccountSource
+type CreateBankAccountSourceResponse201Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// CreateBankAccountSourceResponse409Headers the declared response headers of an HTTP 409 response for CreateBankAccountSource
+type CreateBankAccountSourceResponse409Headers struct {
+	RetryAfter *int
+}
+
+type CreateBankAccountSourceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *BankAccountSource
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers201 the parsed response headers for an HTTP 201 response
+	Headers201 *CreateBankAccountSourceResponse201Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *CreateBankAccountSourceResponse409Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateBankAccountSourceResponse) GetJSON201() *BankAccountSource {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateBankAccountSourceResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateBankAccountSourceResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateBankAccountSourceResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateBankAccountSourceResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateBankAccountSourceResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateBankAccountSourceResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r CreateBankAccountSourceResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateBankAccountSourceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateBankAccountSourceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateBankAccountSourceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateBankAccountSourceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetBankAllocationResponse409Headers the declared response headers of an HTTP 409 response for GetBankAllocation
+type GetBankAllocationResponse409Headers struct {
+	RetryAfter *int
+}
+
+type GetBankAllocationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAllocation
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *GetBankAllocationResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetBankAllocationResponse) GetJSON200() *BankAllocation {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetBankAllocationResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetBankAllocationResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetBankAllocationResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetBankAllocationResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r GetBankAllocationResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r GetBankAllocationResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r GetBankAllocationResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r GetBankAllocationResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetBankAllocationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetBankAllocationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetBankAllocationResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ReleaseBankAllocationResponse200Headers the declared response headers of an HTTP 200 response for ReleaseBankAllocation
+type ReleaseBankAllocationResponse200Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// ReleaseBankAllocationResponse409Headers the declared response headers of an HTTP 409 response for ReleaseBankAllocation
+type ReleaseBankAllocationResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ReleaseBankAllocationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAllocation
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ReleaseBankAllocationResponse200Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ReleaseBankAllocationResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ReleaseBankAllocationResponse) GetJSON200() *BankAllocation {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ReleaseBankAllocationResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ReleaseBankAllocationResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ReleaseBankAllocationResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ReleaseBankAllocationResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ReleaseBankAllocationResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ReleaseBankAllocationResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ReleaseBankAllocationResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ReleaseBankAllocationResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ReleaseBankAllocationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReleaseBankAllocationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ReleaseBankAllocationResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetBankImportResponse409Headers the declared response headers of an HTTP 409 response for GetBankImport
+type GetBankImportResponse409Headers struct {
+	RetryAfter *int
+}
+
+type GetBankImportResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankBatch
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *GetBankImportResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetBankImportResponse) GetJSON200() *BankBatch {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetBankImportResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetBankImportResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetBankImportResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetBankImportResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r GetBankImportResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r GetBankImportResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r GetBankImportResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r GetBankImportResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetBankImportResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetBankImportResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetBankImportResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetBankMovementResponse409Headers the declared response headers of an HTTP 409 response for GetBankMovement
+type GetBankMovementResponse409Headers struct {
+	RetryAfter *int
+}
+
+type GetBankMovementResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankMovement
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *GetBankMovementResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetBankMovementResponse) GetJSON200() *BankMovement {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetBankMovementResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetBankMovementResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetBankMovementResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetBankMovementResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r GetBankMovementResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r GetBankMovementResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r GetBankMovementResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r GetBankMovementResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetBankMovementResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetBankMovementResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetBankMovementResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankAllocationsResponse409Headers the declared response headers of an HTTP 409 response for ListBankAllocations
+type ListBankAllocationsResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankAllocationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankAllocationPage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankAllocationsResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankAllocationsResponse) GetJSON200() *BankAllocationPage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankAllocationsResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankAllocationsResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankAllocationsResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankAllocationsResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankAllocationsResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankAllocationsResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankAllocationsResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankAllocationsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankAllocationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankAllocationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankAllocationsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateBankAllocationResponse201Headers the declared response headers of an HTTP 201 response for CreateBankAllocation
+type CreateBankAllocationResponse201Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// CreateBankAllocationResponse409Headers the declared response headers of an HTTP 409 response for CreateBankAllocation
+type CreateBankAllocationResponse409Headers struct {
+	RetryAfter *int
+}
+
+type CreateBankAllocationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *BankAllocation
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers201 the parsed response headers for an HTTP 201 response
+	Headers201 *CreateBankAllocationResponse201Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *CreateBankAllocationResponse409Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateBankAllocationResponse) GetJSON201() *BankAllocation {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateBankAllocationResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateBankAllocationResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateBankAllocationResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateBankAllocationResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateBankAllocationResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateBankAllocationResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r CreateBankAllocationResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateBankAllocationResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateBankAllocationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateBankAllocationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateBankAllocationResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankObservationsResponse409Headers the declared response headers of an HTTP 409 response for ListBankObservations
+type ListBankObservationsResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankObservationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankObservationPage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankObservationsResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankObservationsResponse) GetJSON200() *BankObservationPage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankObservationsResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankObservationsResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankObservationsResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankObservationsResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankObservationsResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankObservationsResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankObservationsResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankObservationsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankObservationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankObservationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankObservationsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ResolveBankMovementResponse200Headers the declared response headers of an HTTP 200 response for ResolveBankMovement
+type ResolveBankMovementResponse200Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// ResolveBankMovementResponse409Headers the declared response headers of an HTTP 409 response for ResolveBankMovement
+type ResolveBankMovementResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ResolveBankMovementResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankMovement
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *ResolveBankMovementResponse200Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ResolveBankMovementResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ResolveBankMovementResponse) GetJSON200() *BankMovement {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ResolveBankMovementResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ResolveBankMovementResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ResolveBankMovementResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ResolveBankMovementResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ResolveBankMovementResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ResolveBankMovementResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ResolveBankMovementResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ResolveBankMovementResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ResolveBankMovementResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ResolveBankMovementResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ResolveBankMovementResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListBankSourcesResponse409Headers the declared response headers of an HTTP 409 response for ListBankSources
+type ListBankSourcesResponse409Headers struct {
+	RetryAfter *int
+}
+
+type ListBankSourcesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankSourcePage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *ListBankSourcesResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListBankSourcesResponse) GetJSON200() *BankSourcePage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListBankSourcesResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListBankSourcesResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListBankSourcesResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListBankSourcesResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ListBankSourcesResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ListBankSourcesResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r ListBankSourcesResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r ListBankSourcesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListBankSourcesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListBankSourcesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListBankSourcesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateBankSourceResponse201Headers the declared response headers of an HTTP 201 response for CreateBankSource
+type CreateBankSourceResponse201Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// CreateBankSourceResponse409Headers the declared response headers of an HTTP 409 response for CreateBankSource
+type CreateBankSourceResponse409Headers struct {
+	RetryAfter *int
+}
+
+type CreateBankSourceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *BankSource
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers201 the parsed response headers for an HTTP 201 response
+	Headers201 *CreateBankSourceResponse201Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *CreateBankSourceResponse409Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateBankSourceResponse) GetJSON201() *BankSource {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateBankSourceResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateBankSourceResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateBankSourceResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateBankSourceResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateBankSourceResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateBankSourceResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r CreateBankSourceResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateBankSourceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateBankSourceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateBankSourceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateBankSourceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetBankSourceResponse409Headers the declared response headers of an HTTP 409 response for GetBankSource
+type GetBankSourceResponse409Headers struct {
+	RetryAfter *int
+}
+
+type GetBankSourceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankSource
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *GetBankSourceResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetBankSourceResponse) GetJSON200() *BankSource {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetBankSourceResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetBankSourceResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetBankSourceResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetBankSourceResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r GetBankSourceResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r GetBankSourceResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r GetBankSourceResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r GetBankSourceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetBankSourceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetBankSourceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetBankSourceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateBankSourceResponse200Headers the declared response headers of an HTTP 200 response for UpdateBankSource
+type UpdateBankSourceResponse200Headers struct {
+	XAccountingActingUserRecorded *string
+}
+
+// UpdateBankSourceResponse409Headers the declared response headers of an HTTP 409 response for UpdateBankSource
+type UpdateBankSourceResponse409Headers struct {
+	RetryAfter *int
+}
+
+type UpdateBankSourceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *BankSource
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *BadRequest
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Unauthorized
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Forbidden
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *NotFound
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Conflict
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Unprocessable
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *Problem
+	// Headers200 the parsed response headers for an HTTP 200 response
+	Headers200 *UpdateBankSourceResponse200Headers
+	// Headers409 the parsed response headers for an HTTP 409 response
+	Headers409 *UpdateBankSourceResponse409Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateBankSourceResponse) GetJSON200() *BankSource {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateBankSourceResponse) GetApplicationproblemJSON400() *BadRequest {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateBankSourceResponse) GetApplicationproblemJSON401() *Unauthorized {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateBankSourceResponse) GetApplicationproblemJSON403() *Forbidden {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateBankSourceResponse) GetApplicationproblemJSON404() *NotFound {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r UpdateBankSourceResponse) GetApplicationproblemJSON409() *Conflict {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateBankSourceResponse) GetApplicationproblemJSON422() *Unprocessable {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r UpdateBankSourceResponse) GetApplicationproblemJSONDefault() *Problem {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateBankSourceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateBankSourceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateBankSourceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateBankSourceResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -16727,6 +22773,516 @@ func (c *ClientWithResponses) GetAccountStatementWithResponse(ctx context.Contex
 	return ParseGetAccountStatementResponse(rsp)
 }
 
+// GetBankAccountSourceWithResponse Fetch a source account binding
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-account-sources/{aliasId} (the `GetBankAccountSource` operationId).
+func (c *ClientWithResponses) GetBankAccountSourceWithResponse(ctx context.Context, aliasId BankAccountSourceId, reqEditors ...RequestEditorFn) (*GetBankAccountSourceResponse, error) {
+	rsp, err := c.GetBankAccountSource(ctx, aliasId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetBankAccountSourceResponse(rsp)
+}
+
+// UpdateBankAccountSourceWithBodyWithResponse Enable or disable a source account binding
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+func (c *ClientWithResponses) UpdateBankAccountSourceWithBodyWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBankAccountSourceResponse, error) {
+	rsp, err := c.UpdateBankAccountSourceWithBody(ctx, aliasId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateBankAccountSourceResponse(rsp)
+}
+
+// UpdateBankAccountSourceWithResponse Enable or disable a source account binding
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /bank-account-sources/{aliasId} (the `UpdateBankAccountSource` operationId).
+func (c *ClientWithResponses) UpdateBankAccountSourceWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *UpdateBankAccountSourceParams, body UpdateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBankAccountSourceResponse, error) {
+	rsp, err := c.UpdateBankAccountSource(ctx, aliasId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateBankAccountSourceResponse(rsp)
+}
+
+// ListBankImportsWithResponse List immutable ingestion receipts
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-account-sources/{aliasId}/imports (the `ListBankImports` operationId).
+func (c *ClientWithResponses) ListBankImportsWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ListBankImportsParams, reqEditors ...RequestEditorFn) (*ListBankImportsResponse, error) {
+	rsp, err := c.ListBankImports(ctx, aliasId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankImportsResponse(rsp)
+}
+
+// ImportBankMovementsWithBodyWithResponse Import source observations atomically
+//
+// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+func (c *ClientWithResponses) ImportBankMovementsWithBodyWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ImportBankMovementsResponse, error) {
+	rsp, err := c.ImportBankMovementsWithBody(ctx, aliasId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseImportBankMovementsResponse(rsp)
+}
+
+// ImportBankMovementsWithResponse Import source observations atomically
+//
+// Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-account-sources/{aliasId}/imports (the `ImportBankMovements` operationId).
+func (c *ClientWithResponses) ImportBankMovementsWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ImportBankMovementsParams, body ImportBankMovementsJSONRequestBody, reqEditors ...RequestEditorFn) (*ImportBankMovementsResponse, error) {
+	rsp, err := c.ImportBankMovements(ctx, aliasId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseImportBankMovementsResponse(rsp)
+}
+
+// ListBankSourceMovementsWithResponse List movements from one source account
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-account-sources/{aliasId}/movements (the `ListBankSourceMovements` operationId).
+func (c *ClientWithResponses) ListBankSourceMovementsWithResponse(ctx context.Context, aliasId BankAccountSourceId, params *ListBankSourceMovementsParams, reqEditors ...RequestEditorFn) (*ListBankSourceMovementsResponse, error) {
+	rsp, err := c.ListBankSourceMovements(ctx, aliasId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankSourceMovementsResponse(rsp)
+}
+
+// ListBankAccountsWithResponse List external bank accounts
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-accounts (the `ListBankAccounts` operationId).
+func (c *ClientWithResponses) ListBankAccountsWithResponse(ctx context.Context, params *ListBankAccountsParams, reqEditors ...RequestEditorFn) (*ListBankAccountsResponse, error) {
+	rsp, err := c.ListBankAccounts(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankAccountsResponse(rsp)
+}
+
+// CreateBankAccountWithBodyWithResponse Register an external bank account
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+func (c *ClientWithResponses) CreateBankAccountWithBodyWithResponse(ctx context.Context, params *CreateBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankAccountResponse, error) {
+	rsp, err := c.CreateBankAccountWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankAccountResponse(rsp)
+}
+
+// CreateBankAccountWithResponse Register an external bank account
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-accounts (the `CreateBankAccount` operationId).
+func (c *ClientWithResponses) CreateBankAccountWithResponse(ctx context.Context, params *CreateBankAccountParams, body CreateBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankAccountResponse, error) {
+	rsp, err := c.CreateBankAccount(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankAccountResponse(rsp)
+}
+
+// GetBankAccountWithResponse Fetch an external bank account
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-accounts/{bankAccountId} (the `GetBankAccount` operationId).
+func (c *ClientWithResponses) GetBankAccountWithResponse(ctx context.Context, bankAccountId BankAccountId, reqEditors ...RequestEditorFn) (*GetBankAccountResponse, error) {
+	rsp, err := c.GetBankAccount(ctx, bankAccountId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetBankAccountResponse(rsp)
+}
+
+// MapBankAccountWithBodyWithResponse Set an explicit ledger account mapping
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+func (c *ClientWithResponses) MapBankAccountWithBodyWithResponse(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*MapBankAccountResponse, error) {
+	rsp, err := c.MapBankAccountWithBody(ctx, bankAccountId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseMapBankAccountResponse(rsp)
+}
+
+// MapBankAccountWithResponse Set an explicit ledger account mapping
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /bank-accounts/{bankAccountId}/mapping (the `MapBankAccount` operationId).
+func (c *ClientWithResponses) MapBankAccountWithResponse(ctx context.Context, bankAccountId BankAccountId, params *MapBankAccountParams, body MapBankAccountJSONRequestBody, reqEditors ...RequestEditorFn) (*MapBankAccountResponse, error) {
+	rsp, err := c.MapBankAccount(ctx, bankAccountId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseMapBankAccountResponse(rsp)
+}
+
+// ListBankMovementsWithResponse List bank movements
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-accounts/{bankAccountId}/movements (the `ListBankMovements` operationId).
+func (c *ClientWithResponses) ListBankMovementsWithResponse(ctx context.Context, bankAccountId BankAccountId, params *ListBankMovementsParams, reqEditors ...RequestEditorFn) (*ListBankMovementsResponse, error) {
+	rsp, err := c.ListBankMovements(ctx, bankAccountId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankMovementsResponse(rsp)
+}
+
+// ListBankAccountSourcesWithResponse List source identities for an account
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-accounts/{bankAccountId}/sources (the `ListBankAccountSources` operationId).
+func (c *ClientWithResponses) ListBankAccountSourcesWithResponse(ctx context.Context, bankAccountId BankAccountId, params *ListBankAccountSourcesParams, reqEditors ...RequestEditorFn) (*ListBankAccountSourcesResponse, error) {
+	rsp, err := c.ListBankAccountSources(ctx, bankAccountId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankAccountSourcesResponse(rsp)
+}
+
+// CreateBankAccountSourceWithBodyWithResponse Bind a source account identity
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+func (c *ClientWithResponses) CreateBankAccountSourceWithBodyWithResponse(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankAccountSourceResponse, error) {
+	rsp, err := c.CreateBankAccountSourceWithBody(ctx, bankAccountId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankAccountSourceResponse(rsp)
+}
+
+// CreateBankAccountSourceWithResponse Bind a source account identity
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-accounts/{bankAccountId}/sources (the `CreateBankAccountSource` operationId).
+func (c *ClientWithResponses) CreateBankAccountSourceWithResponse(ctx context.Context, bankAccountId BankAccountId, params *CreateBankAccountSourceParams, body CreateBankAccountSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankAccountSourceResponse, error) {
+	rsp, err := c.CreateBankAccountSource(ctx, bankAccountId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankAccountSourceResponse(rsp)
+}
+
+// GetBankAllocationWithResponse Fetch an allocation and current validity
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-allocations/{allocationId} (the `GetBankAllocation` operationId).
+func (c *ClientWithResponses) GetBankAllocationWithResponse(ctx context.Context, allocationId BankAllocationId, reqEditors ...RequestEditorFn) (*GetBankAllocationResponse, error) {
+	rsp, err := c.GetBankAllocation(ctx, allocationId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetBankAllocationResponse(rsp)
+}
+
+// ReleaseBankAllocationWithBodyWithResponse Release an allocation with retained history
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+func (c *ClientWithResponses) ReleaseBankAllocationWithBodyWithResponse(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReleaseBankAllocationResponse, error) {
+	rsp, err := c.ReleaseBankAllocationWithBody(ctx, allocationId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReleaseBankAllocationResponse(rsp)
+}
+
+// ReleaseBankAllocationWithResponse Release an allocation with retained history
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-allocations/{allocationId}/release (the `ReleaseBankAllocation` operationId).
+func (c *ClientWithResponses) ReleaseBankAllocationWithResponse(ctx context.Context, allocationId BankAllocationId, params *ReleaseBankAllocationParams, body ReleaseBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*ReleaseBankAllocationResponse, error) {
+	rsp, err := c.ReleaseBankAllocation(ctx, allocationId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReleaseBankAllocationResponse(rsp)
+}
+
+// GetBankImportWithResponse Fetch an immutable ingestion receipt
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-imports/{batchId} (the `GetBankImport` operationId).
+func (c *ClientWithResponses) GetBankImportWithResponse(ctx context.Context, batchId BankBatchId, reqEditors ...RequestEditorFn) (*GetBankImportResponse, error) {
+	rsp, err := c.GetBankImport(ctx, batchId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetBankImportResponse(rsp)
+}
+
+// GetBankMovementWithResponse Fetch a bank movement
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-movements/{movementId} (the `GetBankMovement` operationId).
+func (c *ClientWithResponses) GetBankMovementWithResponse(ctx context.Context, movementId BankMovementId, reqEditors ...RequestEditorFn) (*GetBankMovementResponse, error) {
+	rsp, err := c.GetBankMovement(ctx, movementId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetBankMovementResponse(rsp)
+}
+
+// ListBankAllocationsWithResponse List allocations and releases
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-movements/{movementId}/allocations (the `ListBankAllocations` operationId).
+func (c *ClientWithResponses) ListBankAllocationsWithResponse(ctx context.Context, movementId BankMovementId, params *ListBankAllocationsParams, reqEditors ...RequestEditorFn) (*ListBankAllocationsResponse, error) {
+	rsp, err := c.ListBankAllocations(ctx, movementId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankAllocationsResponse(rsp)
+}
+
+// CreateBankAllocationWithBodyWithResponse Allocate a movement to a journal line
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+func (c *ClientWithResponses) CreateBankAllocationWithBodyWithResponse(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankAllocationResponse, error) {
+	rsp, err := c.CreateBankAllocationWithBody(ctx, movementId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankAllocationResponse(rsp)
+}
+
+// CreateBankAllocationWithResponse Allocate a movement to a journal line
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-movements/{movementId}/allocations (the `CreateBankAllocation` operationId).
+func (c *ClientWithResponses) CreateBankAllocationWithResponse(ctx context.Context, movementId BankMovementId, params *CreateBankAllocationParams, body CreateBankAllocationJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankAllocationResponse, error) {
+	rsp, err := c.CreateBankAllocation(ctx, movementId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankAllocationResponse(rsp)
+}
+
+// ListBankObservationsWithResponse List immutable movement observations
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-movements/{movementId}/observations (the `ListBankObservations` operationId).
+func (c *ClientWithResponses) ListBankObservationsWithResponse(ctx context.Context, movementId BankMovementId, params *ListBankObservationsParams, reqEditors ...RequestEditorFn) (*ListBankObservationsResponse, error) {
+	rsp, err := c.ListBankObservations(ctx, movementId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankObservationsResponse(rsp)
+}
+
+// ResolveBankMovementWithBodyWithResponse Record an explicit duplicate or distinct decision
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+func (c *ClientWithResponses) ResolveBankMovementWithBodyWithResponse(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ResolveBankMovementResponse, error) {
+	rsp, err := c.ResolveBankMovementWithBody(ctx, movementId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseResolveBankMovementResponse(rsp)
+}
+
+// ResolveBankMovementWithResponse Record an explicit duplicate or distinct decision
+//
+// Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-movements/{movementId}/resolution (the `ResolveBankMovement` operationId).
+func (c *ClientWithResponses) ResolveBankMovementWithResponse(ctx context.Context, movementId BankMovementId, params *ResolveBankMovementParams, body ResolveBankMovementJSONRequestBody, reqEditors ...RequestEditorFn) (*ResolveBankMovementResponse, error) {
+	rsp, err := c.ResolveBankMovement(ctx, movementId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseResolveBankMovementResponse(rsp)
+}
+
+// ListBankSourcesWithResponse List ingestion sources
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-sources (the `ListBankSources` operationId).
+func (c *ClientWithResponses) ListBankSourcesWithResponse(ctx context.Context, params *ListBankSourcesParams, reqEditors ...RequestEditorFn) (*ListBankSourcesResponse, error) {
+	rsp, err := c.ListBankSources(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListBankSourcesResponse(rsp)
+}
+
+// CreateBankSourceWithBodyWithResponse Register an integration-owned ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+func (c *ClientWithResponses) CreateBankSourceWithBodyWithResponse(ctx context.Context, params *CreateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBankSourceResponse, error) {
+	rsp, err := c.CreateBankSourceWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankSourceResponse(rsp)
+}
+
+// CreateBankSourceWithResponse Register an integration-owned ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /bank-sources (the `CreateBankSource` operationId).
+func (c *ClientWithResponses) CreateBankSourceWithResponse(ctx context.Context, params *CreateBankSourceParams, body CreateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBankSourceResponse, error) {
+	rsp, err := c.CreateBankSource(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateBankSourceResponse(rsp)
+}
+
+// GetBankSourceWithResponse Fetch an ingestion source
+//
+// Requires explicit banking.read authorization. Provider credentials are never accepted or returned.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /bank-sources/{sourceId} (the `GetBankSource` operationId).
+func (c *ClientWithResponses) GetBankSourceWithResponse(ctx context.Context, sourceId BankSourceId, reqEditors ...RequestEditorFn) (*GetBankSourceResponse, error) {
+	rsp, err := c.GetBankSource(ctx, sourceId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetBankSourceResponse(rsp)
+}
+
+// UpdateBankSourceWithBodyWithResponse Delegate or deactivate an ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+func (c *ClientWithResponses) UpdateBankSourceWithBodyWithResponse(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBankSourceResponse, error) {
+	rsp, err := c.UpdateBankSourceWithBody(ctx, sourceId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateBankSourceResponse(rsp)
+}
+
+// UpdateBankSourceWithResponse Delegate or deactivate an ingestion source
+//
+// Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /bank-sources/{sourceId} (the `UpdateBankSource` operationId).
+func (c *ClientWithResponses) UpdateBankSourceWithResponse(ctx context.Context, sourceId BankSourceId, params *UpdateBankSourceParams, body UpdateBankSourceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBankSourceResponse, error) {
+	rsp, err := c.UpdateBankSource(ctx, sourceId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateBankSourceResponse(rsp)
+}
+
 // GetDocumentPreservationWithResponse Fetch a preservation decision and its confirmed application state
 //
 // Requires documents.read. The request and actor attribution are immutable.
@@ -17191,6 +23747,9 @@ func (c *ClientWithResponses) CarryforwardFiscalYearWithResponse(ctx context.Con
 
 // CloseFiscalYearWithBodyWithResponse Close income and expense accounts
 //
+// Requires both periods.close and accounting.write permissions and their
+// corresponding machine scopes, including when replaying a previous response.
+//
 // Derives every currency's income and expense balance from posted entries
 // inside this year using an immutable caller-selected mapping. Posts inverse
 // lines against an explicit equity result account with one archived Beleg,
@@ -17210,6 +23769,9 @@ func (c *ClientWithResponses) CloseFiscalYearWithBodyWithResponse(ctx context.Co
 }
 
 // CloseFiscalYearWithResponse Close income and expense accounts
+//
+// Requires both periods.close and accounting.write permissions and their
+// corresponding machine scopes, including when replaying a previous response.
 //
 // Derives every currency's income and expense balance from posted entries
 // inside this year using an immutable caller-selected mapping. Posts inverse
@@ -18471,6 +25033,2218 @@ func ParseGetAccountStatementResponse(rsp *http.Response) (*GetAccountStatementR
 		}
 		response.ApplicationproblemJSONDefault = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseGetBankAccountSourceResponse parses an HTTP response from a GetBankAccountSourceWithResponse call
+func ParseGetBankAccountSourceResponse(rsp *http.Response) (*GetBankAccountSourceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetBankAccountSourceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAccountSource
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers GetBankAccountSourceResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateBankAccountSourceResponse parses an HTTP response from a UpdateBankAccountSourceWithResponse call
+func ParseUpdateBankAccountSourceResponse(rsp *http.Response) (*UpdateBankAccountSourceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateBankAccountSourceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAccountSource
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers UpdateBankAccountSourceResponse200Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers200 = &headers
+	case rsp.StatusCode == 409:
+		var headers UpdateBankAccountSourceResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankImportsResponse parses an HTTP response from a ListBankImportsWithResponse call
+func ParseListBankImportsResponse(rsp *http.Response) (*ListBankImportsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankImportsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankBatchPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankImportsResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseImportBankMovementsResponse parses an HTTP response from a ImportBankMovementsWithResponse call
+func ParseImportBankMovementsResponse(rsp *http.Response) (*ImportBankMovementsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ImportBankMovementsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest BankBatch
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 201:
+		var headers ImportBankMovementsResponse201Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers201 = &headers
+	case rsp.StatusCode == 409:
+		var headers ImportBankMovementsResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankSourceMovementsResponse parses an HTTP response from a ListBankSourceMovementsWithResponse call
+func ParseListBankSourceMovementsResponse(rsp *http.Response) (*ListBankSourceMovementsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankSourceMovementsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankMovementPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankSourceMovementsResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankAccountsResponse parses an HTTP response from a ListBankAccountsWithResponse call
+func ParseListBankAccountsResponse(rsp *http.Response) (*ListBankAccountsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankAccountsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAccountPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankAccountsResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateBankAccountResponse parses an HTTP response from a CreateBankAccountWithResponse call
+func ParseCreateBankAccountResponse(rsp *http.Response) (*CreateBankAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateBankAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest BankAccount
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 201:
+		var headers CreateBankAccountResponse201Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers201 = &headers
+	case rsp.StatusCode == 409:
+		var headers CreateBankAccountResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetBankAccountResponse parses an HTTP response from a GetBankAccountWithResponse call
+func ParseGetBankAccountResponse(rsp *http.Response) (*GetBankAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetBankAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAccount
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers GetBankAccountResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseMapBankAccountResponse parses an HTTP response from a MapBankAccountWithResponse call
+func ParseMapBankAccountResponse(rsp *http.Response) (*MapBankAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &MapBankAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAccount
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers MapBankAccountResponse200Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers200 = &headers
+	case rsp.StatusCode == 409:
+		var headers MapBankAccountResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankMovementsResponse parses an HTTP response from a ListBankMovementsWithResponse call
+func ParseListBankMovementsResponse(rsp *http.Response) (*ListBankMovementsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankMovementsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankMovementPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankMovementsResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankAccountSourcesResponse parses an HTTP response from a ListBankAccountSourcesWithResponse call
+func ParseListBankAccountSourcesResponse(rsp *http.Response) (*ListBankAccountSourcesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankAccountSourcesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAccountSourcePage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankAccountSourcesResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateBankAccountSourceResponse parses an HTTP response from a CreateBankAccountSourceWithResponse call
+func ParseCreateBankAccountSourceResponse(rsp *http.Response) (*CreateBankAccountSourceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateBankAccountSourceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest BankAccountSource
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 201:
+		var headers CreateBankAccountSourceResponse201Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers201 = &headers
+	case rsp.StatusCode == 409:
+		var headers CreateBankAccountSourceResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetBankAllocationResponse parses an HTTP response from a GetBankAllocationWithResponse call
+func ParseGetBankAllocationResponse(rsp *http.Response) (*GetBankAllocationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetBankAllocationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAllocation
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers GetBankAllocationResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseReleaseBankAllocationResponse parses an HTTP response from a ReleaseBankAllocationWithResponse call
+func ParseReleaseBankAllocationResponse(rsp *http.Response) (*ReleaseBankAllocationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ReleaseBankAllocationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAllocation
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ReleaseBankAllocationResponse200Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers200 = &headers
+	case rsp.StatusCode == 409:
+		var headers ReleaseBankAllocationResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetBankImportResponse parses an HTTP response from a GetBankImportWithResponse call
+func ParseGetBankImportResponse(rsp *http.Response) (*GetBankImportResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetBankImportResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankBatch
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers GetBankImportResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetBankMovementResponse parses an HTTP response from a GetBankMovementWithResponse call
+func ParseGetBankMovementResponse(rsp *http.Response) (*GetBankMovementResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetBankMovementResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankMovement
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers GetBankMovementResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankAllocationsResponse parses an HTTP response from a ListBankAllocationsWithResponse call
+func ParseListBankAllocationsResponse(rsp *http.Response) (*ListBankAllocationsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankAllocationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankAllocationPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankAllocationsResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateBankAllocationResponse parses an HTTP response from a CreateBankAllocationWithResponse call
+func ParseCreateBankAllocationResponse(rsp *http.Response) (*CreateBankAllocationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateBankAllocationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest BankAllocation
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 201:
+		var headers CreateBankAllocationResponse201Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers201 = &headers
+	case rsp.StatusCode == 409:
+		var headers CreateBankAllocationResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankObservationsResponse parses an HTTP response from a ListBankObservationsWithResponse call
+func ParseListBankObservationsResponse(rsp *http.Response) (*ListBankObservationsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankObservationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankObservationPage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankObservationsResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseResolveBankMovementResponse parses an HTTP response from a ResolveBankMovementWithResponse call
+func ParseResolveBankMovementResponse(rsp *http.Response) (*ResolveBankMovementResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ResolveBankMovementResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankMovement
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers ResolveBankMovementResponse200Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers200 = &headers
+	case rsp.StatusCode == 409:
+		var headers ResolveBankMovementResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListBankSourcesResponse parses an HTTP response from a ListBankSourcesWithResponse call
+func ParseListBankSourcesResponse(rsp *http.Response) (*ListBankSourcesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListBankSourcesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankSourcePage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers ListBankSourcesResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateBankSourceResponse parses an HTTP response from a CreateBankSourceWithResponse call
+func ParseCreateBankSourceResponse(rsp *http.Response) (*CreateBankSourceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateBankSourceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest BankSource
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 201:
+		var headers CreateBankSourceResponse201Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers201 = &headers
+	case rsp.StatusCode == 409:
+		var headers CreateBankSourceResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetBankSourceResponse parses an HTTP response from a GetBankSourceWithResponse call
+func ParseGetBankSourceResponse(rsp *http.Response) (*GetBankSourceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetBankSourceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankSource
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 409:
+		var headers GetBankSourceResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateBankSourceResponse parses an HTTP response from a UpdateBankSourceWithResponse call
+func ParseUpdateBankSourceResponse(rsp *http.Response) (*UpdateBankSourceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateBankSourceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BankSource
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Forbidden
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Conflict
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Unprocessable
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Problem
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 200:
+		var headers UpdateBankSourceResponse200Headers
+		if values := rsp.Header.Values("X-Accounting-Acting-User-Recorded"); len(values) > 0 {
+			var value string
+			if err := runtime.BindStyledParameterWithOptions("simple", "X-Accounting-Acting-User-Recorded", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.XAccountingActingUserRecorded = &value
+		}
+		response.Headers200 = &headers
+	case rsp.StatusCode == 409:
+		var headers UpdateBankSourceResponse409Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers409 = &headers
 	}
 
 	return response, nil

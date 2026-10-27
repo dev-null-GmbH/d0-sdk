@@ -21,6 +21,1838 @@
     }
   ],
   "paths": {
+    "/bank-sources": {
+      "get": {
+        "operationId": "listBankSources",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List ingestion sources",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankSourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankSourcePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createBankSource",
+        "x-d0-machine-scopes": [
+          "accounting.banking.manage"
+        ],
+        "summary": "Register an integration-owned ingestion source",
+        "description": "Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankSource"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankSourceCreate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-sources/{sourceId}": {
+      "get": {
+        "operationId": "getBankSource",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "Fetch an ingestion source",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankSourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankSource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "updateBankSource",
+        "x-d0-machine-scopes": [
+          "accounting.banking.manage"
+        ],
+        "summary": "Delegate or deactivate an ingestion source",
+        "description": "Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "sourceId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankSourceId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankSource"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankSourceUpdate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-accounts": {
+      "get": {
+        "operationId": "listBankAccounts",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List external bank accounts",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccountPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createBankAccount",
+        "x-d0-machine-scopes": [
+          "accounting.banking.manage"
+        ],
+        "summary": "Register an external bank account",
+        "description": "Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccount"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountCreate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-accounts/{bankAccountId}": {
+      "get": {
+        "operationId": "getBankAccount",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "Fetch an external bank account",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "bankAccountId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccount"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-accounts/{bankAccountId}/mapping": {
+      "put": {
+        "operationId": "mapBankAccount",
+        "x-d0-machine-scopes": [
+          "accounting.banking.manage"
+        ],
+        "summary": "Set an explicit ledger account mapping",
+        "description": "Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "bankAccountId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccount"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountMapping"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-accounts/{bankAccountId}/sources": {
+      "get": {
+        "operationId": "listBankAccountSources",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List source identities for an account",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "bankAccountId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountSourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccountSourcePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createBankAccountSource",
+        "x-d0-machine-scopes": [
+          "accounting.banking.manage"
+        ],
+        "summary": "Bind a source account identity",
+        "description": "Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "bankAccountId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccountSource"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountSourceCreate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-account-sources/{aliasId}": {
+      "get": {
+        "operationId": "getBankAccountSource",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "Fetch a source account binding",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "aliasId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountSourceId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccountSource"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "updateBankAccountSource",
+        "x-d0-machine-scopes": [
+          "accounting.banking.manage"
+        ],
+        "summary": "Enable or disable a source account binding",
+        "description": "Requires explicit banking.manage authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "aliasId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountSourceId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccountSource"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountSourceUpdate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-account-sources/{aliasId}/imports": {
+      "post": {
+        "operationId": "importBankMovements",
+        "x-d0-machine-scopes": [
+          "accounting.banking.ingest"
+        ],
+        "summary": "Import source observations atomically",
+        "description": "Requires explicit banking.ingest authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "aliasId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountSourceId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankBatch"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankImport"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "listBankImports",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List immutable ingestion receipts",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "aliasId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountSourceId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankBatchId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankBatchPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-imports/{batchId}": {
+      "get": {
+        "operationId": "getBankImport",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "Fetch an immutable ingestion receipt",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "batchId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankBatchId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankBatch"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-account-sources/{aliasId}/movements": {
+      "get": {
+        "operationId": "listBankSourceMovements",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List movements from one source account",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "aliasId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountSourceId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankMovementId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankMovementPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-accounts/{bankAccountId}/movements": {
+      "get": {
+        "operationId": "listBankMovements",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List bank movements",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "bankAccountId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAccountId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankMovementId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankMovementPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-movements/{movementId}": {
+      "get": {
+        "operationId": "getBankMovement",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "Fetch a bank movement",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "movementId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankMovementId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankMovement"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-movements/{movementId}/observations": {
+      "get": {
+        "operationId": "listBankObservations",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List immutable movement observations",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "movementId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankMovementId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankObservationId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankObservationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-movements/{movementId}/resolution": {
+      "post": {
+        "operationId": "resolveBankMovement",
+        "x-d0-machine-scopes": [
+          "accounting.banking.reconcile"
+        ],
+        "summary": "Record an explicit duplicate or distinct decision",
+        "description": "Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "movementId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankMovementId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankMovement"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankResolution"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-movements/{movementId}/allocations": {
+      "get": {
+        "operationId": "listBankAllocations",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "List allocations and releases",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "movementId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankMovementId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "The preceding page nextCursor; keep the parent collection unchanged.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAllocationId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAllocationPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createBankAllocation",
+        "x-d0-machine-scopes": [
+          "accounting.banking.reconcile"
+        ],
+        "summary": "Allocate a movement to a journal line",
+        "description": "Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "movementId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankMovementId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAllocation"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAllocationCreate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-allocations/{allocationId}": {
+      "get": {
+        "operationId": "getBankAllocation",
+        "x-d0-machine-scopes": [
+          "accounting.banking.read"
+        ],
+        "summary": "Fetch an allocation and current validity",
+        "description": "Requires explicit banking.read authorization. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "allocationId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAllocationId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAllocation"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
+    "/bank-allocations/{allocationId}/release": {
+      "post": {
+        "operationId": "releaseBankAllocation",
+        "x-d0-machine-scopes": [
+          "accounting.banking.reconcile"
+        ],
+        "summary": "Release an allocation with retained history",
+        "description": "Requires explicit banking.reconcile authorization. Writes and their idempotency receipt commit together. Provider credentials are never accepted or returned.",
+        "tags": [
+          "banking"
+        ],
+        "parameters": [
+          {
+            "name": "allocationId",
+            "in": "path",
+            "required": true,
+            "description": "Public identifier of the scoped resource.",
+            "schema": {
+              "$ref": "#/components/schemas/BankAllocationId"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserIssuer"
+          },
+          {
+            "$ref": "#/components/parameters/ActingUserSubject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tenant-scoped result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAllocation"
+                }
+              }
+            },
+            "headers": {
+              "X-Accounting-Acting-User-Recorded": {
+                "$ref": "#/components/headers/ActingUserRecorded"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/Unprocessable"
+          },
+          "default": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "requestBody": {
+          "description": "The explicit banking operation.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAllocationRelease"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "machineToken": [],
+            "machineProof": [],
+            "machineTenant": []
+          }
+        ]
+      }
+    },
     "/tax-rules": {
       "get": {
         "operationId": "listTaxRules",
@@ -479,10 +2311,11 @@
       "post": {
         "operationId": "closeFiscalYear",
         "x-d0-machine-scopes": [
-          "accounting.periods.close"
+          "accounting.periods.close",
+          "accounting.write"
         ],
         "summary": "Close income and expense accounts",
-        "description": "Derives every currency's income and expense balance from posted entries\ninside this year using an immutable caller-selected mapping. Posts inverse\nlines against an explicit equity result account with one archived Beleg,\nthen seals the closing period in the same transaction. All other periods\nmust already be sealed. If all P&L balances are zero, the period is sealed\nand entries is empty. A repeat with identical inputs returns the prior result.\n",
+        "description": "Requires both periods.close and accounting.write permissions and their\ncorresponding machine scopes, including when replaying a previous response.\n\nDerives every currency's income and expense balance from posted entries\ninside this year using an immutable caller-selected mapping. Posts inverse\nlines against an explicit equity result account with one archived Beleg,\nthen seals the closing period in the same transaction. All other periods\nmust already be sealed. If all P&L balances are zero, the period is sealed\nand entries is empty. A repeat with identical inputs returns the prior result.\n",
         "tags": [
           "fiscal-years"
         ],
@@ -6270,7 +8103,7 @@
       "AccessPermissions": {
         "type": "array",
         "description": "Explicit unique grants; an empty array grants no operations.",
-        "maxItems": 9,
+        "maxItems": 13,
         "uniqueItems": true,
         "items": {
           "$ref": "#/components/schemas/AccessPermission"
@@ -6288,7 +8121,11 @@
           "webhooks.manage",
           "access.manage",
           "exports.read",
-          "audit.read"
+          "audit.read",
+          "banking.read",
+          "banking.manage",
+          "banking.ingest",
+          "banking.reconcile"
         ]
       },
       "MembershipReplace": {
@@ -7111,6 +8948,1102 @@
               "string",
               "null"
             ]
+          }
+        }
+      },
+      "BankAllocationRelease": {
+        "type": "object",
+        "description": "Release an allocation without deleting the allocation or its history.",
+        "additionalProperties": false,
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1
+          }
+        }
+      },
+      "BankAllocation": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "movementId",
+          "movementRevision",
+          "entryId",
+          "lineNo",
+          "amountCents",
+          "createdAt",
+          "releasedAt",
+          "releaseReason",
+          "stale"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/BankAllocationId"
+          },
+          "movementId": {
+            "$ref": "#/components/schemas/BankMovementId"
+          },
+          "movementRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "entryId": {
+            "$ref": "#/components/schemas/EntryId"
+          },
+          "lineNo": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "amountCents": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "description": "Exact positive int64 minor units, never a JSON number."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "releasedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "releaseReason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          },
+          "stale": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BankMovementId": {
+        "type": "string",
+        "description": "Opaque BankMovement identifier.",
+        "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      "BankAllocationId": {
+        "type": "string",
+        "description": "Opaque BankAllocation identifier.",
+        "pattern": "^balloc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      "BankAllocationCreate": {
+        "type": "object",
+        "description": "Allocate a booked, reviewed movement to a posted journal line on the mapped ledger account. Both allocation sums are bounded atomically. Reversed entries and stale reconciliation are rejected.",
+        "additionalProperties": false,
+        "required": [
+          "expectedRevision",
+          "entryId",
+          "lineNo",
+          "amountCents",
+          "expectedReviewRevision"
+        ],
+        "properties": {
+          "expectedReviewRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "entryId": {
+            "$ref": "#/components/schemas/EntryId"
+          },
+          "lineNo": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "amountCents": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$",
+            "description": "Exact positive int64 minor units, never a JSON number."
+          }
+        }
+      },
+      "BankAllocationPage": {
+        "type": "object",
+        "description": "Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "nextCursor"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankAllocation"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^balloc_[0-9A-HJKMNP-TV-Z]{26}$"
+          }
+        }
+      },
+      "BankResolution": {
+        "type": "object",
+        "description": "Explicit review decision. Omit both relations to confirm a distinct movement. A relation must identify an eligible movement of the same bank account; no fuzzy deduplication is performed.",
+        "additionalProperties": false,
+        "required": [
+          "expectedRevision",
+          "reason",
+          "expectedReviewRevision"
+        ],
+        "properties": {
+          "expectedReviewRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "duplicateOf": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "supersedes": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1
+          }
+        }
+      },
+      "BankMovement": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "aliasId",
+          "accountId",
+          "sourceReference",
+          "status",
+          "amountCents",
+          "currency",
+          "bookingDate",
+          "valueDate",
+          "remittance",
+          "counterparty",
+          "bankReference",
+          "provenance",
+          "revision",
+          "observedAt",
+          "receivedAt",
+          "reviewRequired",
+          "duplicateOf",
+          "supersededBy",
+          "reconciliationStale",
+          "reviewRevision"
+        ],
+        "properties": {
+          "reviewRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "id": {
+            "$ref": "#/components/schemas/BankMovementId"
+          },
+          "aliasId": {
+            "$ref": "#/components/schemas/BankAccountSourceId"
+          },
+          "accountId": {
+            "$ref": "#/components/schemas/BankAccountId"
+          },
+          "sourceReference": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "booked",
+              "cancelled"
+            ],
+            "x-enum-varnames": [
+              "BankMovementPending",
+              "BankMovementBooked",
+              "BankMovementCancelled"
+            ]
+          },
+          "amountCents": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "description": "Exact signed int64 minor units; positive is bank-account inflow. Never a JSON number."
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "bookingDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "valueDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "remittance": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "counterparty": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          },
+          "bankReference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 255
+          },
+          "provenance": {
+            "type": "object",
+            "description": "Bounded source references only, no credentials or raw provider responses; maximum 8 KiB encoded.",
+            "maxProperties": 16,
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewRequired": {
+            "type": "boolean"
+          },
+          "duplicateOf": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "supersededBy": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "reconciliationStale": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BankAccountId": {
+        "type": "string",
+        "description": "Opaque BankAccount identifier.",
+        "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      "BankAccountSourceId": {
+        "type": "string",
+        "description": "Opaque BankAccountSource identifier.",
+        "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      "BankObservationPage": {
+        "type": "object",
+        "description": "Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "nextCursor"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankObservation"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^bobs_[0-9A-HJKMNP-TV-Z]{26}$"
+          }
+        }
+      },
+      "BankObservation": {
+        "type": "object",
+        "description": "Immutable source observation; id identifies the movement and revision identifies its observation.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "aliasId",
+          "accountId",
+          "batchId",
+          "sourceReference",
+          "status",
+          "amountCents",
+          "currency",
+          "bookingDate",
+          "valueDate",
+          "remittance",
+          "counterparty",
+          "bankReference",
+          "provenance",
+          "revision",
+          "observedAt",
+          "receivedAt"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/BankMovementId"
+          },
+          "aliasId": {
+            "$ref": "#/components/schemas/BankAccountSourceId"
+          },
+          "accountId": {
+            "$ref": "#/components/schemas/BankAccountId"
+          },
+          "batchId": {
+            "$ref": "#/components/schemas/BankBatchId"
+          },
+          "sourceReference": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "booked",
+              "cancelled"
+            ],
+            "x-enum-varnames": [
+              "BankObservationPending",
+              "BankObservationBooked",
+              "BankObservationCancelled"
+            ]
+          },
+          "amountCents": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "description": "Exact signed int64 minor units; positive is bank-account inflow. Never a JSON number."
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "bookingDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "valueDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "remittance": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "counterparty": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          },
+          "bankReference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 255
+          },
+          "provenance": {
+            "type": "object",
+            "description": "Bounded source references only, no credentials or raw provider responses; maximum 8 KiB encoded.",
+            "maxProperties": 16,
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BankBatchId": {
+        "type": "string",
+        "description": "Opaque BankBatch identifier.",
+        "pattern": "^bbatch_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      "BankObservationId": {
+        "type": "string",
+        "description": "Opaque BankObservation identifier.",
+        "pattern": "^bobs_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      "BankMovementPage": {
+        "type": "object",
+        "description": "Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "nextCursor"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankMovement"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^btxn_[0-9A-HJKMNP-TV-Z]{26}$"
+          }
+        }
+      },
+      "BankBatch": {
+        "type": "object",
+        "description": "Immutable ingestion receipt. Completeness and sync times are assertions by the source, not an independent bank verification.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "aliasId",
+          "reference",
+          "observedAt",
+          "successfulSyncAt",
+          "coverageFrom",
+          "coverageTo",
+          "complete",
+          "error",
+          "receivedAt"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/BankBatchId"
+          },
+          "aliasId": {
+            "$ref": "#/components/schemas/BankAccountSourceId"
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "successfulSyncAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "coverageFrom": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "coverageTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BankBatchPage": {
+        "type": "object",
+        "description": "Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "nextCursor"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankBatch"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^bbatch_[0-9A-HJKMNP-TV-Z]{26}$"
+          }
+        }
+      },
+      "BankImport": {
+        "type": "object",
+        "description": "Atomic bounded import, at most 500 movements, 1 MiB HTTP request body and 2 MiB normalized JSON. A durable alias/reference identifies the batch beyond the Idempotency-Key window; changed payload under that reference conflicts. Empty batches do not independently prove feed completeness.",
+        "additionalProperties": false,
+        "required": [
+          "reference",
+          "observedAt",
+          "complete",
+          "movements"
+        ],
+        "properties": {
+          "reference": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "observedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "successfulSyncAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "coverageFrom": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "coverageTo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64,
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "movements": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/BankMovementInput"
+            }
+          }
+        }
+      },
+      "BankMovementInput": {
+        "type": "object",
+        "description": "One source observation. Zero expectedRevision creates a movement. Identical content replays independently of the request key; changed content requires the current revision. Booked movements require bookingDate.",
+        "additionalProperties": false,
+        "required": [
+          "sourceReference",
+          "expectedRevision",
+          "status",
+          "amountCents",
+          "currency"
+        ],
+        "properties": {
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "sourceReference": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "booked",
+              "cancelled"
+            ],
+            "x-enum-varnames": [
+              "BankMovementInputPending",
+              "BankMovementInputBooked",
+              "BankMovementInputCancelled"
+            ]
+          },
+          "amountCents": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]{0,18})$",
+            "description": "Exact signed int64 minor units; positive is bank-account inflow. Never a JSON number."
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "bookingDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "valueDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "remittance": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "counterparty": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500
+          },
+          "bankReference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 255
+          },
+          "provenance": {
+            "type": "object",
+            "description": "Bounded source references only, no credentials or raw provider responses; maximum 8 KiB encoded.",
+            "maxProperties": 16,
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 512
+            }
+          }
+        }
+      },
+      "BankAccountSourceUpdate": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "active",
+          "expectedRevision"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          }
+        }
+      },
+      "BankAccountSource": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "accountId",
+          "sourceId",
+          "externalAccountRef",
+          "active",
+          "revision",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/BankAccountSourceId"
+          },
+          "accountId": {
+            "$ref": "#/components/schemas/BankAccountId"
+          },
+          "sourceId": {
+            "$ref": "#/components/schemas/BankSourceId"
+          },
+          "externalAccountRef": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BankSourceId": {
+        "type": "string",
+        "description": "Opaque BankSource identifier.",
+        "pattern": "^bsrc_[0-9A-HJKMNP-TV-Z]{26}$"
+      },
+      "BankAccountSourceCreate": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "sourceId",
+          "externalAccountRef"
+        ],
+        "properties": {
+          "sourceId": {
+            "$ref": "#/components/schemas/BankSourceId"
+          },
+          "externalAccountRef": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          }
+        }
+      },
+      "BankAccountSourcePage": {
+        "type": "object",
+        "description": "Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "nextCursor"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankAccountSource"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^bas_[0-9A-HJKMNP-TV-Z]{26}$"
+          }
+        }
+      },
+      "BankAccountMapping": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "ledgerAccountId",
+          "expectedRevision"
+        ],
+        "properties": {
+          "ledgerAccountId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          }
+        }
+      },
+      "BankAccount": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "currency",
+          "ledgerAccountId",
+          "revision",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/BankAccountId"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "ledgerAccountId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BankAccountCreate": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "currency"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "ledgerAccountId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^acct_[0-9A-HJKMNP-TV-Z]{26}$"
+          }
+        }
+      },
+      "BankAccountPage": {
+        "type": "object",
+        "description": "Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "nextCursor"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankAccount"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^bacct_[0-9A-HJKMNP-TV-Z]{26}$"
+          }
+        }
+      },
+      "BankSourceUpdate": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "writerMembershipId",
+          "active",
+          "expectedRevision"
+        ],
+        "properties": {
+          "writerMembershipId": {
+            "$ref": "#/components/schemas/MembershipId"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          }
+        }
+      },
+      "BankSource": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "writerMembershipId",
+          "active",
+          "revision",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/BankSourceId"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "writerMembershipId": {
+            "$ref": "#/components/schemas/MembershipId"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BankSourceCreate": {
+        "type": "object",
+        "description": "Tenant-scoped banking data.",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "writerMembershipId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "writerMembershipId": {
+            "$ref": "#/components/schemas/MembershipId"
+          }
+        }
+      },
+      "BankSourcePage": {
+        "type": "object",
+        "description": "Public UUID keyset order. Pass nextCursor as after on the same collection; null means no next page. This is not a frozen snapshot.",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "nextCursor"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankSource"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^bsrc_[0-9A-HJKMNP-TV-Z]{26}$"
           }
         }
       }

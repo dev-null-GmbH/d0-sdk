@@ -1,6 +1,6 @@
 {
   "name": "@dev-null-gmbh/accounting",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "engines": {
     "node": ">=24.21.0 <27"
@@ -26,9 +26,9 @@
     "@dev-null-gmbh/auth-machine": "0.1.0"
   },
   "devDependencies": {
-    "@types/node": "26.6.4",
+    "@types/node": "26.6.5",
     "typescript": "7.0.2",
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   },
   "license": "MIT",
   "publishConfig": {

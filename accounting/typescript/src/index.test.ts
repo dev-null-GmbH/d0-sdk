@@ -33,8 +33,8 @@ function fixture(profile: "production" | "test") {
 }
 
 describe("pinned operation surface", () => {
-  it("has all 56 production and exactly 12 test operations", () => {
-    expect(Object.keys(operations)).toHaveLength(56);
+  it("has all 80 production and exactly 12 test operations", () => {
+    expect(Object.keys(operations)).toHaveLength(80);
     expect(Object.values(operations).filter(op => op.test)).toHaveLength(12);
     for (const op of Object.keys(operations)) expect(typeof (AccountingClient.prototype as unknown as Record<string, unknown>)[op]).toBe("function");
   });
@@ -73,5 +73,21 @@ describe("pinned operation surface", () => {
     const error = new APIError(409, "conflict", "Conflict", "req-1");
     expect(error.status).toBe(409);
     expect(error.message).not.toContain("raw");
+  });
+  it("blocks all 24 banking operations in the isolated test profile", async () => {
+    const { client, calls } = fixture("test");
+    const banking = Object.entries(operations).filter(([, op]) => op.path.startsWith("/bank"));
+    expect(banking).toHaveLength(24);
+    for (const [operation] of banking) {
+      await expect(client.call(operation as keyof typeof operations, {} as never)).rejects.toThrow(/unavailable/);
+    }
+    expect(calls).toHaveLength(0);
+  });
+  it("rejects numeric bank amounts before transport", async () => {
+    const { client, calls } = fixture("production");
+    await expect(client.createBankAllocation({ movementId: "btxn_" + suffix, idempotencyKey: key, body: {
+      expectedRevision: 1, expectedReviewRevision: 1, entryId: entry, lineNo: 1, amountCents: 1000 as unknown as string,
+    } })).rejects.toThrow(/decimal strings/);
+    expect(calls).toHaveLength(0);
   });
 });

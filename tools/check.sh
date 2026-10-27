@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 
 python3 tools/verify_export.py
 python3 -m unittest discover -s tools
-test "$(go env GOVERSION)" = go1.27.2
+test "$(go env GOVERSION)" = go1.27.3
 test "$(node --version)" = v26.10.0
 test "$(npm --version)" = 12.2.0
 test "$(uv --version | cut -d ' ' -f 2)" = 0.13.1

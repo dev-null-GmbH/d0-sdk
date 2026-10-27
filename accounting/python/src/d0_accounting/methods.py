@@ -11,6 +11,78 @@ class AccountingOperations:
     def _call(self, operation: str, request: Mapping[str, Any]) -> Any:
         raise NotImplementedError
 
+    def list_bank_sources(self, request: g.ListBankSourcesRequest) -> g.ListBankSourcesResult:
+        return cast(g.ListBankSourcesResult, self._call('listBankSources', request))
+
+    def create_bank_source(self, request: g.CreateBankSourceRequest) -> g.CreateBankSourceResult:
+        return cast(g.CreateBankSourceResult, self._call('createBankSource', request))
+
+    def get_bank_source(self, request: g.GetBankSourceRequest) -> g.GetBankSourceResult:
+        return cast(g.GetBankSourceResult, self._call('getBankSource', request))
+
+    def update_bank_source(self, request: g.UpdateBankSourceRequest) -> g.UpdateBankSourceResult:
+        return cast(g.UpdateBankSourceResult, self._call('updateBankSource', request))
+
+    def list_bank_accounts(self, request: g.ListBankAccountsRequest) -> g.ListBankAccountsResult:
+        return cast(g.ListBankAccountsResult, self._call('listBankAccounts', request))
+
+    def create_bank_account(self, request: g.CreateBankAccountRequest) -> g.CreateBankAccountResult:
+        return cast(g.CreateBankAccountResult, self._call('createBankAccount', request))
+
+    def get_bank_account(self, request: g.GetBankAccountRequest) -> g.GetBankAccountResult:
+        return cast(g.GetBankAccountResult, self._call('getBankAccount', request))
+
+    def map_bank_account(self, request: g.MapBankAccountRequest) -> g.MapBankAccountResult:
+        return cast(g.MapBankAccountResult, self._call('mapBankAccount', request))
+
+    def list_bank_account_sources(self, request: g.ListBankAccountSourcesRequest) -> g.ListBankAccountSourcesResult:
+        return cast(g.ListBankAccountSourcesResult, self._call('listBankAccountSources', request))
+
+    def create_bank_account_source(self, request: g.CreateBankAccountSourceRequest) -> g.CreateBankAccountSourceResult:
+        return cast(g.CreateBankAccountSourceResult, self._call('createBankAccountSource', request))
+
+    def get_bank_account_source(self, request: g.GetBankAccountSourceRequest) -> g.GetBankAccountSourceResult:
+        return cast(g.GetBankAccountSourceResult, self._call('getBankAccountSource', request))
+
+    def update_bank_account_source(self, request: g.UpdateBankAccountSourceRequest) -> g.UpdateBankAccountSourceResult:
+        return cast(g.UpdateBankAccountSourceResult, self._call('updateBankAccountSource', request))
+
+    def import_bank_movements(self, request: g.ImportBankMovementsRequest) -> g.ImportBankMovementsResult:
+        return cast(g.ImportBankMovementsResult, self._call('importBankMovements', request))
+
+    def list_bank_imports(self, request: g.ListBankImportsRequest) -> g.ListBankImportsResult:
+        return cast(g.ListBankImportsResult, self._call('listBankImports', request))
+
+    def get_bank_import(self, request: g.GetBankImportRequest) -> g.GetBankImportResult:
+        return cast(g.GetBankImportResult, self._call('getBankImport', request))
+
+    def list_bank_source_movements(self, request: g.ListBankSourceMovementsRequest) -> g.ListBankSourceMovementsResult:
+        return cast(g.ListBankSourceMovementsResult, self._call('listBankSourceMovements', request))
+
+    def list_bank_movements(self, request: g.ListBankMovementsRequest) -> g.ListBankMovementsResult:
+        return cast(g.ListBankMovementsResult, self._call('listBankMovements', request))
+
+    def get_bank_movement(self, request: g.GetBankMovementRequest) -> g.GetBankMovementResult:
+        return cast(g.GetBankMovementResult, self._call('getBankMovement', request))
+
+    def list_bank_observations(self, request: g.ListBankObservationsRequest) -> g.ListBankObservationsResult:
+        return cast(g.ListBankObservationsResult, self._call('listBankObservations', request))
+
+    def resolve_bank_movement(self, request: g.ResolveBankMovementRequest) -> g.ResolveBankMovementResult:
+        return cast(g.ResolveBankMovementResult, self._call('resolveBankMovement', request))
+
+    def list_bank_allocations(self, request: g.ListBankAllocationsRequest) -> g.ListBankAllocationsResult:
+        return cast(g.ListBankAllocationsResult, self._call('listBankAllocations', request))
+
+    def create_bank_allocation(self, request: g.CreateBankAllocationRequest) -> g.CreateBankAllocationResult:
+        return cast(g.CreateBankAllocationResult, self._call('createBankAllocation', request))
+
+    def get_bank_allocation(self, request: g.GetBankAllocationRequest) -> g.GetBankAllocationResult:
+        return cast(g.GetBankAllocationResult, self._call('getBankAllocation', request))
+
+    def release_bank_allocation(self, request: g.ReleaseBankAllocationRequest) -> g.ReleaseBankAllocationResult:
+        return cast(g.ReleaseBankAllocationResult, self._call('releaseBankAllocation', request))
+
     def list_tax_rules(self, request: g.ListTaxRulesRequest) -> g.ListTaxRulesResult:
         return cast(g.ListTaxRulesResult, self._call('listTaxRules', request))
 

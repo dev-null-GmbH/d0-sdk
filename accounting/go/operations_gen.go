@@ -21,6 +21,342 @@ var testOperations = map[string]bool{
 	"replaceJournalEntryDraft": true,
 }
 
+func (c *Client) ListBankSources(ctx context.Context, params *gen.ListBankSourcesParams) (*gen.ListBankSourcesResponse, error) {
+	if err := c.allow("listBankSources"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankSourcesWithResponse(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) CreateBankSource(ctx context.Context, params *gen.CreateBankSourceParams, body gen.CreateBankSourceJSONRequestBody) (*gen.CreateBankSourceResponse, error) {
+	if err := c.allow("createBankSource"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.CreateBankSourceWithResponse(ctx, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 201 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) GetBankSource(ctx context.Context, sourceId gen.BankSourceId) (*gen.GetBankSourceResponse, error) {
+	if err := c.allow("getBankSource"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.GetBankSourceWithResponse(ctx, sourceId)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) UpdateBankSource(ctx context.Context, sourceId gen.BankSourceId, params *gen.UpdateBankSourceParams, body gen.UpdateBankSourceJSONRequestBody) (*gen.UpdateBankSourceResponse, error) {
+	if err := c.allow("updateBankSource"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.UpdateBankSourceWithResponse(ctx, sourceId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ListBankAccounts(ctx context.Context, params *gen.ListBankAccountsParams) (*gen.ListBankAccountsResponse, error) {
+	if err := c.allow("listBankAccounts"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankAccountsWithResponse(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) CreateBankAccount(ctx context.Context, params *gen.CreateBankAccountParams, body gen.CreateBankAccountJSONRequestBody) (*gen.CreateBankAccountResponse, error) {
+	if err := c.allow("createBankAccount"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.CreateBankAccountWithResponse(ctx, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 201 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) GetBankAccount(ctx context.Context, bankAccountId gen.BankAccountId) (*gen.GetBankAccountResponse, error) {
+	if err := c.allow("getBankAccount"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.GetBankAccountWithResponse(ctx, bankAccountId)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) MapBankAccount(ctx context.Context, bankAccountId gen.BankAccountId, params *gen.MapBankAccountParams, body gen.MapBankAccountJSONRequestBody) (*gen.MapBankAccountResponse, error) {
+	if err := c.allow("mapBankAccount"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.MapBankAccountWithResponse(ctx, bankAccountId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ListBankAccountSources(ctx context.Context, bankAccountId gen.BankAccountId, params *gen.ListBankAccountSourcesParams) (*gen.ListBankAccountSourcesResponse, error) {
+	if err := c.allow("listBankAccountSources"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankAccountSourcesWithResponse(ctx, bankAccountId, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) CreateBankAccountSource(ctx context.Context, bankAccountId gen.BankAccountId, params *gen.CreateBankAccountSourceParams, body gen.CreateBankAccountSourceJSONRequestBody) (*gen.CreateBankAccountSourceResponse, error) {
+	if err := c.allow("createBankAccountSource"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.CreateBankAccountSourceWithResponse(ctx, bankAccountId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 201 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) GetBankAccountSource(ctx context.Context, aliasId gen.BankAccountSourceId) (*gen.GetBankAccountSourceResponse, error) {
+	if err := c.allow("getBankAccountSource"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.GetBankAccountSourceWithResponse(ctx, aliasId)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) UpdateBankAccountSource(ctx context.Context, aliasId gen.BankAccountSourceId, params *gen.UpdateBankAccountSourceParams, body gen.UpdateBankAccountSourceJSONRequestBody) (*gen.UpdateBankAccountSourceResponse, error) {
+	if err := c.allow("updateBankAccountSource"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.UpdateBankAccountSourceWithResponse(ctx, aliasId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ImportBankMovements(ctx context.Context, aliasId gen.BankAccountSourceId, params *gen.ImportBankMovementsParams, body gen.ImportBankMovementsJSONRequestBody) (*gen.ImportBankMovementsResponse, error) {
+	if err := c.allow("importBankMovements"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ImportBankMovementsWithResponse(ctx, aliasId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 201 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ListBankImports(ctx context.Context, aliasId gen.BankAccountSourceId, params *gen.ListBankImportsParams) (*gen.ListBankImportsResponse, error) {
+	if err := c.allow("listBankImports"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankImportsWithResponse(ctx, aliasId, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) GetBankImport(ctx context.Context, batchId gen.BankBatchId) (*gen.GetBankImportResponse, error) {
+	if err := c.allow("getBankImport"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.GetBankImportWithResponse(ctx, batchId)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ListBankSourceMovements(ctx context.Context, aliasId gen.BankAccountSourceId, params *gen.ListBankSourceMovementsParams) (*gen.ListBankSourceMovementsResponse, error) {
+	if err := c.allow("listBankSourceMovements"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankSourceMovementsWithResponse(ctx, aliasId, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ListBankMovements(ctx context.Context, bankAccountId gen.BankAccountId, params *gen.ListBankMovementsParams) (*gen.ListBankMovementsResponse, error) {
+	if err := c.allow("listBankMovements"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankMovementsWithResponse(ctx, bankAccountId, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) GetBankMovement(ctx context.Context, movementId gen.BankMovementId) (*gen.GetBankMovementResponse, error) {
+	if err := c.allow("getBankMovement"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.GetBankMovementWithResponse(ctx, movementId)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ListBankObservations(ctx context.Context, movementId gen.BankMovementId, params *gen.ListBankObservationsParams) (*gen.ListBankObservationsResponse, error) {
+	if err := c.allow("listBankObservations"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankObservationsWithResponse(ctx, movementId, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ResolveBankMovement(ctx context.Context, movementId gen.BankMovementId, params *gen.ResolveBankMovementParams, body gen.ResolveBankMovementJSONRequestBody) (*gen.ResolveBankMovementResponse, error) {
+	if err := c.allow("resolveBankMovement"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ResolveBankMovementWithResponse(ctx, movementId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ListBankAllocations(ctx context.Context, movementId gen.BankMovementId, params *gen.ListBankAllocationsParams) (*gen.ListBankAllocationsResponse, error) {
+	if err := c.allow("listBankAllocations"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ListBankAllocationsWithResponse(ctx, movementId, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) CreateBankAllocation(ctx context.Context, movementId gen.BankMovementId, params *gen.CreateBankAllocationParams, body gen.CreateBankAllocationJSONRequestBody) (*gen.CreateBankAllocationResponse, error) {
+	if err := c.allow("createBankAllocation"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.CreateBankAllocationWithResponse(ctx, movementId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 201 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) GetBankAllocation(ctx context.Context, allocationId gen.BankAllocationId) (*gen.GetBankAllocationResponse, error) {
+	if err := c.allow("getBankAllocation"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.GetBankAllocationWithResponse(ctx, allocationId)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) ReleaseBankAllocation(ctx context.Context, allocationId gen.BankAllocationId, params *gen.ReleaseBankAllocationParams, body gen.ReleaseBankAllocationJSONRequestBody) (*gen.ReleaseBankAllocationResponse, error) {
+	if err := c.allow("releaseBankAllocation"); err != nil {
+		return nil, err
+	}
+	r, err := c.api.ReleaseBankAllocationWithResponse(ctx, allocationId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
 func (c *Client) ListTaxRules(ctx context.Context, params *gen.ListTaxRulesParams) (*gen.ListTaxRulesResponse, error) {
 	if err := c.allow("listTaxRules"); err != nil {
 		return nil, err

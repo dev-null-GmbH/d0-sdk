@@ -31,6 +31,8 @@ function exactMoney(value: unknown): void {
   const record = value as Record<string, unknown>;
   if ("amount" in record && "currency" in record && (typeof record.amount !== "string" || !/^-?(0|[1-9][0-9]{0,18})$/.test(record.amount)))
     throw new Error("Accounting amounts must be exact minor-unit decimal strings");
+  if ("amountCents" in record && (typeof record.amountCents !== "string" || !/^-?(0|[1-9][0-9]{0,18})$/.test(record.amountCents)))
+    throw new Error("Accounting amounts must be exact minor-unit decimal strings");
   for (const item of Object.values(record)) exactMoney(item);
 }
 

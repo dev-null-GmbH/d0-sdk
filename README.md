@@ -13,11 +13,16 @@ GitHub Releases and these public sources are the supported distribution channels
 The SDKs are not published to npm or PyPI; no registry account is needed to install them.
 Live product availability is reported separately in the Developer Console.
 
+Accounting 0.1.2 in this source tree is a pending banking release: 80 production
+operations, including 24 banking methods, and twelve isolated test operations.
+The existing 0.1.1 archives retain their original contents. Publication requires
+the exact-commit qualification and anonymous checks in [PUBLISHING.md](PUBLISHING.md).
+
 | Product | Production operations | Isolated test operations | Package directories |
 | --- | ---: | ---: | --- |
 | Shared authentication | OAuth/DPoP transport | Separate resource profiles | [Go](auth/go), [TypeScript](auth/typescript), [Python](auth/python) |
 | Platform | 30 | 5 | [Go](platform/go), [TypeScript](platform/typescript), [Python](platform/python) |
-| Accounting | 56 | 12 | [Go](accounting/go), [TypeScript](accounting/typescript), [Python](accounting/python) |
+| Accounting | 80 | 12 | [Go](accounting/go), [TypeScript](accounting/typescript), [Python](accounting/python) |
 | EInvoice | 7 | 7 | [Go](einvoice/go), [TypeScript](einvoice/typescript), [Python](einvoice/python) |
 | ERiC | 49 | 2 | [Go](eric/go), [TypeScript](eric/typescript), [Python](eric/python) |
 
@@ -89,7 +94,7 @@ The package directories above contain the language-specific API examples.
 
 ## Qualification and provenance
 
-Use Go 1.27.2, Node.js 26.10.0, npm 12.2.0, Python 3.14.8 and uv 0.13.1:
+Use Go 1.27.3, Node.js 26.10.0, npm 12.2.0, Python 3.14.8 and uv 0.13.1. The combined Python development workspace pins Ruff 0.17.1 to reconcile imported product checks; this does not change runtime package dependencies:
 
 ```sh
 tools/check.sh

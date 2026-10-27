@@ -11,7 +11,7 @@
   },
   "accounting": {
     "repository": "devacc-api",
-    "commit": "73c37684eb96379edaca9080aba4032ea08475f7",
+    "commit": "4a398c2ac8cb02e5915d0b0fdf55225c874fdcc9",
     "prefix": "sdk"
   },
   "einvoice": {
