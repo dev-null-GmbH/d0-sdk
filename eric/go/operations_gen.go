@@ -9,6 +9,23 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+func (c *Client) GetFilingSubmissionArtifact(ctx context.Context, productId genprod.ID, submissionId genprod.ID, kind genprod.GetFilingSubmissionArtifactParamsKind, params *genprod.GetFilingSubmissionArtifactParams) (*genprod.GetFilingSubmissionArtifactResponse, error) {
+	if err := c.allow("GetFilingSubmissionArtifact"); err != nil {
+		return nil, err
+	}
+	r, err := c.genprod.GetFilingSubmissionArtifactWithResponse(ctx, productId, submissionId, kind, params)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	if err := verifyDigest(r.Body, r.HTTPResponse, true); err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
 func (c *Client) GetUserNotices(ctx context.Context, productId genprod.ID, params *genprod.GetUserNoticesParams) (*genprod.GetUserNoticesResponse, error) {
 	if err := c.allow("GetUserNotices"); err != nil {
 		return nil, err

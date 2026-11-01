@@ -1,5 +1,50 @@
 [
   {
+    "id": "GetFilingSubmissionArtifact",
+    "method": "GET",
+    "path": "/products/{productId}/submissions/{submissionId}/artifacts/{kind}",
+    "params": [
+      {
+        "name": "productId",
+        "wire": "productId",
+        "in": "path",
+        "required": true,
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      {
+        "name": "submissionId",
+        "wire": "submissionId",
+        "in": "path",
+        "required": true,
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      {
+        "name": "xEricActorStatus",
+        "wire": "X-ERIC-Actor-Status",
+        "in": "header",
+        "required": true
+      },
+      {
+        "name": "xEricHumanAuthorization",
+        "wire": "X-ERIC-Human-Authorization",
+        "in": "header",
+        "required": false
+      },
+      {
+        "name": "kind",
+        "wire": "kind",
+        "in": "path",
+        "required": true
+      }
+    ],
+    "status": 200,
+    "bodyType": "",
+    "responseType": "application/json",
+    "profile": "production",
+    "artifact": true,
+    "contentLength": true
+  },
+  {
     "id": "GetUserNotices",
     "method": "GET",
     "path": "/products/{productId}/notices",

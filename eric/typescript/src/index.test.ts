@@ -30,8 +30,8 @@ function machine(profile: "production" | "test") {
 
 describe("ERiC catalog and boundaries",()=>{
   it("binds every published operation and limits test to two simulations",async()=>{
-    expect(Object.keys(operations)).toHaveLength(51);
-    expect(Object.values(operations).filter(op=>op.profile === "production")).toHaveLength(49);
+    expect(Object.keys(operations)).toHaveLength(52);
+    expect(Object.values(operations).filter(op=>op.profile === "production")).toHaveLength(50);
     expect(Object.values(operations).filter(op=>op.profile === "test")).toHaveLength(2);
     for (const op of Object.keys(operations)) expect(typeof (EricClient.prototype as unknown as Record<string,unknown>)[op]).toBe("function");
     const {client,calls}=machine("test");
@@ -56,10 +56,12 @@ describe("ERiC catalog and boundaries",()=>{
     const artifact=await client.GetPreparationArtifact({productId:product,preparationId:simulation,kind:"payload.xml"});
     expect(new TextDecoder().decode(artifact.bytes)).toBe("<fixture/>");
     const tampered=new EricClient("production",tenant,{request:async()=>new Response("<bad/>",{status:200,headers:{"Content-Type":"application/xml","Content-Digest":"sha-256=:invalid:"}})});
+    await expect(tampered.GetFilingSubmissionArtifact({productId:product,submissionId:simulation,kind:"manifest.json",xEricActorStatus:"fixture-jws"})).rejects.toThrow(/Digest/);
     await expect(tampered.GetPreparationArtifact({productId:product,preparationId:simulation,kind:"payload.xml"})).rejects.toThrow(/Digest/);
     const bytes=Buffer.from([0,1,255]);
     const digest=`sha-256=:${createHash("sha256").update(bytes).digest("base64")}:`;
     const lengthClient=new EricClient("production",tenant,{request:async()=>new Response(bytes,{status:200,headers:{"Content-Type":"application/octet-stream","Content-Digest":digest,"Content-Length":"4"}})});
+    await expect(lengthClient.GetFilingSubmissionArtifact({productId:product,submissionId:simulation,kind:"version.xml",xEricActorStatus:"fixture-jws"})).rejects.toThrow(/Length/);
     await expect(lengthClient.GetRetrievalArtifactContent({productId:product,artifactId:simulation,kind:"content",xEricActorStatus:"fixture-jws"})).rejects.toThrow(/Length/);
   });
   it("rejects invalid tenant and key before transport; safe problem metadata",async()=>{

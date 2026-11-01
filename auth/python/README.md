@@ -5,7 +5,7 @@ ES256 DPoP, shared token refresh and bounded nonce retries for one organization'
 client and one d0 product resource. Product SDKs own their versioned operations,
 models, pagination, polling and business error handling.
 
-Use Python 3.14.8 and install from the lockfile with `uv sync --locked`. The shared transport is qualified with the product SDKs. Publication uses the
+Use Python 3.14.10 and install from the lockfile with `uv sync --locked`. The shared transport is qualified with the product SDKs. Publication uses the
 public d0-sdk distribution; a local qualification is not a registry release.
 
 ```python
@@ -56,22 +56,33 @@ including `429`, return as ordinary responses. Redirects fail closed. Close or
 consume each response. Caller-supplied credentials, cookies, Host overrides and
 credential query parameters are rejected.
 
-Each request has a 45-second maximum deadline; token exchange has a separate
-10-second deadline. Pass `cancel=threading.Event()` to cancel while waiting for a
-shared token refresh and between network attempts. An in-flight synchronous
-socket call remains bounded by its timeout and may have completed a write when
-cancellation is observed; treat that as an uncertain outcome. Concurrent callers
-share a refresh but get distinct DPoP proofs. The dedicated TLS 1.3 transport
-does not use ambient proxies, cookies or redirect handlers.
+Each request has a 45-second budget; token exchange shares a separate 10-second
+budget across nonce attempts. After connecting, an absolute deadline interrupts
+trickled response headers and bodies by shutting down the socket. DNS resolution,
+connection setup and TLS negotiation still use standard-library/OS timeouts;
+blocking OS DNS resolution cannot be interrupted, so these budgets are not a
+strict upper bound on the complete exchange. Token expiry starts before the
+network request, so transport delay never extends its cached lifetime.
+Pass `cancel=threading.Event()` to cancel while waiting for a shared token refresh
+and between network attempts. An in-flight synchronous socket call may have
+completed a write when cancellation is observed; treat that as an uncertain
+outcome. Concurrent callers share a refresh but get distinct DPoP proofs. The
+dedicated TLS 1.3 transport does not use ambient proxies, cookies or redirects.
 
 Run `uv run --locked python -m unittest discover -s tests -v`, `uv lock --check`,
 `uv audit --locked`, and `uv build` from this directory. The fixtures verify real
 PS256/ES256 signatures, both nonce paths, exact write replay, origin and header
 boundaries, token downgrade, response limits, shared refresh and cancellation.
-They are functional checks, not load tests.
+They are functional checks, not load tests. From the repository root, CI runs
+the same SDK gate with `docker build --file Dockerfile.python-ci --target python-test --no-cache-filter python-test .`. The image
+builds the checksum-pinned official Python source into an isolated prefix and
+binds uv to it with automatic interpreter downloads disabled. The test stage
+runs afresh, including the vulnerability audit; the source build stays cached. For local checks,
+set `UV_PYTHON` to the absolute path of an installed Python 3.14.10 interpreter
+when uv cannot discover that patch.
 
-Pins were verified on 2026-10-15 against the official
-[Python 3.14.8 release](https://www.python.org/downloads/release/python-3148/),
-[joserfc 1.7.5 changelog](https://jose.authlib.org/en/changelog/),
+Pins were verified on 2026-10-26 against the official
+[Python 3.14.10 security release](https://www.python.org/downloads/release/python-31410/),
+[joserfc 1.7.7 changelog](https://jose.authlib.org/en/changelog/),
 [cryptography 50.0.2 documentation](https://cryptography.io/en/50.0.2/), and
 [Hatchling release history](https://pypi.org/project/hatchling/).

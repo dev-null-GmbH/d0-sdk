@@ -11,6 +11,9 @@ class EricOperations:
     def _call(self, operation: str, request: Mapping[str, Any]) -> Any:
         raise NotImplementedError
 
+    def get_filing_submission_artifact(self, request: g.GetFilingSubmissionArtifactRequest) -> g.GetFilingSubmissionArtifactResult:
+        return cast(g.GetFilingSubmissionArtifactResult, self._call('GetFilingSubmissionArtifact', request))
+
     def get_user_notices(self, request: g.GetUserNoticesRequest) -> g.GetUserNoticesResult:
         return cast(g.GetUserNoticesResult, self._call('GetUserNotices', request))
 

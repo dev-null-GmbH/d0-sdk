@@ -47,10 +47,10 @@ class FakeMachine(MachineClient):
         if url.endswith("/notices"):
             payload = {"schema_version": "eric.user-notices.v1", "version": "fixture", "sdk_release": "fixture", "documentation_archive_sha256": "0"*64, "license_document_sha256": "0"*64, "license_member": "license", "notices": []}
             return Response(200, json.dumps(payload).encode(), "application/json")
-        if url.endswith("/payload.xml"):
+        if url.endswith("/payload.xml") or "/submissions/" in url:
             data = b"<fixture/>"
             digest = "sha-256=:" + base64.b64encode(hashlib.sha256(data).digest()).decode() + ":"
-            return Response(200, data if not self.tamper else b"<bad/>", "application/xml", {"Content-Digest": digest})
+            return Response(200, data if not self.tamper else b"<bad/>", "application/xml", {"Content-Digest": digest, "Content-Length": str(len(data))})
         if url.endswith("/content"):
             data = bytes((0, 1, 255))
             digest = "sha-256=:" + base64.b64encode(hashlib.sha256(data).digest()).decode() + ":"
@@ -59,10 +59,10 @@ class FakeMachine(MachineClient):
 
 class SDKTests(unittest.TestCase):
     def test_catalog_coverage(self) -> None:
-        self.assertEqual(len(OPERATIONS), 51)
-        self.assertEqual(Counter(op["profile"] for op in OPERATIONS.values()), {"production": 49, "test": 2})
+        self.assertEqual(len(OPERATIONS), 52)
+        self.assertEqual(Counter(op["profile"] for op in OPERATIONS.values()), {"production": 50, "test": 2})
         public_methods = {k for k,v in vars(EricOperations).items() if not k.startswith("_") and callable(v)}
-        self.assertEqual(len(public_methods), 51)
+        self.assertEqual(len(public_methods), 52)
 
     def test_both_simulation_outcomes_and_gates(self) -> None:
         transport = FakeMachine("test")
@@ -87,6 +87,8 @@ class SDKTests(unittest.TestCase):
         self.assertEqual(sdk.get_user_notices({"productId":PRODUCT})["schema_version"],"eric.user-notices.v1")
         artifact = sdk.get_preparation_artifact({"productId":PRODUCT,"preparationId":SIMULATION,"kind":"payload.xml"})
         self.assertEqual(artifact["bytes"],b"<fixture/>")
+        submission = sdk.get_filing_submission_artifact({"productId":PRODUCT,"submissionId":SIMULATION,"kind":"version.xml","xEricActorStatus":"fixture-jws"})
+        self.assertEqual(submission["bytes"],b"<fixture/>")
         binary = sdk.get_retrieval_artifact_content({"productId": PRODUCT, "artifactId": SIMULATION, "kind": "content", "xEricActorStatus": "fixture-jws"})
         self.assertEqual(binary["bytes"], bytes((0, 1, 255)))
         transport.tamper = True

@@ -9,6 +9,23 @@ class Artifact(TypedDict):
     contentType: str
     contentDigest: str
 
+class SubmissionArtifact(TypedDict):
+    kind: Literal['version.xml', 'result.xml', 'server.xml']
+    media_type: Literal['application/xml']
+    bytes: int
+    sha256: Digest
+
+class SubmissionArtifactManifest(TypedDict):
+    schema: Literal['eric.submission-artifacts.v1']
+    submission_id: ID
+    attempt_id: ID
+    binding_sha256: Digest
+    purpose: Literal['authorized_test_transmission']
+    execution_failed: bool
+    evidence_invalid: bool
+    send_invoked: bool
+    artifacts: list[SubmissionArtifact]
+
 class EBilanzFormPlanInput(TypedDict):
     reporting_start: NotRequired[str]
     reporting_end: NotRequired[str]
@@ -17,7 +34,7 @@ class EBilanzFormPlanInput(TypedDict):
     corporation_tax_option: NotRequired[bool]
     micro_bilg_prepared: NotRequired[bool]
     result_appropriation: NotRequired[bool]
-    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']
+    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'Other.KOER', 'KGAA', 'MU']
     income_statement_format: NotRequired[Literal['GKV', 'UKV']]
     fiscal_start: str
     closing_date: str
@@ -33,7 +50,7 @@ class Problem(TypedDict):
 
 class EBilanzFormPlan(TypedDict):
     entry_schema: str
-    schema_version: Literal['ebilanz-form-plan-v7', 'ebilanz-form-plan-v8', 'ebilanz-form-plan-v9', 'ebilanz-form-plan-v10', 'ebilanz-form-plan-v11', 'ebilanz-form-plan-v12', 'ebilanz-form-plan-v13', 'ebilanz-form-plan-v14', 'ebilanz-form-plan-v15', 'ebilanz-form-plan-v16', 'ebilanz-form-plan-v17', 'ebilanz-form-plan-v18', 'ebilanz-form-plan-v19', 'ebilanz-form-plan-v20']
+    schema_version: Literal['ebilanz-form-plan-v7', 'ebilanz-form-plan-v8', 'ebilanz-form-plan-v9', 'ebilanz-form-plan-v10', 'ebilanz-form-plan-v11', 'ebilanz-form-plan-v12', 'ebilanz-form-plan-v13', 'ebilanz-form-plan-v14', 'ebilanz-form-plan-v15', 'ebilanz-form-plan-v16', 'ebilanz-form-plan-v17', 'ebilanz-form-plan-v18', 'ebilanz-form-plan-v19', 'ebilanz-form-plan-v20', 'ebilanz-form-plan-v21', 'ebilanz-form-plan-v22', 'ebilanz-form-plan-v23', 'ebilanz-form-plan-v24', 'ebilanz-form-plan-v25', 'ebilanz-form-plan-v26', 'ebilanz-form-plan-v27', 'ebilanz-form-plan-v28', 'ebilanz-form-plan-v29', 'ebilanz-form-plan-v30', 'ebilanz-form-plan-v31', 'ebilanz-form-plan-v32']
     procedure: Literal['Bilanz_6.9']
     taxonomy_version: Literal['6.9']
     taxonomy_archive_sha256: Digest
@@ -63,6 +80,7 @@ class EBilanzFormPartnership(TypedDict):
     equity_member_root: str
     kke_partner_groups: list[str]
     kke_equity_member_roots: NotRequired[dict[str, str]]
+    former_equity_member_roots: NotRequired[dict[str, str]]
     required_kke_fields: list[str]
 
 class EBilanzFormReconciliation(TypedDict):
@@ -110,7 +128,7 @@ class EBilanzMappingAxis(TypedDict):
 class EBilanzMappingMember(TypedDict):
     name: str
     label: str
-    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']]
+    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'Other.KOER', 'KGAA', 'MU']]
     valid_since: NotRequired[list[str]]
     valid_through: NotRequired[list[str]]
     fiscal_valid_since: NotRequired[str]
@@ -188,7 +206,7 @@ class EBilanzMappingTarget(TypedDict):
     period: Literal['instant', 'duration']
     nillable: bool
     components: list[Literal['B', 'GuV', 'BVV', 'SGE', 'SGEP', 'BAL', 'KKE']]
-    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']]
+    value_legal_forms: list[Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'Other.KOER', 'KGAA', 'MU']]
     dimension_set_ids: list[Digest]
     valid_since: NotRequired[list[str]]
     valid_through: NotRequired[list[str]]
@@ -836,6 +854,15 @@ class EricTestSimulation(TypedDict):
     outcome: Literal['simulated_accepted', 'simulated_rejected']
     simulated: Literal[True]
 
+class GetFilingSubmissionArtifactRequest(TypedDict):
+    productId: ID
+    submissionId: ID
+    xEricActorStatus: str
+    xEricHumanAuthorization: NotRequired[str]
+    kind: Literal['manifest.json', 'server.xml', 'result.xml', 'version.xml']
+
+type GetFilingSubmissionArtifactResult = Artifact
+
 class GetUserNoticesRequest(TypedDict):
     productId: ID
 
@@ -1231,7 +1258,7 @@ class InlineObject1(TypedDict):
     corporation_tax_option: NotRequired[bool]
     micro_bilg_prepared: bool
     result_appropriation: bool
-    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']
+    legal_form: Literal['EU', 'EUF', 'EUN', 'GmbH', 'UG', 'AG', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'Other.KOER', 'KGAA', 'MU']
     legal_form_label: str
     income_statement_format: Literal['GKV', 'UKV']
     income_statement_format_label: str
@@ -1265,8 +1292,11 @@ class InlineObject3(TypedDict):
     fiscal_end_min: str
     fiscal_end_max: str
     closing_date_binding: Literal['fiscal_start', 'fiscal_end', 'within_fiscal_year']
+    closing_date_min: NotRequired[str]
+    closing_date_max: NotRequired[str]
+    duration_limit: NotRequired[Literal['none']]
     self_employment_same_calendar_year: Literal[True]
-    maximum_months: Literal[12]
+    maximum_months: Literal[0, 12]
 
 class InlineObject4(TypedDict):
     id: str
@@ -1288,7 +1318,7 @@ class InlineObject7(TypedDict):
     typed_value: str
 
 class InlineObject8(TypedDict):
-    legal_forms: list[Literal['EU', 'GmbH', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'MU']]
+    legal_forms: list[Literal['EU', 'GmbH', 'OHG', 'KG', 'GKG', 'AGKG', 'GOHG', 'AGOHG', 'GBR', 'PG', 'ASG', 'soPG', 'EWI', 'Other.MUN', 'Other.KOER', 'KGAA', 'MU']]
     accounting_standard: Literal['AO']
     income_statement_format: Literal['GKV']
     annual: Literal[True]

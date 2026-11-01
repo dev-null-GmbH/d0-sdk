@@ -2,4 +2,4 @@
 members = ["auth/python", "platform/python", "accounting/python", "einvoice/python", "eric/python"]
 
 [tool.uv]
-override-dependencies = ["ruff==0.17.1"]
+override-dependencies = ["ruff==0.17.3", "mypy==2.4.1"]

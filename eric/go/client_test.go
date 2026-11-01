@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -50,7 +51,7 @@ func TestCatalogAndSimulationBoundary(t *testing.T) {
 	if err = json.Unmarshal(raw, &ops); err != nil {
 		t.Fatal(err)
 	}
-	if len(ops) != 51 {
+	if len(ops) != 52 {
 		t.Fatalf("operations=%d", len(ops))
 	}
 	var prod, test int
@@ -68,7 +69,7 @@ func TestCatalogAndSimulationBoundary(t *testing.T) {
 			t.Fatalf("missing %s", method)
 		}
 	}
-	if prod != 49 || test != 2 {
+	if prod != 50 || test != 2 {
 		t.Fatalf("coverage %d/%d", prod, test)
 	}
 	calls := 0
@@ -118,6 +119,7 @@ func TestProductionReadAndArtifactDigest(t *testing.T) {
 		sum := sha256.Sum256(body)
 		h := make(http.Header)
 		h.Set("Content-Digest", "sha-256=:"+base64.StdEncoding.EncodeToString(sum[:])+":")
+		h.Set("Content-Length", strconv.Itoa(len(body)))
 		return response(200, "application/xml", body, h), nil
 	})
 	notices, err := c.GetUserNotices(context.Background(), genprod.ID(product), &genprod.GetUserNoticesParams{})
@@ -134,11 +136,14 @@ func TestProductionReadAndArtifactDigest(t *testing.T) {
 	if string(a.Body) != "<fixture/>" {
 		t.Fatal("artifact altered")
 	}
-	if calls != 2 {
+	if artifact, err := c.GetFilingSubmissionArtifact(context.Background(), genprod.ID(product), genprod.ID(simulation), genprod.SubmissionVersionXml, &genprod.GetFilingSubmissionArtifactParams{XERICActorStatus: "fixture-jws"}); err != nil || string(artifact.Body) != "<fixture/>" {
+		t.Fatal("submission artifact", err)
+	}
+	if calls != 3 {
 		t.Fatal(calls)
 	}
 	_, err = c.CreateEricTestSimulation(context.Background(), uuid.MustParse(tenant), uuid.MustParse(product), &gentest.CreateEricTestSimulationParams{}, gentest.CreateEricTestSimulationJSONRequestBody{})
-	if err == nil || calls != 2 {
+	if err == nil || calls != 3 {
 		t.Fatal("prod called test operation")
 	}
 }

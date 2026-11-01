@@ -60,7 +60,7 @@ def main():
         npm_packages = [f"@dev-null-gmbh/{'auth-machine' if product == 'auth' else product}@{release_versions[product]}" for product in PRODUCTS] if args.public else list(map(str, sorted((ROOT / "dist/npm").glob("*.tgz"))))
         run("npm", "install", "--ignore-scripts", "--no-audit", "--no-fund", "--registry", "https://registry.npmjs.org", *npm_packages, cwd=node)
         python = customer / "python"
-        run("uv", "venv", "--python", "3.14.8", str(python), cwd=customer)
+        run("uv", "venv", "--python", "3.14.10", str(python), cwd=customer)
         interpreter = python / "bin/python"
         python_packages = [f"d0-{'auth-machine' if product == 'auth' else product}=={release_versions[product]}" for product in PRODUCTS] if args.public else list(map(str, sorted((ROOT / "dist/python").glob("*.whl"))))
         run("uv", "pip", "install", "--python", str(interpreter), "--default-index", "https://pypi.org/simple", *python_packages, cwd=customer)

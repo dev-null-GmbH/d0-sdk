@@ -1,7 +1,7 @@
 {
   "auth": {
     "repository": "d0-auth",
-    "commit": "427beab15ee4ba6d6487a85120d920f028a1cee5",
+    "commit": "3e2140c4e0191105db41d93c664d87873e26b5c2",
     "prefix": "packages/machine"
   },
   "platform": {
@@ -11,17 +11,17 @@
   },
   "accounting": {
     "repository": "devacc-api",
-    "commit": "4a398c2ac8cb02e5915d0b0fdf55225c874fdcc9",
+    "commit": "7835529eeeb1296efd7e15d09e8e5667519cd541",
     "prefix": "sdk"
   },
   "einvoice": {
     "repository": "devacc-einvoice-platform",
-    "commit": "d4a456dd25a52d250bf003b6984f96d297e8fe2f",
+    "commit": "ff350bd1a166a1edc26a6785a3c5b76d80c56954",
     "prefix": "sdk"
   },
   "eric": {
     "repository": "devacc-eric-svc",
-    "commit": "15215cc6dc683005868d1f0f0e61e5de7408ab03",
+    "commit": "415b44921c46d106936c03427e03f659435f3a7c",
     "prefix": "sdk"
   }
 }

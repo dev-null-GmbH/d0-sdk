@@ -4,7 +4,7 @@ Seven validation-only EInvoice operations on one fixed production or customer-te
 
 Create a client with await createEInvoiceClient("test", {clientId, keyId, signingKey, scopes}). Read policies with listValidationPolicies(); upload exact XML bytes with createDocument(xml, stableUploadKey); create a validation with createValidationOperation(documentId, policyId, stableValidationKey); then waitValidation(operationId, 120000). A succeeded operation can have a result with valid=false.
 
-Local qualification uses the reviewed sibling auth source at commit 8cce182:
+Local qualification uses the reviewed sibling auth source at commit 3e2140c:
 npm ci --ignore-scripts; npm run check; npm test; npm run example:fixture.
 The fixture example executes both profiles through the real product SDK
 methods without network access. The file dependency is a development

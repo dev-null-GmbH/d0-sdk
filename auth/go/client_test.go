@@ -190,9 +190,9 @@ func TestTestResourceSignaturesAndCrossOriginBoundary(t *testing.T) {
 			if claims["aud"] != issuer || form.Get("resource") != cfg.Resource {
 				t.Error("wrong assertion audience or test resource")
 			}
-			return &http.Response{StatusCode: 200, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(`{"access_token":"fixture-token","token_type":"DPoP","expires_in":300,"scope":"platform.domains.read"}`))}, nil
+			return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: io.NopCloser(strings.NewReader(`{"access_token":"fixture-token","token_type":"DPoP","expires_in":300,"scope":"platform.domains.read"}`))}, nil
 		}
-		return &http.Response{StatusCode: 204, Header: make(http.Header), Body: http.NoBody}, nil
+		return &http.Response{StatusCode: http.StatusNoContent, Header: make(http.Header), Body: http.NoBody}, nil
 	})
 	req, _ := http.NewRequestWithContext(t.Context(), http.MethodGet, cfg.Resource+"/v1/domains", nil)
 	response, err := client.Do(req)
@@ -200,7 +200,7 @@ func TestTestResourceSignaturesAndCrossOriginBoundary(t *testing.T) {
 		t.Fatal(err)
 	}
 	_ = response.Body.Close()
-	if response.StatusCode != 204 {
+	if response.StatusCode != http.StatusNoContent {
 		t.Fatal("unexpected API status")
 	}
 	wrong, _ := http.NewRequestWithContext(t.Context(), http.MethodGet, "https://api.d0.eu/platform/v1/domains", nil)

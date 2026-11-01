@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import re
+import socket
 import ssl
 import threading
 import time
@@ -15,8 +16,9 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
-from collections.abc import Mapping
-from http.client import HTTPException
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
+from http.client import HTTPException, HTTPResponse, HTTPSConnection
 from typing import Any, cast
 
 from joserfc import jwt
@@ -24,6 +26,7 @@ from joserfc.jwk import ECKey, RSAKey
 
 _ISSUER = "https://auth.d0.eu"
 _TOKEN_ENDPOINT = _ISSUER + "/oauth2/token"
+_TOKEN_TIMEOUT_SECONDS = 10.0
 _RESOURCES = {
     f"{origin}/{name}": name
     for origin in ("https://api.d0.eu", "https://api.test.d0.eu")
@@ -90,6 +93,100 @@ def _json_object(raw: bytes) -> dict[str, Any]:
     if not isinstance(result, dict):
         raise TypeError("JSON object required")
     return result
+
+
+class _DeadlineResponse(HTTPResponse):
+    _deadline_timer: threading.Timer | None = None
+    _deadline_expired: threading.Event | None = None
+
+    def _check_deadline(self) -> None:
+        if self._deadline_expired is not None and self._deadline_expired.is_set():
+            self.close()
+            raise TimeoutError("d0 request timed out") from None
+
+    @contextmanager
+    def _reading(self) -> Iterator[None]:
+        self._check_deadline()
+        try:
+            yield
+        finally:
+            self._check_deadline()
+            if self.isclosed() and self._deadline_timer is not None:
+                self._deadline_timer.cancel()
+
+    def read(self, amt: int | None = None) -> bytes:
+        with self._reading():
+            return super().read(amt)
+
+    def readinto(self, b: Any) -> int:
+        with self._reading():
+            return super().readinto(b)
+
+    def read1(self, n: int = -1) -> bytes:
+        with self._reading():
+            return super().read1(n)
+
+    def readline(self, limit: int | None = -1) -> bytes:
+        with self._reading():
+            return super().readline(-1 if limit is None else limit)
+
+    def peek(self, n: int = -1) -> bytes:
+        with self._reading():
+            return super().peek(n)
+
+    def close(self) -> None:
+        if self._deadline_timer is not None:
+            self._deadline_timer.cancel()
+        super().close()
+
+
+class _DeadlineHTTPSConnection(HTTPSConnection):
+    response_class = _DeadlineResponse
+
+    def __init__(self, host: str, **kwargs: Any) -> None:
+        super().__init__(host, **kwargs)
+        self._deadline = time.monotonic() + cast(float, self.timeout)
+
+    def getresponse(self) -> HTTPResponse:
+        connection = self.sock
+        if connection is None:
+            raise HTTPException("d0 connection unavailable")
+        expired = threading.Event()
+
+        def interrupt() -> None:
+            expired.set()
+            try:
+                connection.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+
+        # Socket timeouts reset on each received byte; shutdown also bounds trickled headers/body.
+        timer = threading.Timer(max(0, self._deadline - time.monotonic()), interrupt)
+        timer.daemon = True
+        timer.start()
+        try:
+            response = cast(_DeadlineResponse, super().getresponse())
+        except Exception:
+            timer.cancel()
+            if expired.is_set():
+                raise TimeoutError("d0 request timed out") from None
+            raise
+        response._deadline_timer = timer
+        response._deadline_expired = expired
+        if response.isclosed():
+            timer.cancel()
+        return response
+
+
+class _DeadlineHTTPSHandler(urllib.request.HTTPSHandler):
+    def __init__(self, context: ssl.SSLContext) -> None:
+        super().__init__(context=context)
+        self._tls_context = context
+
+    def https_open(self, request: urllib.request.Request) -> Any:
+        return self.do_open(
+            _DeadlineHTTPSConnection, request, context=self._tls_context
+        )
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -162,7 +259,7 @@ class MachineClient:
         context.minimum_version = ssl.TLSVersion.TLSv1_3
         self._opener = urllib.request.build_opener(
             urllib.request.ProxyHandler({}),
-            urllib.request.HTTPSHandler(context=context),
+            _DeadlineHTTPSHandler(context=context),
             _NoRedirect(),
         )
 
@@ -216,10 +313,11 @@ class MachineClient:
             raise RuntimeError("could not sign DPoP proof") from None
 
     def _fetch_token(self) -> str:
-        deadline = time.monotonic() + 10
+        deadline = time.monotonic() + _TOKEN_TIMEOUT_SECONDS
         for attempt in range(2):
             if time.monotonic() >= deadline:
                 raise TimeoutError("d0 token request timed out")
+            attempt_started = time.monotonic()
             now = int(time.time())
             try:
                 assertion = jwt.encode(
@@ -256,10 +354,13 @@ class MachineClient:
                     "DPoP": self._proof("POST", _TOKEN_ENDPOINT, self._as_nonce),
                 },
             )
-            response = self._perform(request, min(10, deadline - time.monotonic()))
+            response = self._perform(request, deadline - time.monotonic())
             try:
                 try:
                     raw = response.read(32769)
+                    self._check(None, deadline)
+                except TimeoutError:
+                    raise TimeoutError("d0 token request timed out") from None
                 except OSError, HTTPException:
                     raise RuntimeError("d0 token response transport failed") from None
                 if len(raw) > 32768:
@@ -296,7 +397,7 @@ class MachineClient:
                 with self._state_lock:
                     self._token, self._expires = (
                         result["access_token"],
-                        time.monotonic() + lifetime,
+                        attempt_started + lifetime,
                     )
                 return cast(str, result["access_token"])
             finally:

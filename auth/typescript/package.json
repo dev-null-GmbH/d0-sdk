@@ -23,12 +23,12 @@
     "prepack": "npm run check && npm run build"
   },
   "dependencies": {
-    "jose": "6.2.12"
+    "jose": "6.2.13"
   },
   "devDependencies": {
-    "@types/node": "26.6.4",
+    "@types/node": "26.6.5",
     "typescript": "7.0.2",
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",

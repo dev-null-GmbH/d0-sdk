@@ -18,13 +18,16 @@ operations, including 24 banking methods, and twelve isolated test operations.
 The existing 0.1.1 archives retain their original contents. Exact qualification,
 checksums and anonymous installation evidence are recorded in [PUBLISHING.md](PUBLISHING.md).
 
+The source tree for the next release pins the shared Python transport to
+`joserfc` 1.7.7. The operation counts below describe these sources.
+
 | Product | Production operations | Isolated test operations | Package directories |
 | --- | ---: | ---: | --- |
 | Shared authentication | OAuth/DPoP transport | Separate resource profiles | [Go](auth/go), [TypeScript](auth/typescript), [Python](auth/python) |
 | Platform | 30 | 5 | [Go](platform/go), [TypeScript](platform/typescript), [Python](platform/python) |
 | Accounting | 80 | 12 | [Go](accounting/go), [TypeScript](accounting/typescript), [Python](accounting/python) |
 | EInvoice | 7 | 7 | [Go](einvoice/go), [TypeScript](einvoice/typescript), [Python](einvoice/python) |
-| ERiC | 49 | 2 | [Go](eric/go), [TypeScript](eric/typescript), [Python](eric/python) |
+| ERiC | 50 | 2 | [Go](eric/go), [TypeScript](eric/typescript), [Python](eric/python) |
 
 The package names inside the release archives are `@dev-null-gmbh/{product}`,
 `d0-{product}` and `github.com/dev-null-GmbH/d0-sdk/{product}/go`.
@@ -94,7 +97,7 @@ The package directories above contain the language-specific API examples.
 
 ## Qualification and provenance
 
-Use Go 1.27.3, Node.js 26.10.0, npm 12.2.0, Python 3.14.8 and uv 0.13.1. The combined Python development workspace pins Ruff 0.17.1 to reconcile imported product checks; this does not change runtime package dependencies:
+Use Go 1.27.3, Node.js 26.13.0, npm 12.2.1, Python 3.14.10 and uv 0.13.6. The combined Python development workspace pins Ruff 0.17.3 and mypy 2.4.1 to reconcile imported product checks; this does not change runtime package dependencies:
 
 ```sh
 tools/check.sh

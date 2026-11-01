@@ -59,6 +59,6 @@ real PS256/ES256 signatures, nonce separation, unchanged retries, concurrent
 refresh, token-profile rejection and resource boundaries. Package publication
 and each product SDK's qualification are separate release steps.
 
-The exact `jose` 6.2.12 pin was verified against the official
-[immutable release](https://github.com/panva/jose/releases/tag/v6.2.12) on
+The exact `jose` 6.2.13 pin was verified against the official
+[immutable release](https://github.com/panva/jose/releases/tag/v6.2.13) on
 2026-10-15. JOSE operations use that library's signing and key APIs.

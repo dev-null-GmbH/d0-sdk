@@ -1,14 +1,18 @@
 import base64
 import hashlib
 import json
+import socketserver
 import threading
 import time
 import unittest
+from http.client import HTTPConnection, HTTPSConnection
+from unittest.mock import patch
 from urllib.parse import parse_qs
 
 from joserfc import jwt
 from joserfc.jwk import ECKey, RSAKey
 
+import d0_auth_machine
 from d0_auth_machine import MachineClient
 
 
@@ -310,6 +314,178 @@ class MachineTests(unittest.TestCase):
             thread.join()
         self.assertEqual(errors, [])
         self.assertEqual(sum(url.endswith("/oauth2/token") for url in calls), 1)
+
+    def test_token_deadline_interrupts_trickled_headers_and_body(self):
+        payload = b'{"access_token":"fixture-token","token_type":"DPoP","expires_in":300,"scope":"platform.domains.read"}'
+        for phase in ("headers", "body"):
+            with self.subTest(phase=phase):
+                stop = threading.Event()
+
+                class Handler(socketserver.BaseRequestHandler):
+                    def handle(self, phase=phase, stop=stop):
+                        self.request.recv(16384)
+                        header = (
+                            b"HTTP/1.1 200 OK\r\nContent-Length: "
+                            + str(len(payload)).encode()
+                            + b"\r\nConnection: close\r\n\r\n"
+                        )
+                        try:
+                            if phase == "body":
+                                self.request.sendall(header)
+                            for byte in header if phase == "headers" else payload:
+                                if stop.wait(0.02):
+                                    return
+                                self.request.sendall(bytes([byte]))
+                        except OSError:
+                            pass
+
+                with socketserver.ThreadingTCPServer(
+                    ("127.0.0.1", 0), Handler
+                ) as server:
+                    thread = threading.Thread(target=server.serve_forever, daemon=True)
+                    thread.start()
+                    client = self.client()
+                    endpoint = (
+                        f"https://127.0.0.1:{server.server_address[1]}/oauth2/token"
+                    )
+                    try:
+                        with (
+                            patch.object(d0_auth_machine, "_TOKEN_ENDPOINT", endpoint),
+                            patch.object(
+                                d0_auth_machine,
+                                "_TOKEN_TIMEOUT_SECONDS",
+                                0.12,
+                                create=True,
+                            ),
+                            # Exercise the real urllib transport over loopback without a TLS fixture.
+                            patch.object(
+                                HTTPSConnection, "connect", HTTPConnection.connect
+                            ),
+                        ):
+                            started = time.monotonic()
+                            with self.assertRaises(TimeoutError):
+                                client.request(
+                                    "https://api.d0.eu/platform/v1/x", timeout=0.8
+                                )
+                            self.assertLess(time.monotonic() - started, 0.6)
+                            until = time.monotonic() + 0.2
+                            while (
+                                client._refresh is not None and time.monotonic() < until
+                            ):
+                                time.sleep(0.005)
+                            self.assertIsNone(client._refresh)
+                    finally:
+                        stop.set()
+                        server.shutdown()
+                        thread.join()
+
+    def test_response_streaming_methods_reject_deadline_eof(self):
+        for method in (
+            "read",
+            "readinto",
+            "readline",
+            "read1",
+            "readinto1",
+            "readlines",
+            "iteration",
+            "peek",
+        ):
+            with self.subTest(method=method):
+                stop = threading.Event()
+
+                class Handler(socketserver.BaseRequestHandler):
+                    def handle(self, stop=stop):
+                        self.request.recv(16384)
+                        try:
+                            self.request.sendall(
+                                b"HTTP/1.1 200 OK\r\nContent-Length: 10\r\nConnection: close\r\n\r\n"
+                            )
+                            for _ in range(10):
+                                if stop.wait(0.3):
+                                    return
+                                self.request.sendall(b"x")
+                        except OSError:
+                            pass
+
+                with socketserver.ThreadingTCPServer(
+                    ("127.0.0.1", 0), Handler
+                ) as server:
+                    thread = threading.Thread(target=server.serve_forever, daemon=True)
+                    thread.start()
+                    client = self.client()
+                    client._token, client._expires = (
+                        "fixture-token",
+                        time.monotonic() + 300,
+                    )
+                    original_send = client._send
+                    endpoint = f"https://127.0.0.1:{server.server_address[1]}/stream"
+                    client._send = (
+                        lambda request, timeout, endpoint=endpoint, original_send=original_send: (
+                            original_send(
+                                d0_auth_machine.urllib.request.Request(
+                                    endpoint, headers=dict(request.header_items())
+                                ),
+                                timeout,
+                            )
+                        )
+                    )
+                    try:
+                        with patch.object(
+                            HTTPSConnection, "connect", HTTPConnection.connect
+                        ):
+                            response = client.request(
+                                "https://api.d0.eu/platform/v1/x", timeout=1
+                            )
+                            try:
+                                until = time.monotonic() + 2
+                                with self.assertRaises(TimeoutError):
+                                    while True:
+                                        if time.monotonic() >= until:
+                                            self.fail(
+                                                "deadline did not interrupt buffered reads"
+                                            )
+                                        if method == "iteration":
+                                            part = next(response, b"")
+                                        elif method in ("readinto", "readinto1"):
+                                            part = getattr(response, method)(
+                                                bytearray(10)
+                                            )
+                                        elif method == "readlines":
+                                            part = response.readlines()
+                                        else:
+                                            part = getattr(response, method)(10)
+                                        if not part:
+                                            self.fail(
+                                                "deadline was reported as successful EOF"
+                                            )
+                                        if method == "peek":
+                                            time.sleep(0.01)
+                                self.assertTrue(response.closed)
+                                timer = response._deadline_timer
+                                timer.join(0.2)
+                                self.assertFalse(timer.is_alive())
+                            finally:
+                                response.close()
+                    finally:
+                        stop.set()
+                        server.shutdown()
+                        thread.join()
+
+    def test_token_expiry_starts_before_the_network_request(self):
+        client = self.client()
+        clock = [100.0]
+
+        class DelayedResponse(FakeResponse):
+            def read(self, size=-1):
+                clock[0] += 5
+                return super().read(size)
+
+        client._send = lambda *_: DelayedResponse(
+            body=b'{"access_token":"fixture-token","token_type":"DPoP","expires_in":300,"scope":"platform.domains.read"}'
+        )
+        with patch.object(d0_auth_machine.time, "monotonic", lambda: clock[0]):
+            self.assertEqual(client._fetch_token(), "fixture-token")
+        self.assertEqual(client._expires, 400)
 
     def test_refresh_timeout_is_returned_to_waiters(self):
         client = self.client()

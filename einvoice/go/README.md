@@ -7,5 +7,5 @@ Pass machine.Config with the local signing key, client ID, key ID, and EInvoice 
 Local qualification: go test -race ./... and go run ./examples/fixture. The
 example executes the complete synthetic workflow for both profiles through
 the real product SDK methods without network access. The relative replace
-uses the reviewed sibling shared-auth source at commit 8cce182. Replace it
+uses the reviewed sibling shared-auth source at commit 3e2140c. Replace it
 with an immutable published module version before publishing this SDK.
