@@ -112,6 +112,13 @@
             "readOnly": true,
             "type": "string"
           },
+          "billing_backend": {
+            "type": "string"
+          },
+          "billing_started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
           "created_at": {
             "format": "date-time",
             "type": "string"
@@ -130,6 +137,7 @@
           }
         },
         "required": [
+          "billing_backend",
           "id",
           "name",
           "s3_name",
@@ -161,13 +169,17 @@
           },
           "region": {
             "type": "string"
+          },
+          "tariff": {
+            "$ref": "#/components/schemas/Tariff"
           }
         },
         "required": [
           "enabled",
           "endpoint",
           "region",
-          "limits"
+          "limits",
+          "tariff"
         ],
         "type": "object"
       },
@@ -443,6 +455,51 @@
         ],
         "type": "object"
       },
+      "DnssecKeyBody": {
+        "additionalProperties": false,
+        "properties": {
+          "algorithm": {
+            "description": "DNSKEY algorithm",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "ds": {
+            "description": "Matching DS records as RDATA",
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "flags": {
+            "description": "DNSKEY flags",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "protocol": {
+            "description": "DNSKEY protocol",
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "public_key": {
+            "description": "Public DNSKEY material",
+            "type": "string"
+          }
+        },
+        "required": [
+          "flags",
+          "protocol",
+          "algorithm",
+          "public_key",
+          "ds"
+        ],
+        "type": "object"
+      },
       "DomainBody": {
         "additionalProperties": false,
         "properties": {
@@ -491,6 +548,54 @@
           "status",
           "created_at",
           "updated_at"
+        ],
+        "type": "object"
+      },
+      "DomainDNSSECBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/DomainDNSSECBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "keys": {
+            "description": "Public delegation keys; never private signing material",
+            "items": {
+              "$ref": "#/components/schemas/DnssecKeyBody"
+            },
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "managed": {
+            "description": "Whether the domain uses platform nameservers",
+            "type": "boolean"
+          },
+          "registrar_configured": {
+            "description": "Whether matching delegation material is confirmed at the registrar",
+            "type": "boolean"
+          },
+          "signing": {
+            "description": "Whether authoritative DNSSEC signing is enabled",
+            "type": "boolean"
+          },
+          "validated": {
+            "description": "Whether DNSSEC validation is confirmed",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "managed",
+          "signing",
+          "registrar_configured",
+          "validated",
+          "keys"
         ],
         "type": "object"
       },
@@ -806,10 +911,17 @@
             "maxLength": 63,
             "minLength": 2,
             "type": "string"
+          },
+          "tariff_version": {
+            "enum": [
+              "object-storage-v1"
+            ],
+            "type": "string"
           }
         },
         "required": [
-          "name"
+          "name",
+          "tariff_version"
         ],
         "type": "object"
       },
@@ -1389,6 +1501,44 @@
           "vcpu",
           "memory_gib",
           "storage_gib"
+        ],
+        "type": "object"
+      },
+      "Tariff": {
+        "additionalProperties": false,
+        "properties": {
+          "base_hourly_eur": {
+            "type": "string"
+          },
+          "base_monthly_cap_eur": {
+            "type": "string"
+          },
+          "egress_eur_per_tb": {
+            "type": "string"
+          },
+          "included_egress_bytes_per_hour": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "included_storage_bytes": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "storage_eur_per_tb_hour": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "base_hourly_eur",
+          "base_monthly_cap_eur",
+          "included_storage_bytes",
+          "included_egress_bytes_per_hour",
+          "storage_eur_per_tb_hour",
+          "egress_eur_per_tb"
         ],
         "type": "object"
       },
@@ -2875,9 +3025,121 @@
         ]
       }
     },
+    "/platform/v1/domains/{domain}/dnssec": {
+      "get": {
+        "description": "Reads authoritative signing and registrar delegation state for an owned domain.",
+        "operationId": "platform-getDomainDNSSEC",
+        "parameters": [
+          {
+            "description": "The managed domain",
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "description": "The managed domain",
+              "examples": [
+                "example.eu"
+              ],
+              "maxLength": 253,
+              "minLength": 3,
+              "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainDNSSECBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.dns.read"
+            ]
+          }
+        ],
+        "summary": "Get DNSSEC status",
+        "tags": [
+          "dns"
+        ]
+      },
+      "put": {
+        "description": "Enables authoritative signing and publishes matching public delegation keys after serving verification. Existing signing keys are preserved; external DNS is not changed.",
+        "operationId": "platform-enableDomainDNSSEC",
+        "parameters": [
+          {
+            "description": "The managed domain",
+            "in": "path",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "description": "The managed domain",
+              "examples": [
+                "example.eu"
+              ],
+              "maxLength": 253,
+              "minLength": 3,
+              "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DomainDNSSECBody"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.domains.write"
+            ]
+          }
+        ],
+        "summary": "Enable managed DNSSEC",
+        "tags": [
+          "dns"
+        ]
+      }
+    },
     "/platform/v1/domains/{domain}/nameservers": {
       "put": {
-        "description": "Replaces the domain's nameservers at the registry. Scoped to the caller tenant.",
+        "description": "Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.",
         "operationId": "platform-setDomainNameservers",
         "parameters": [
           {
@@ -3058,6 +3320,16 @@
               }
             },
             "description": "Unauthorized"
+          },
+          "402": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Payment Required"
           },
           "403": {
             "content": {

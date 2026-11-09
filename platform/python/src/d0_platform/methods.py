@@ -77,6 +77,12 @@ class PlatformOperations:
     def upsert_dns_record(self, request: g.UpsertDNSRecordRequest) -> g.UpsertDNSRecordResult:
         return cast(g.UpsertDNSRecordResult, self._call('upsertDNSRecord', request))
 
+    def get_domain_dnssec(self, request: g.GetDomainDNSSECRequest) -> g.GetDomainDNSSECResult:
+        return cast(g.GetDomainDNSSECResult, self._call('getDomainDNSSEC', request))
+
+    def enable_domain_dnssec(self, request: g.EnableDomainDNSSECRequest) -> g.EnableDomainDNSSECResult:
+        return cast(g.EnableDomainDNSSECResult, self._call('enableDomainDNSSEC', request))
+
     def set_domain_nameservers(self, request: g.SetDomainNameserversRequest) -> g.SetDomainNameserversResult:
         return cast(g.SetDomainNameserversResult, self._call('setDomainNameservers', request))
 

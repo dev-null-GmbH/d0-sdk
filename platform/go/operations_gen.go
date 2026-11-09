@@ -395,6 +395,40 @@ func (c *Client) UpsertDNSRecord(ctx context.Context, domain string, name string
 	return r, nil
 }
 
+func (c *Client) GetDomainDNSSEC(ctx context.Context, domain string) (*gen.PlatformGetDomainDNSSECResponse, error) {
+	if err := c.allow("getDomainDNSSEC"); err != nil {
+		return nil, err
+	}
+	if !validPath(domain) {
+		return nil, errors.New("invalid Platform path identifier")
+	}
+	r, err := c.api.PlatformGetDomainDNSSECWithResponse(ctx, domain)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
+func (c *Client) EnableDomainDNSSEC(ctx context.Context, domain string) (*gen.PlatformEnableDomainDNSSECResponse, error) {
+	if err := c.allow("enableDomainDNSSEC"); err != nil {
+		return nil, err
+	}
+	if !validPath(domain) {
+		return nil, errors.New("invalid Platform path identifier")
+	}
+	r, err := c.api.PlatformEnableDomainDNSSECWithResponse(ctx, domain)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}
+
 func (c *Client) SetDomainNameservers(ctx context.Context, domain string, body gen.PlatformSetDomainNameserversJSONRequestBody) (*gen.PlatformSetDomainNameserversResponse, error) {
 	if err := c.allow("setDomainNameservers"); err != nil {
 		return nil, err

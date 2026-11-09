@@ -56,10 +56,10 @@ class FakeMachine(MachineClient):
 
 class SDKTests(unittest.TestCase):
     def test_contract_coverage(self) -> None:
-        self.assertEqual(len(OPERATIONS), 30)
-        self.assertEqual(Counter(op["test"] for op in OPERATIONS.values()), {False: 25, True: 5})
+        self.assertEqual(len(OPERATIONS), 32)
+        self.assertEqual(Counter(op["test"] for op in OPERATIONS.values()), {False: 27, True: 5})
         public_methods = {name for name, value in vars(PlatformOperations).items() if not name.startswith("_") and callable(value)}
-        self.assertEqual(len(public_methods), 30)
+        self.assertEqual(len(public_methods), 32)
 
     def test_dns_both_profiles(self) -> None:
         for profile in ("production", "test"):

@@ -23,6 +23,8 @@ class BoundBody(TypedDict):
     min: int
 
 class Bucket(TypedDict):
+    billing_backend: str
+    billing_started_at: NotRequired[str]
     created_at: str
     id: str
     name: str
@@ -34,6 +36,7 @@ class Catalog(TypedDict):
     endpoint: str
     limits: Limits
     region: str
+    tariff: Tariff
 
 class CatalogBody(TypedDict):
     max_memory_per_vcpu: int
@@ -86,6 +89,13 @@ class DailyUsage(TypedDict):
     rate_limited: int
     requests: int
 
+class DnssecKeyBody(TypedDict):
+    algorithm: int
+    ds: list[str] | None
+    flags: int
+    protocol: int
+    public_key: str
+
 class DomainBody(TypedDict):
     created_at: str
     expires_at: NotRequired[str]
@@ -93,6 +103,13 @@ class DomainBody(TypedDict):
     nameservers: NotRequired[list[str] | None]
     status: str
     updated_at: str
+
+class DomainDNSSECBody(TypedDict):
+    keys: list[DnssecKeyBody] | None
+    managed: bool
+    registrar_configured: bool
+    signing: bool
+    validated: bool
 
 class ErrorDetail(TypedDict):
     location: NotRequired[str]
@@ -139,6 +156,7 @@ class ObjectStorageBucketsOutputBody(TypedDict):
 
 class ObjectStorageCreateBucketInputBody(TypedDict):
     name: str
+    tariff_version: Literal['object-storage-v1']
 
 class ObjectStorageCreateCredentialInputBody(TypedDict):
     name: str
@@ -232,6 +250,15 @@ class SpecReqBody(TypedDict):
     public_ipv4: NotRequired[bool]
     storage_gib: int
     vcpu: int
+
+class Tariff(TypedDict):
+    base_hourly_eur: str
+    base_monthly_cap_eur: str
+    egress_eur_per_tb: str
+    included_egress_bytes_per_hour: int
+    included_storage_bytes: int
+    storage_eur_per_tb_hour: str
+    version: str
 
 class Totals(TypedDict):
     duration_ms: float
@@ -370,6 +397,16 @@ class UpsertDNSRecordRequest(TypedDict):
     body: RecordUpsertBody
 
 type UpsertDNSRecordResult = RecordBody
+
+class GetDomainDNSSECRequest(TypedDict):
+    domain: str
+
+type GetDomainDNSSECResult = DomainDNSSECBody
+
+class EnableDomainDNSSECRequest(TypedDict):
+    domain: str
+
+type EnableDomainDNSSECResult = DomainDNSSECBody
 
 class SetDomainNameserversRequest(TypedDict):
     domain: str

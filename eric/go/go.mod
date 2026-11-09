@@ -10,6 +10,6 @@ require (
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.7 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
 	github.com/oapi-codegen/nullable v1.2.0 // indirect
 )
