@@ -2,8 +2,8 @@
 export type AuditEventBody = { "actor"?: string; "created_at" : string; "detail"?: Record<string, Record<string, unknown>>; "from_state"?: string; "id" : string; "resource_id" : string; "resource_type" : "order" | "cluster" | "object_storage_bucket" | "object_storage_credential"; "state_version" : number; "to_state" : string };
 export type AuthCodeOutputBody = { "$schema"?: string; "auth_code" : string };
 export type BoundBody = { "max" : number; "min" : number };
-export type Bucket = { "$schema"?: string; "created_at" : string; "id" : string; "name" : string; "s3_name" : string; "state" : string };
-export type Catalog = { "$schema"?: string; "enabled" : boolean; "endpoint" : string; "limits" : Limits; "region" : string };
+export type Bucket = { "$schema"?: string; "billing_backend" : string; "billing_started_at"?: string; "created_at" : string; "id" : string; "name" : string; "s3_name" : string; "state" : string };
+export type Catalog = { "$schema"?: string; "enabled" : boolean; "endpoint" : string; "limits" : Limits; "region" : string; "tariff" : Tariff };
 export type CatalogBody = { "$schema"?: string; "max_memory_per_vcpu" : number; "memory_gib" : BoundBody; "network" : CatalogBodyNetworkStruct; "presets" : Array<PresetBody> | null; "rates" : RateCardBody; "storage_gib" : BoundBody; "vcpu" : BoundBody };
 export type CatalogBodyNetworkStruct = { "dedicated_ipv6" : boolean; "public_ipv4_available" : boolean };
 export type ClusterBody = { "$schema"?: string; "created_at" : string; "currency"?: string; "endpoint"?: string; "id" : string; "name" : string; "offering" : string; "price_cents"?: string; "public_ipv4_address"?: string; "ready" : boolean; "spec" : SpecBody; "state" : string; "state_version" : number; "updated_at" : string };
@@ -11,7 +11,9 @@ export type ClusterQuoteOutputBody = { "$schema"?: string; "price" : PriceBody; 
 export type CreatedCredential = { "$schema"?: string; "credential" : Credential; "secret_access_key" : string };
 export type Credential = { "access_key_id"?: string; "created_at" : string; "id" : string; "name" : string; "state" : string; "write_access" : boolean };
 export type DailyUsage = { "day" : string; "duration_ms" : number; "errors" : number; "rate_limited" : number; "requests" : number };
+export type DnssecKeyBody = { "algorithm" : number; "ds" : Array<string> | null; "flags" : number; "protocol" : number; "public_key" : string };
 export type DomainBody = { "$schema"?: string; "created_at" : string; "expires_at"?: string; "fqdn" : string; "nameservers"?: Array<string> | null; "status" : string; "updated_at" : string };
+export type DomainDNSSECBody = { "$schema"?: string; "keys" : Array<DnssecKeyBody> | null; "managed" : boolean; "registrar_configured" : boolean; "signing" : boolean; "validated" : boolean };
 export type ErrorDetail = { "location"?: string; "message"?: string; "value"?: Record<string, unknown> };
 export type ErrorModel = { "$schema"?: string; "detail"?: string; "errors"?: Array<ErrorDetail> | null; "instance"?: string; "status"?: number; "title"?: string; "type"?: string };
 export type KubeconfigOutputBody = { "$schema"?: string; "kubeconfig" : string };
@@ -22,7 +24,7 @@ export type ListDomainsOutputBody = { "$schema"?: string; "domains" : Array<Doma
 export type ListRecordsOutputBody = { "$schema"?: string; "records" : Array<RecordBody> | null };
 export type NameserverInput = { "host" : string; "ipv4"?: string; "ipv6"?: string };
 export type ObjectStorageBucketsOutputBody = { "$schema"?: string; "buckets" : Array<Bucket> | null };
-export type ObjectStorageCreateBucketInputBody = { "$schema"?: string; "name" : string };
+export type ObjectStorageCreateBucketInputBody = { "$schema"?: string; "name" : string; "tariff_version" : "object-storage-v1" };
 export type ObjectStorageCreateCredentialInputBody = { "$schema"?: string; "name" : string; "write_access" : boolean };
 export type ObjectStorageCredentialsOutputBody = { "$schema"?: string; "credentials" : Array<Credential> | null };
 export type PresetBody = { "name" : string; "price" : PriceBody; "spec" : SpecBody };
@@ -39,6 +41,7 @@ export type Result = { "$schema"?: string; "buckets" : Array<RateLimitBucket> | 
 export type SetNameserversInputBody = { "$schema"?: string; "nameservers" : Array<NameserverInput> | null };
 export type SpecBody = { "memory_gib" : number; "public_ipv4" : boolean; "storage_gib" : number; "vcpu" : number };
 export type SpecReqBody = { "$schema"?: string; "memory_gib" : number; "public_ipv4"?: boolean; "storage_gib" : number; "vcpu" : number };
+export type Tariff = { "base_hourly_eur" : string; "base_monthly_cap_eur" : string; "egress_eur_per_tb" : string; "included_egress_bytes_per_hour" : number; "included_storage_bytes" : number; "storage_eur_per_tb_hour" : string; "version" : string };
 export type Totals = { "duration_ms" : number; "errors" : number; "rate_limited" : number; "requests" : number };
 export type UpdateContactsInputBody = { "$schema"?: string; "registrant" : RegistrantInput };
 export type Usage = { "$schema"?: string; "by_product" : Array<ProductUsage> | null; "collection_gaps_24h" : number; "coverage_from" : string; "covered_products" : Array<string> | null; "daily" : Array<DailyUsage> | null; "environment" : "production" | "test"; "from" : string; "observed_at" : string; "totals" : Totals; "until" : string };
@@ -86,6 +89,10 @@ export type DeleteDNSRecordRequest = { "domain": string; "name": string; "type":
 export type DeleteDNSRecordResult = void;
 export type UpsertDNSRecordRequest = { "domain": string; "name": string; "type": string; "body": RecordUpsertBody };
 export type UpsertDNSRecordResult = RecordBody;
+export type GetDomainDNSSECRequest = { "domain": string };
+export type GetDomainDNSSECResult = DomainDNSSECBody;
+export type EnableDomainDNSSECRequest = { "domain": string };
+export type EnableDomainDNSSECResult = DomainDNSSECBody;
 export type SetDomainNameserversRequest = { "domain": string; "body": SetNameserversInputBody };
 export type SetDomainNameserversResult = void;
 export type GetObjectStorageCatalogRequest = {  };
@@ -126,6 +133,8 @@ export interface OperationRequests {
   listDNSRecords: ListDNSRecordsRequest;
   deleteDNSRecord: DeleteDNSRecordRequest;
   upsertDNSRecord: UpsertDNSRecordRequest;
+  getDomainDNSSEC: GetDomainDNSSECRequest;
+  enableDomainDNSSEC: EnableDomainDNSSECRequest;
   setDomainNameservers: SetDomainNameserversRequest;
   getObjectStorageCatalog: GetObjectStorageCatalogRequest;
   listObjectStorageBuckets: ListObjectStorageBucketsRequest;
@@ -158,6 +167,8 @@ export interface OperationResults {
   listDNSRecords: ListDNSRecordsResult;
   deleteDNSRecord: DeleteDNSRecordResult;
   upsertDNSRecord: UpsertDNSRecordResult;
+  getDomainDNSSEC: GetDomainDNSSECResult;
+  enableDomainDNSSEC: EnableDomainDNSSECResult;
   setDomainNameservers: SetDomainNameserversResult;
   getObjectStorageCatalog: GetObjectStorageCatalogResult;
   listObjectStorageBuckets: ListObjectStorageBucketsResult;

@@ -19,12 +19,12 @@ The existing 0.1.1 archives retain their original contents. Exact qualification,
 checksums and anonymous installation evidence are recorded in [PUBLISHING.md](PUBLISHING.md).
 
 The source tree for the next release pins the shared Python transport to
-`joserfc` 1.7.7. The operation counts below describe these sources.
+`joserfc` 1.8.0. The operation counts below describe these sources.
 
 | Product | Production operations | Isolated test operations | Package directories |
 | --- | ---: | ---: | --- |
 | Shared authentication | OAuth/DPoP transport | Separate resource profiles | [Go](auth/go), [TypeScript](auth/typescript), [Python](auth/python) |
-| Platform | 30 | 5 | [Go](platform/go), [TypeScript](platform/typescript), [Python](platform/python) |
+| Platform | 32 | 5 | [Go](platform/go), [TypeScript](platform/typescript), [Python](platform/python) |
 | Accounting | 80 | 12 | [Go](accounting/go), [TypeScript](accounting/typescript), [Python](accounting/python) |
 | EInvoice | 7 | 7 | [Go](einvoice/go), [TypeScript](einvoice/typescript), [Python](einvoice/python) |
 | ERiC | 50 | 2 | [Go](eric/go), [TypeScript](eric/typescript), [Python](eric/python) |
@@ -32,9 +32,10 @@ The source tree for the next release pins the shared Python transport to
 The package names inside the release archives are `@dev-null-gmbh/{product}`,
 `d0-{product}` and `github.com/dev-null-GmbH/d0-sdk/{product}/go`.
 The auth packages are `@dev-null-gmbh/auth-machine`, `d0-auth-machine` and
-`github.com/dev-null-GmbH/d0-sdk/auth/go`. Auth, Platform and EInvoice use 0.1.0, Accounting uses 0.1.1 and the ERiC
-0.1.2 SDK adds the optional filing-consent replay-only header. Product packages
-retain the exact auth dependency at 0.1.0.
+`github.com/dev-null-GmbH/d0-sdk/auth/go`. In the 15 October bundle, Auth,
+Platform and EInvoice use 0.1.0, Accounting uses 0.1.1 and the ERiC 0.1.2 SDK
+adds the optional filing-consent replay-only header. Product packages retain
+the exact auth dependency at 0.1.0.
 
 Select `production` or `test` explicitly, use separate client credentials for
 each, and grant only the product scopes your integration needs. Each machine
@@ -97,7 +98,7 @@ The package directories above contain the language-specific API examples.
 
 ## Qualification and provenance
 
-Use Go 1.27.3, Node.js 26.13.0, npm 12.2.1, Python 3.14.10 and uv 0.13.6. The combined Python development workspace pins Ruff 0.17.3 and mypy 2.4.1 to reconcile imported product checks; this does not change runtime package dependencies:
+Use Go 1.27.3, Node.js 26.13.0, npm 12.2.2, Python 3.14.10 and uv 0.13.7. The combined Python development workspace pins Ruff 0.17.4 and mypy 2.4.1 to reconcile imported product checks; this does not change runtime package dependencies:
 
 ```sh
 tools/check.sh

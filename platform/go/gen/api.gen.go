@@ -43,6 +43,21 @@ func (e AuditEventBodyResourceType) Valid() bool {
 	}
 }
 
+// Defines values for ObjectStorageCreateBucketInputBodyTariffVersion.
+const (
+	ObjectStorageV1 ObjectStorageCreateBucketInputBodyTariffVersion = "object-storage-v1"
+)
+
+// Valid indicates whether the value is a known member of the ObjectStorageCreateBucketInputBodyTariffVersion enum.
+func (e ObjectStorageCreateBucketInputBodyTariffVersion) Valid() bool {
+	switch e {
+	case ObjectStorageV1:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for RateLimitBucketScope.
 const (
 	RateScopeClient       RateLimitBucketScope = "client"
@@ -170,12 +185,14 @@ type Bucket struct {
 	// Schema A URL to the JSON Schema for this object.
 	//
 	// Examples: https://example.com/schemas/Bucket.json
-	Schema    *string   `json:"$schema,omitempty"`
-	CreatedAt time.Time `json:"created_at"`
-	Id        string    `json:"id"`
-	Name      string    `json:"name"`
-	S3Name    string    `json:"s3_name"`
-	State     string    `json:"state"`
+	Schema           *string    `json:"$schema,omitempty"`
+	BillingBackend   string     `json:"billing_backend"`
+	BillingStartedAt *time.Time `json:"billing_started_at,omitempty"`
+	CreatedAt        time.Time  `json:"created_at"`
+	Id               string     `json:"id"`
+	Name             string     `json:"name"`
+	S3Name           string     `json:"s3_name"`
+	State            string     `json:"state"`
 }
 
 // Catalog defines model for Catalog.
@@ -188,6 +205,7 @@ type Catalog struct {
 	Endpoint string  `json:"endpoint"`
 	Limits   Limits  `json:"limits"`
 	Region   string  `json:"region"`
+	Tariff   Tariff  `json:"tariff"`
 }
 
 // CatalogBody defines model for CatalogBody.
@@ -316,6 +334,24 @@ type DailyUsage struct {
 	Requests    int64   `json:"requests"`
 }
 
+// DnssecKeyBody defines model for DnssecKeyBody.
+type DnssecKeyBody struct {
+	// Algorithm DNSKEY algorithm
+	Algorithm int32 `json:"algorithm"`
+
+	// Ds Matching DS records as RDATA
+	Ds nullable.Nullable[[]string] `json:"ds"`
+
+	// Flags DNSKEY flags
+	Flags int32 `json:"flags"`
+
+	// Protocol DNSKEY protocol
+	Protocol int32 `json:"protocol"`
+
+	// PublicKey Public DNSKEY material
+	PublicKey string `json:"public_key"`
+}
+
 // DomainBody defines model for DomainBody.
 type DomainBody struct {
 	// Schema A URL to the JSON Schema for this object.
@@ -340,6 +376,29 @@ type DomainBody struct {
 
 	// UpdatedAt RFC 3339 last-update time
 	UpdatedAt string `json:"updated_at"`
+}
+
+// DomainDNSSECBody defines model for DomainDNSSECBody.
+type DomainDNSSECBody struct {
+	// Schema A URL to the JSON Schema for this object.
+	//
+	// Examples: https://example.com/schemas/DomainDNSSECBody.json
+	Schema *string `json:"$schema,omitempty"`
+
+	// Keys Public delegation keys; never private signing material
+	Keys nullable.Nullable[[]DnssecKeyBody] `json:"keys"`
+
+	// Managed Whether the domain uses platform nameservers
+	Managed bool `json:"managed"`
+
+	// RegistrarConfigured Whether matching delegation material is confirmed at the registrar
+	RegistrarConfigured bool `json:"registrar_configured"`
+
+	// Signing Whether authoritative DNSSEC signing is enabled
+	Signing bool `json:"signing"`
+
+	// Validated Whether DNSSEC validation is confirmed
+	Validated bool `json:"validated"`
 }
 
 // ErrorDetail defines model for ErrorDetail.
@@ -482,9 +541,13 @@ type ObjectStorageCreateBucketInputBody struct {
 	// Schema A URL to the JSON Schema for this object.
 	//
 	// Examples: https://example.com/schemas/ObjectStorageCreateBucketInputBody.json
-	Schema *string `json:"$schema,omitempty"`
-	Name   string  `json:"name"`
+	Schema        *string                                         `json:"$schema,omitempty"`
+	Name          string                                          `json:"name"`
+	TariffVersion ObjectStorageCreateBucketInputBodyTariffVersion `json:"tariff_version"`
 }
+
+// ObjectStorageCreateBucketInputBodyTariffVersion defines model for ObjectStorageCreateBucketInputBody.TariffVersion.
+type ObjectStorageCreateBucketInputBodyTariffVersion string
 
 // ObjectStorageCreateCredentialInputBody defines model for ObjectStorageCreateCredentialInputBody.
 type ObjectStorageCreateCredentialInputBody struct {
@@ -727,6 +790,17 @@ type SpecReqBody struct {
 	//
 	// Examples: 4
 	Vcpu int64 `json:"vcpu"`
+}
+
+// Tariff defines model for Tariff.
+type Tariff struct {
+	BaseHourlyEur              string `json:"base_hourly_eur"`
+	BaseMonthlyCapEur          string `json:"base_monthly_cap_eur"`
+	EgressEurPerTb             string `json:"egress_eur_per_tb"`
+	IncludedEgressBytesPerHour int64  `json:"included_egress_bytes_per_hour"`
+	IncludedStorageBytes       int64  `json:"included_storage_bytes"`
+	StorageEurPerTbHour        string `json:"storage_eur_per_tb_hour"`
+	Version                    string `json:"version"`
 }
 
 // Totals defines model for Totals.
@@ -1111,9 +1185,23 @@ type ClientInterface interface {
 	// Corresponds with PUT /platform/v1/domains/{domain}/dns/records/{name}/{type} (the `PlatformUpsertDNSRecord` operationId).
 	PlatformUpsertDNSRecord(ctx context.Context, domain string, name string, pType string, body PlatformUpsertDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// PlatformGetDomainDNSSEC Get DNSSEC status
+	//
+	// Reads authoritative signing and registrar delegation state for an owned domain.
+	//
+	// Corresponds with GET /platform/v1/domains/{domain}/dnssec (the `PlatformGetDomainDNSSEC` operationId).
+	PlatformGetDomainDNSSEC(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PlatformEnableDomainDNSSEC Enable managed DNSSEC
+	//
+	// Enables authoritative signing and publishes matching public delegation keys after serving verification. Existing signing keys are preserved; external DNS is not changed.
+	//
+	// Corresponds with PUT /platform/v1/domains/{domain}/dnssec (the `PlatformEnableDomainDNSSEC` operationId).
+	PlatformEnableDomainDNSSEC(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// PlatformSetDomainNameserversWithBody Set nameservers
 	//
-	// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+	// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 	//
 	// Takes any type of body and a specified content type.
 	//
@@ -1122,7 +1210,7 @@ type ClientInterface interface {
 
 	// PlatformSetDomainNameservers Set nameservers
 	//
-	// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+	// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 	//
 	// Takes a body of the `application/json` content type.
 	//
@@ -1639,9 +1727,43 @@ func (c *Client) PlatformUpsertDNSRecord(ctx context.Context, domain string, nam
 	return c.Client.Do(req)
 }
 
+// PlatformGetDomainDNSSEC Get DNSSEC status
+//
+// Reads authoritative signing and registrar delegation state for an owned domain.
+//
+// Corresponds with GET /platform/v1/domains/{domain}/dnssec (the `PlatformGetDomainDNSSEC` operationId).
+func (c *Client) PlatformGetDomainDNSSEC(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPlatformGetDomainDNSSECRequest(c.Server, domain)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// PlatformEnableDomainDNSSEC Enable managed DNSSEC
+//
+// Enables authoritative signing and publishes matching public delegation keys after serving verification. Existing signing keys are preserved; external DNS is not changed.
+//
+// Corresponds with PUT /platform/v1/domains/{domain}/dnssec (the `PlatformEnableDomainDNSSEC` operationId).
+func (c *Client) PlatformEnableDomainDNSSEC(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPlatformEnableDomainDNSSECRequest(c.Server, domain)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // PlatformSetDomainNameserversWithBody Set nameservers
 //
-// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 //
 // Takes any type of body and a specified content type.
 //
@@ -1660,7 +1782,7 @@ func (c *Client) PlatformSetDomainNameserversWithBody(ctx context.Context, domai
 
 // PlatformSetDomainNameservers Set nameservers
 //
-// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 //
 // Takes a body of the `application/json` content type.
 //
@@ -2778,6 +2900,74 @@ func NewPlatformUpsertDNSRecordRequestWithBody(server string, domain string, nam
 	return req, nil
 }
 
+// NewPlatformGetDomainDNSSECRequest constructs an http.Request for the PlatformGetDomainDNSSEC method
+func NewPlatformGetDomainDNSSECRequest(server string, domain string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domain", domain, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/platform/v1/domains/%s/dnssec", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPlatformEnableDomainDNSSECRequest constructs an http.Request for the PlatformEnableDomainDNSSEC method
+func NewPlatformEnableDomainDNSSECRequest(server string, domain string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domain", domain, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/platform/v1/domains/%s/dnssec", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewPlatformSetDomainNameserversRequest calls the generic PlatformSetDomainNameservers builder with application/json body
 func NewPlatformSetDomainNameserversRequest(server string, domain string, body PlatformSetDomainNameserversJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -3351,9 +3541,27 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with PUT /platform/v1/domains/{domain}/dns/records/{name}/{type} (the `PlatformUpsertDNSRecord` operationId).
 	PlatformUpsertDNSRecordWithResponse(ctx context.Context, domain string, name string, pType string, body PlatformUpsertDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*PlatformUpsertDNSRecordResponse, error)
 
+	// PlatformGetDomainDNSSECWithResponse Get DNSSEC status
+	//
+	// Reads authoritative signing and registrar delegation state for an owned domain.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /platform/v1/domains/{domain}/dnssec (the `PlatformGetDomainDNSSEC` operationId).
+	PlatformGetDomainDNSSECWithResponse(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*PlatformGetDomainDNSSECResponse, error)
+
+	// PlatformEnableDomainDNSSECWithResponse Enable managed DNSSEC
+	//
+	// Enables authoritative signing and publishes matching public delegation keys after serving verification. Existing signing keys are preserved; external DNS is not changed.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /platform/v1/domains/{domain}/dnssec (the `PlatformEnableDomainDNSSEC` operationId).
+	PlatformEnableDomainDNSSECWithResponse(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*PlatformEnableDomainDNSSECResponse, error)
+
 	// PlatformSetDomainNameserversWithBodyWithResponse Set nameservers
 	//
-	// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+	// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -3362,7 +3570,7 @@ type ClientWithResponsesInterface interface {
 
 	// PlatformSetDomainNameserversWithResponse Set nameservers
 	//
-	// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+	// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
@@ -4489,6 +4697,102 @@ func (r PlatformUpsertDNSRecordResponse) ContentType() string {
 	return ""
 }
 
+type PlatformGetDomainDNSSECResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *DomainDNSSECBody
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *ErrorModel
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r PlatformGetDomainDNSSECResponse) GetJSON200() *DomainDNSSECBody {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r PlatformGetDomainDNSSECResponse) GetApplicationproblemJSONDefault() *ErrorModel {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r PlatformGetDomainDNSSECResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r PlatformGetDomainDNSSECResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PlatformGetDomainDNSSECResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r PlatformGetDomainDNSSECResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type PlatformEnableDomainDNSSECResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *DomainDNSSECBody
+	// ApplicationproblemJSONDefault the response for an HTTP default `application/problem+json` response
+	ApplicationproblemJSONDefault *ErrorModel
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r PlatformEnableDomainDNSSECResponse) GetJSON200() *DomainDNSSECBody {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSONDefault returns the response for an HTTP default `application/problem+json` response
+func (r PlatformEnableDomainDNSSECResponse) GetApplicationproblemJSONDefault() *ErrorModel {
+	return r.ApplicationproblemJSONDefault
+}
+
+// GetBody returns the raw response body bytes
+func (r PlatformEnableDomainDNSSECResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r PlatformEnableDomainDNSSECResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PlatformEnableDomainDNSSECResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r PlatformEnableDomainDNSSECResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type PlatformSetDomainNameserversResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4635,6 +4939,8 @@ type PlatformCreateObjectStorageBucketResponse struct {
 	ApplicationproblemJSON400 *ErrorModel
 	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
 	ApplicationproblemJSON401 *ErrorModel
+	// ApplicationproblemJSON402 the response for an HTTP 402 `application/problem+json` response
+	ApplicationproblemJSON402 *ErrorModel
 	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
 	ApplicationproblemJSON403 *ErrorModel
 	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
@@ -4660,6 +4966,11 @@ func (r PlatformCreateObjectStorageBucketResponse) GetApplicationproblemJSON400(
 // GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
 func (r PlatformCreateObjectStorageBucketResponse) GetApplicationproblemJSON401() *ErrorModel {
 	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON402 returns the response for an HTTP 402 `application/problem+json` response
+func (r PlatformCreateObjectStorageBucketResponse) GetApplicationproblemJSON402() *ErrorModel {
+	return r.ApplicationproblemJSON402
 }
 
 // GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
@@ -5359,9 +5670,39 @@ func (c *ClientWithResponses) PlatformUpsertDNSRecordWithResponse(ctx context.Co
 	return ParsePlatformUpsertDNSRecordResponse(rsp)
 }
 
+// PlatformGetDomainDNSSECWithResponse Get DNSSEC status
+//
+// Reads authoritative signing and registrar delegation state for an owned domain.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /platform/v1/domains/{domain}/dnssec (the `PlatformGetDomainDNSSEC` operationId).
+func (c *ClientWithResponses) PlatformGetDomainDNSSECWithResponse(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*PlatformGetDomainDNSSECResponse, error) {
+	rsp, err := c.PlatformGetDomainDNSSEC(ctx, domain, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePlatformGetDomainDNSSECResponse(rsp)
+}
+
+// PlatformEnableDomainDNSSECWithResponse Enable managed DNSSEC
+//
+// Enables authoritative signing and publishes matching public delegation keys after serving verification. Existing signing keys are preserved; external DNS is not changed.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /platform/v1/domains/{domain}/dnssec (the `PlatformEnableDomainDNSSEC` operationId).
+func (c *ClientWithResponses) PlatformEnableDomainDNSSECWithResponse(ctx context.Context, domain string, reqEditors ...RequestEditorFn) (*PlatformEnableDomainDNSSECResponse, error) {
+	rsp, err := c.PlatformEnableDomainDNSSEC(ctx, domain, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePlatformEnableDomainDNSSECResponse(rsp)
+}
+
 // PlatformSetDomainNameserversWithBodyWithResponse Set nameservers
 //
-// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
@@ -5376,7 +5717,7 @@ func (c *ClientWithResponses) PlatformSetDomainNameserversWithBodyWithResponse(c
 
 // PlatformSetDomainNameserversWithResponse Set nameservers
 //
-// Replaces the domain's nameservers at the registry. Scoped to the caller tenant.
+// Replaces the domain's nameservers at the registry after confirming unsigned local and parent state. Signed delegations require a managed DNSSEC migration; this endpoint does not disable signing or remove keys. Scoped to the caller tenant.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
@@ -6250,6 +6591,72 @@ func ParsePlatformUpsertDNSRecordResponse(rsp *http.Response) (*PlatformUpsertDN
 	return response, nil
 }
 
+// ParsePlatformGetDomainDNSSECResponse parses an HTTP response from a PlatformGetDomainDNSSECWithResponse call
+func ParsePlatformGetDomainDNSSECResponse(rsp *http.Response) (*PlatformGetDomainDNSSECResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PlatformGetDomainDNSSECResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DomainDNSSECBody
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorModel
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePlatformEnableDomainDNSSECResponse parses an HTTP response from a PlatformEnableDomainDNSSECWithResponse call
+func ParsePlatformEnableDomainDNSSECResponse(rsp *http.Response) (*PlatformEnableDomainDNSSECResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PlatformEnableDomainDNSSECResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DomainDNSSECBody
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorModel
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParsePlatformSetDomainNameserversResponse parses an HTTP response from a PlatformSetDomainNameserversWithResponse call
 func ParsePlatformSetDomainNameserversResponse(rsp *http.Response) (*PlatformSetDomainNameserversResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -6382,6 +6789,13 @@ func ParsePlatformCreateObjectStorageBucketResponse(rsp *http.Response) (*Platfo
 			return nil, err
 		}
 		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 402:
+		var dest ErrorModel
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON402 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
 		var dest ErrorModel

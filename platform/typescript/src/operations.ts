@@ -577,6 +577,54 @@ export const operations = {
       }
     ]
   },
+  "getDomainDNSSEC": {
+    "scope": "platform.dns.read",
+    "method": "GET",
+    "path": "/domains/{domain}/dnssec",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "emptyStatuses": [],
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false,
+    "params": [
+      {
+        "name": "domain",
+        "wire": "domain",
+        "in": "path",
+        "required": true,
+        "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+        "maxLength": 253,
+        "minLength": 3
+      }
+    ]
+  },
+  "enableDomainDNSSEC": {
+    "scope": "platform.domains.write",
+    "method": "PUT",
+    "path": "/domains/{domain}/dnssec",
+    "status": 200,
+    "statuses": [
+      200
+    ],
+    "emptyStatuses": [],
+    "bodyType": "",
+    "responseType": "application/json",
+    "test": false,
+    "params": [
+      {
+        "name": "domain",
+        "wire": "domain",
+        "in": "path",
+        "required": true,
+        "pattern": "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)+$",
+        "maxLength": 253,
+        "minLength": 3
+      }
+    ]
+  },
   "setDomainNameservers": {
     "scope": "platform.domains.write",
     "method": "PUT",

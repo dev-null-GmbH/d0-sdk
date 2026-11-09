@@ -22,8 +22,8 @@ function fixture(profile: Profile) {
 }
 
 describe("Platform machine contract", () => {
-  it("covers exactly 30 production and 5 test operations", () => {
-    expect(Object.keys(operations)).toHaveLength(30);
+  it("covers exactly 32 production and 5 test operations", () => {
+    expect(Object.keys(operations)).toHaveLength(32);
     expect(Object.values(operations).filter(op => op.test)).toHaveLength(5);
     for (const op of Object.keys(operations)) expect(typeof (PlatformClient.prototype as unknown as Record<string, unknown>)[op]).toBe("function");
   });
@@ -43,6 +43,24 @@ describe("Platform machine contract", () => {
       await expect(client.getClusterCatalog({})).rejects.toThrow(/unavailable/);
       expect(calls).toHaveLength(4);
     }
+  });
+  it("keeps DNSSEC operations production-only and preserves validation status", async () => {
+    const calls: Array<{ url: string; method?: string }> = [];
+    const transport = { async request(url: string | URL, options?: { method?: string }) {
+      calls.push({ url: String(url), method: options?.method });
+      return new Response(JSON.stringify({ managed: true, signing: true, registrar_configured: true, validated: false, keys: [] }), { status: 200, headers: { "Content-Type": "application/json" } });
+    } };
+    const production = new PlatformClient("production", transport);
+    expect((await production.getDomainDNSSEC({ domain: "example.eu" })).validated).toBe(false);
+    expect((await production.enableDomainDNSSEC({ domain: "example.eu" })).signing).toBe(true);
+    expect(calls).toEqual([
+      { url: resourceFor("production") + "/v1/domains/example.eu/dnssec", method: "GET" },
+      { url: resourceFor("production") + "/v1/domains/example.eu/dnssec", method: "PUT" }
+    ]);
+    const test = new PlatformClient("test", transport);
+    await expect(test.getDomainDNSSEC({ domain: "example.eu" })).rejects.toThrow(/unavailable/);
+    await expect(test.enableDomainDNSSEC({ domain: "example.eu" })).rejects.toThrow(/unavailable/);
+    expect(calls).toHaveLength(2);
   });
   it("rejects path escapes and unsafe numeric prices before egress", async () => {
     const { client, calls } = fixture("production");

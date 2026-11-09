@@ -1,11 +1,11 @@
 go 1.27.3
 
 use (
-	./auth/go
-	./platform/go
 	./accounting/go
+	./auth/go
 	./einvoice/go
 	./eric/go
+	./platform/go
 )
 
 // Qualify the unpublished dependency from this release tree without private sources.

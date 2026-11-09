@@ -62,13 +62,14 @@ Current versions are Auth, Platform and EInvoice 0.1.0, Accounting 0.1.1, and
 ERiC 0.1.2. All current Go modules passed anonymous proxy/checksum downloads and
 installed examples. Prior tags and release contents remain unchanged. Package
 versions come from each product's matching TypeScript/Python metadata; Go uses
-the same product version. Source commits and original/exported file hashes
-remain in `sources.json` and `export-manifest.json`.
+the same product version. The release commit's `sources.json` and
+`export-manifest.json` record source commits and original/exported file hashes.
 
 ## Verified Accounting banking release
 
-Accounting 0.1.2 imports the source commit pinned in `sources.json`, with
-80 production operations and twelve isolated test operations. It adds 24
+The released Accounting 0.1.2 imports Accounting API commit
+`4a398c2ac8cb02e5915d0b0fdf55225c874fdcc9` and has 80 production operations
+and twelve isolated test operations. It adds 24
 production banking methods and requires Go 1.27.3. The previous release and
 Accounting v0.1.1 module tag remain immutable. Auth and the other product
 versions remain unchanged. The [27 October release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-27)
