@@ -98,7 +98,7 @@ The package directories above contain the language-specific API examples.
 
 ## Qualification and provenance
 
-Use Go 1.27.3, Node.js 26.13.0, npm 12.2.2, Python 3.14.10 and uv 0.13.7. The combined Python development workspace pins Ruff 0.17.4 and mypy 2.4.1 to reconcile imported product checks; this does not change runtime package dependencies:
+Use Go 1.27.4, Node.js 26.13.0, npm 12.2.2, Python 3.14.10 and uv 0.13.7. The combined Python development workspace pins Ruff 0.17.4 and mypy 2.4.1 to reconcile imported product checks; this does not change runtime package dependencies:
 
 ```sh
 tools/check.sh
