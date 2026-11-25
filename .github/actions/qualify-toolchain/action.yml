@@ -1,0 +1,37 @@
+name: Set up SDK qualification tools
+description: Install supported exact language runtimes and the dependency scanner
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+      with:
+        go-version: '1.27.4'
+        cache: false
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: '26.13.1'
+        package-manager-cache: false
+    - name: Activate integrity-pinned npm
+      shell: bash
+      run: |
+        npm install --global --ignore-scripts corepack@0.36.0
+        corepack enable npm
+        corepack install --global "$(node -p 'require("./package.json").packageManager')"
+        test "$(npm --version)" = 12.2.3
+    - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+      with:
+        version: '0.13.10'
+        checksum: bf65ac1a0af10f92c522d91ac096c7c0a39657647b155577e7836c2cbbb4526c
+        python-version: '3.14.10'
+        enable-cache: false
+    - name: Install pinned Python and OSV-Scanner
+      shell: bash
+      run: |
+        uv python install 3.14.10
+        printf '%s\n' "$(dirname "$(uv python find --managed-python 3.14.10)")" >> "$GITHUB_PATH"
+        tools="$RUNNER_TEMP/sdk-audit-tools"
+        mkdir -p "$tools"
+        curl -fsSL https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64 -o "$tools/osv-scanner"
+        printf 'fb7dab19a8bd9bbe5c3189f09d4b7ee1820c9553a23bac202648a56efd2f6ee8  %s\n' "$tools/osv-scanner" | sha256sum --check --strict
+        chmod 0755 "$tools/osv-scanner"
+        printf '%s\n' "$tools" >> "$GITHUB_PATH"

@@ -5,9 +5,9 @@ cd "$(dirname "$0")/.."
 python3 tools/verify_export.py
 python3 -m unittest discover -s tools
 test "$(go env GOVERSION)" = go1.27.4
-test "$(node --version)" = v26.13.0
-test "$(npm --version)" = 12.2.2
-test "$(uv --version | cut -d ' ' -f 2)" = 0.13.7
+test "$(node --version)" = v26.13.1
+test "$(npm --version)" = 12.2.3
+test "$(uv --version | cut -d ' ' -f 2)" = 0.13.10
 
 npm ci --ignore-scripts
 uv sync --locked --all-packages --all-groups
@@ -37,5 +37,9 @@ for product in auth platform accounting einvoice eric; do
 done
 uv build --all-packages --no-sources --out-dir dist/python
 python3 tools/verify_packages.py
-python3 tools/check_install.py
+if [[ -n ${SDK_EVIDENCE_DIR:-} ]]; then
+  python3 tools/check_install.py --evidence-dir "$SDK_EVIDENCE_DIR"
+else
+  python3 tools/check_install.py
+fi
 python3 tools/verify_packages.py

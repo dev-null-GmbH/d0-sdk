@@ -47,6 +47,29 @@ The retained registry helper scripts are inactive tooling, not a publication
 instruction. Enabling another distribution channel requires a new explicit
 product decision and its release qualification.
 
+## Vulnerability rechecks
+
+Candidate CI scans the workspace locks and the dependency graphs resolved by
+fresh installations of the exact built archives. The Monday and manual release
+workflow separately downloads both supported GitHub release ZIPs by tag, verifies
+their pinned revisions, lengths and checksums, and installs the packed TypeScript
+and Python libraries together with the exact Go modules from the public proxy.
+The installer compares the public Go module's file contents and module manifest
+against the copy inside the pinned release ZIP.
+The SDK and auth versions, archive digests, resolved dependency graphs, declared
+Go module inputs and unfiltered OSV reports are retained with the run. The
+distribution maintainer investigates findings or unavailable downloads and
+contacts affected SDK maintainers and consumers. The scheduled workflow has
+read-only access.
+
+The November 25, 2026 recheck found the published Go auth module's declared
+`go-jose/v4` 4.1.5 affected by the High advisory
+[GHSA-mgcc-cww5-fp2q](https://github.com/advisories/GHSA-mgcc-cww5-fp2q).
+Both released Python auth wheels resolve `joserfc` 1.7.5, which is affected by the
+Medium advisory [GHSA-9pg5-8c7x-5hfx](https://github.com/advisories/GHSA-9pg5-8c7x-5hfx).
+The original artifacts remain immutable. A new distribution requires the
+reviewed release procedure and successful clean installs of its own bytes.
+
 ## Current verified release
 
 [SDK release of 15 October 2026](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15)

@@ -21,22 +21,39 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version: 1.27.4
-          cache: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 26.13.0
-          package-manager-cache: false
-      - run: npm install --global --ignore-scripts npm@12.2.2
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          version: 0.13.7
-          python-version: 3.14.10
-          enable-cache: false
-      - run: tools/check.sh
+      - uses: ./.github/actions/qualify-toolchain
+      - name: Verify candidate archives and actual consumer resolution
+        id: consumer
+        env:
+          GOTOOLCHAIN: local
+          SDK_EVIDENCE_DIR: ${{ runner.temp }}/sdk-evidence/consumer
+        run: tools/check.sh
+      - name: Scan workspace and candidate install dependency graphs
+        env:
+          EVIDENCE: ${{ runner.temp }}/sdk-evidence
+        run: |
+          manifest=$(sha256sum dist/SHA256SUMS | cut -d' ' -f1)
+          jq -n --arg sha "$(git rev-parse HEAD)" --arg digest "$manifest" --arg time "$(date -u +%FT%TZ)" \
+            '{role: "archive release candidate", platform: "portable", revision: $sha, checksumsSha256: $digest, scanner: "OSV-Scanner 2.7.1", advisorySource: "osv.dev", queriedAt: $time}' \
+            > "$EVIDENCE/scope.json"
+          cp dist/SHA256SUMS "$EVIDENCE/SHA256SUMS"
+          failed=0
+          osv-scanner scan source --all-vulns --all-packages --format json --output-file "$EVIDENCE/workspace-osv.json" \
+            -L package-lock.json -L uv.lock -L auth/go/go.mod -L platform/go/go.mod \
+            -L accounting/go/go.mod -L einvoice/go/go.mod -L eric/go/go.mod || failed=1
+          osv-scanner scan source --no-resolve --no-call-analysis=go --all-vulns --all-packages \
+            --format json --output-file "$EVIDENCE/consumer/osv.json" \
+            -L "$EVIDENCE/consumer/package-lock.json" -L "$EVIDENCE/consumer/requirements.txt" -L "$EVIDENCE/consumer/go.mod" || failed=1
+          exit "$failed"
       - run: npm audit --audit-level=high
+        if: ${{ !cancelled() && steps.consumer.outcome == 'success' }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: sdk-dependency-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/sdk-evidence/
+          if-no-files-found: warn
+          retention-days: 30
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sdk-${{ github.sha }}
