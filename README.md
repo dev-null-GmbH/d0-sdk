@@ -4,23 +4,17 @@ Typed Go, TypeScript and Python clients for d0 Platform, Accounting, EInvoice an
 ERiC, with the shared d0 machine OAuth/DPoP transport. These clients are for
 trusted server applications. Private signing keys never belong in browser code.
 
-**Release state:** all five Go modules at v0.1.0 are public and verified through
-anonymous Go proxy and checksum-database downloads. Accounting and ERiC 0.1.1
-are also published and passed fresh anonymous downloads and installed examples.
-ERiC 0.1.2 is published with the same verification. All 15 SDK packages are also
-available as [qualified release archives](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15).
+**Release state:** Auth, Platform and EInvoice 0.1.1 and Accounting and ERiC
+0.1.3 are available as [qualified release archives](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-11-25)
+and verified through anonymous Go proxy and checksum-database downloads.
 GitHub Releases and these public sources are the supported distribution channels.
 The SDKs are not published to npm or PyPI; no registry account is needed to install them.
 Live product availability is reported separately in the Developer Console.
 
-Accounting 0.1.2 is published in the [27 October release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-27): 80 production
-operations, including 24 banking methods, and twelve isolated test operations.
-The existing 0.1.1 archives retain their original contents. Exact qualification,
-checksums and anonymous installation evidence are recorded in [PUBLISHING.md](PUBLISHING.md).
-
-The next release candidate pins the shared transport to Go `go-jose/v4` 4.1.9,
-TypeScript `jose` 6.2.18 and Python `joserfc` 1.8.0. The operation counts below
-describe the candidate sources.
+The shared transport pins Go `go-jose/v4` 4.1.9, TypeScript `jose` 6.2.18 and
+Python `joserfc` 1.8.0. Update the product and auth packages together. The
+[qualification record](PUBLISHING.md#verified-november-security-release)
+includes checksums and fresh installation evidence.
 
 | Product | Production operations | Isolated test operations | Package directories |
 | --- | ---: | ---: | --- |
@@ -33,10 +27,8 @@ describe the candidate sources.
 The package names inside the release archives are `@dev-null-gmbh/{product}`,
 `d0-{product}` and `github.com/dev-null-GmbH/d0-sdk/{product}/go`.
 The auth packages are `@dev-null-gmbh/auth-machine`, `d0-auth-machine` and
-`github.com/dev-null-GmbH/d0-sdk/auth/go`. In the 15 October bundle, Auth,
-Platform and EInvoice use 0.1.0, Accounting uses 0.1.1 and the ERiC 0.1.2 SDK
-adds the optional filing-consent replay-only header. Product packages retain
-the exact auth dependency at 0.1.0.
+`github.com/dev-null-GmbH/d0-sdk/auth/go`. The current product packages require
+auth 0.1.1.
 
 Select `production` or `test` explicitly, use separate client credentials for
 each, and grant only the product scopes your integration needs. Each machine
@@ -59,14 +51,14 @@ d0 Developer Console.
 
 ## Install the released packages
 
-Download the [qualified SDK bundle](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15),
+Download the [qualified SDK bundle](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-11-25),
 verify its checksum, and unpack it. Run the following in a new directory:
 
 ```sh
 curl --fail --location --output d0-sdk.zip \
-  https://github.com/dev-null-GmbH/d0-sdk/releases/download/sdk-2026-10-15/d0-sdk-2026-10-15.zip
+  https://github.com/dev-null-GmbH/d0-sdk/releases/download/sdk-2026-11-25/d0-sdk-2026-11-25.zip
 printf '%s  %s\n' \
-  6c11b63a5ce5f24dff79d1f3d33c7879ff48831d66dd9029b37abf073152dd93 \
+  9e48ac681f4f3dff3d18ab14f29c66e2e13b14dff9ecb152897219cee7954136 \
   d0-sdk.zip | shasum -a 256 --check
 unzip d0-sdk.zip -d sdk
 (cd sdk && shasum -a 256 --check SHA256SUMS)
@@ -92,7 +84,7 @@ still resolve through the standard package indexes. Go uses public immutable
 module tags, for example:
 
 ```sh
-go get github.com/dev-null-GmbH/d0-sdk/eric/go@v0.1.2
+go get github.com/dev-null-GmbH/d0-sdk/eric/go@v0.1.3
 ```
 
 The package directories above contain the language-specific API examples.
