@@ -51,7 +51,7 @@ product decision and its release qualification.
 
 Candidate CI scans the workspace locks and the dependency graphs resolved by
 fresh installations of the exact built archives. The Monday and manual release
-workflow separately downloads both supported GitHub release ZIPs by tag, verifies
+workflow separately downloads each tracked GitHub release ZIP by tag, verifies
 their pinned revisions, lengths and checksums, and installs the packed TypeScript
 and Python libraries together with the exact Go modules from the public proxy.
 The installer compares the public Go module's file contents and module manifest
@@ -70,7 +70,23 @@ Medium advisory [GHSA-9pg5-8c7x-5hfx](https://github.com/advisories/GHSA-9pg5-8c
 The original artifacts remain immutable. A new distribution requires the
 reviewed release procedure and successful clean installs of its own bytes.
 
-## Current verified release
+## Verified November security release
+
+The [25 November release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-11-25)
+contains all fifteen SDK packages with Auth, Platform and EInvoice 0.1.1 and
+Accounting and ERiC 0.1.3. The product packages require Auth 0.1.1 in each
+language, resolving the Go JOSE and Python JOSE findings above in the new set.
+
+[Main CI run 45717113834](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/45717113834)
+qualified commit `9a54d8ca8a05f4aeaf7031989aa2936c788ee93c` and original
+artifact `15069948307`, including package, consumer dependency and vulnerability
+checks. The 441,210-byte anonymous download matched the original ZIP's SHA-256
+`9e48ac681f4f3dff3d18ab14f29c66e2e13b14dff9ecb152897219cee7954136` and all
+35 inner file checksums. Fresh customer installs used the downloaded TypeScript
+and Python archives and the public Go proxy with its checksum database. All
+twelve installed product examples passed.
+
+## Verified October baseline
 
 [SDK release of 15 October 2026](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-10-15)
 contains all 15 language packages from source
