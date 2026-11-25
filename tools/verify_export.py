@@ -45,6 +45,7 @@ def main():
     assert manifest["schemaVersion"] == 1
     assert manifest["sources"] == json.loads((ROOT / "sources.json").read_text())
     assert set(manifest["sources"]) == set(PRODUCTS)
+    assert release_versions == {product: source["version"] for product, source in manifest["sources"].items()}
     files = subprocess.check_output(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT)
     actual = {name.decode() for name in files.split(b"\0") if name}
     verify_inventory(actual, set(manifest["files"]) | DISTRIBUTION_FILES)
@@ -67,11 +68,13 @@ def main():
         assert metadata["project"]["license-files"] == ["LICENSE"]
         for language in ("go", "typescript", "python"):
             assert (ROOT / product / language / "LICENSE").read_bytes() == (ROOT / "LICENSE").read_bytes()
-        if product != "auth":
-            assert package["dependencies"]["@dev-null-gmbh/auth-machine"] == "0.1.0"
-            assert metadata["project"]["dependencies"] == ["d0-auth-machine==0.1.0"]
-            assert metadata["tool"]["uv"]["sources"]["d0-auth-machine"] == {"workspace": True}
         module = (ROOT / product / "go/go.mod").read_text()
+        if product != "auth":
+            auth_version = release_versions["auth"]
+            assert package["dependencies"]["@dev-null-gmbh/auth-machine"] == auth_version
+            assert metadata["project"]["dependencies"] == [f"d0-auth-machine=={auth_version}"]
+            assert metadata["tool"]["uv"]["sources"]["d0-auth-machine"] == {"workspace": True}
+            assert f"github.com/dev-null-GmbH/d0-sdk/auth/go v{auth_version}\n" in module
         assert module.startswith(f"module github.com/dev-null-GmbH/d0-sdk/{product}/go\n"), product
         assert "replace " not in module and "../../../" not in module, product
     print(f"verified {len(manifest['files'])} pinned files and all 15 public package identities")

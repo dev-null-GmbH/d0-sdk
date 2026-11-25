@@ -18,13 +18,14 @@ operations, including 24 banking methods, and twelve isolated test operations.
 The existing 0.1.1 archives retain their original contents. Exact qualification,
 checksums and anonymous installation evidence are recorded in [PUBLISHING.md](PUBLISHING.md).
 
-The source tree for the next release pins the shared Python transport to
-`joserfc` 1.8.0. The operation counts below describe these sources.
+The next release candidate pins the shared transport to Go `go-jose/v4` 4.1.9,
+TypeScript `jose` 6.2.18 and Python `joserfc` 1.8.0. The operation counts below
+describe the candidate sources.
 
 | Product | Production operations | Isolated test operations | Package directories |
 | --- | ---: | ---: | --- |
 | Shared authentication | OAuth/DPoP transport | Separate resource profiles | [Go](auth/go), [TypeScript](auth/typescript), [Python](auth/python) |
-| Platform | 32 | 5 | [Go](platform/go), [TypeScript](platform/typescript), [Python](platform/python) |
+| Platform | 33 | 5 | [Go](platform/go), [TypeScript](platform/typescript), [Python](platform/python) |
 | Accounting | 80 | 12 | [Go](accounting/go), [TypeScript](accounting/typescript), [Python](accounting/python) |
 | EInvoice | 7 | 7 | [Go](einvoice/go), [TypeScript](einvoice/typescript), [Python](einvoice/python) |
 | ERiC | 50 | 2 | [Go](eric/go), [TypeScript](eric/typescript), [Python](eric/python) |
@@ -98,7 +99,7 @@ The package directories above contain the language-specific API examples.
 
 ## Qualification and provenance
 
-Use Go 1.27.4, Node.js 26.13.1, npm 12.2.3, Python 3.14.10 and uv 0.13.10. The combined Python development workspace pins Ruff 0.17.4 and mypy 2.4.1 to reconcile imported product checks. The published packages keep their own exact dependencies:
+Use Go 1.27.4, Node.js 26.13.1, npm 12.2.3, Python 3.14.10 and uv 0.13.10. The combined Python development workspace pins Ruff 0.17.6 and mypy 2.4.1 to reconcile imported product checks. The published packages keep their own exact dependencies.
 
 ```sh
 tools/check.sh
@@ -110,9 +111,10 @@ The Go installation test uses a local module proxy generated from the exact
 release source; no private module access or workspace replacement reaches the
 customer packages. No load tests are included.
 
-`sources.json` pins the private implementation sources. Only committed SDK
-subtrees are imported; `export-manifest.json` records original and distributed
-file hashes, including explicit dependency and license metadata adjustments.
+`sources.json` pins the private implementation revisions and public package
+versions. The importer uses the public auth version for each product SDK's
+exact Go, TypeScript and Python dependency. `export-manifest.json` records the
+original and distributed file hashes for committed SDK subtrees.
 Private application code is not part of this repository. Maintainers regenerate
 the export with `python3 tools/import_sources.py --sources-root /path/to/checkouts`.
 Public CI requires only this repository and public dependencies.

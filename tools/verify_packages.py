@@ -16,6 +16,7 @@ PRODUCTS = ("auth", "platform", "accounting", "einvoice", "eric")
 def main():
     archives = []
     release_versions = versions()
+    auth_version = release_versions["auth"]
     for product in PRODUCTS:
         version = release_versions[product]
         suffix = "auth-machine" if product == "auth" else product
@@ -31,7 +32,7 @@ def main():
             assert metadata["license"] == "MIT"
             assert package.extractfile("package/LICENSE").read() == (ROOT / "LICENSE").read_bytes()
             if product != "auth":
-                assert metadata["dependencies"]["@dev-null-gmbh/auth-machine"] == "0.1.0"
+                assert metadata["dependencies"]["@dev-null-gmbh/auth-machine"] == auth_version
         archives.append(archive)
         module = "d0_auth_machine" if product == "auth" else f"d0_{product}"
         wheel = ROOT / f"dist/python/{module}-{version}-py3-none-any.whl"
@@ -42,7 +43,7 @@ def main():
             assert metadata["Version"] == version, product
             assert package.read(f"{module}-{version}.dist-info/licenses/LICENSE") == (ROOT / "LICENSE").read_bytes()
             if product != "auth":
-                assert metadata.get_all("Requires-Dist") == ["d0-auth-machine==0.1.0"], product
+                assert metadata.get_all("Requires-Dist") == [f"d0-auth-machine=={auth_version}"], product
             assert all(" @ " not in value for value in metadata.get_all("Requires-Dist", [])), product
         archives.extend([wheel, ROOT / f"dist/python/{module}-{version}.tar.gz"])
     archives.extend(path for path in (ROOT / "dist/go").rglob("*") if path.is_file())

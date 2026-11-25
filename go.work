@@ -1,4 +1,4 @@
-go 1.27.3
+go 1.27.4
 
 toolchain go1.27.4
 
@@ -11,4 +11,4 @@ use (
 )
 
 // Qualify the unpublished dependency from this release tree without private sources.
-replace github.com/dev-null-GmbH/d0-sdk/auth/go v0.1.0 => ./auth/go
+replace github.com/dev-null-GmbH/d0-sdk/auth/go v0.1.1 => ./auth/go

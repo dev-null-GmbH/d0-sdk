@@ -106,3 +106,6 @@ class PlatformOperations:
 
     def delete_object_storage_credential(self, request: g.DeleteObjectStorageCredentialRequest) -> g.DeleteObjectStorageCredentialResult:
         return cast(g.DeleteObjectStorageCredentialResult, self._call('deleteObjectStorageCredential', request))
+
+    def resize_object_storage_bucket(self, request: g.ResizeObjectStorageBucketRequest) -> g.ResizeObjectStorageBucketResult:
+        return cast(g.ResizeObjectStorageBucketResult, self._call('resizeObjectStorageBucket', request))

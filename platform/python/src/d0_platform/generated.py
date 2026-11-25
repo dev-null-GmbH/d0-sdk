@@ -27,7 +27,10 @@ class Bucket(TypedDict):
     billing_started_at: NotRequired[str]
     created_at: str
     id: str
+    max_quota_bytes: int
     name: str
+    quota_bytes: int
+    requested_quota_bytes: int
     s3_name: str
     state: str
 
@@ -35,6 +38,7 @@ class Catalog(TypedDict):
     enabled: bool
     endpoint: str
     limits: Limits
+    max_new_bucket_bytes: int
     region: str
     tariff: Tariff
 
@@ -156,6 +160,7 @@ class ObjectStorageBucketsOutputBody(TypedDict):
 
 class ObjectStorageCreateBucketInputBody(TypedDict):
     name: str
+    quota_bytes: NotRequired[int]
     tariff_version: Literal['object-storage-v1']
 
 class ObjectStorageCreateCredentialInputBody(TypedDict):
@@ -164,6 +169,9 @@ class ObjectStorageCreateCredentialInputBody(TypedDict):
 
 class ObjectStorageCredentialsOutputBody(TypedDict):
     credentials: list[Credential] | None
+
+class ObjectStorageQuotaInputBody(TypedDict):
+    quota_bytes: int
 
 class PresetBody(TypedDict):
     name: str
@@ -427,7 +435,7 @@ type ListObjectStorageBucketsResult = ObjectStorageBucketsOutputBody
 class CreateObjectStorageBucketRequest(TypedDict):
     body: ObjectStorageCreateBucketInputBody
 
-type CreateObjectStorageBucketResult = Bucket | None
+type CreateObjectStorageBucketResult = Bucket
 
 class DeleteObjectStorageBucketRequest(TypedDict):
     id: str
@@ -450,3 +458,9 @@ class DeleteObjectStorageCredentialRequest(TypedDict):
     credential_id: str
 
 type DeleteObjectStorageCredentialResult = None
+
+class ResizeObjectStorageBucketRequest(TypedDict):
+    id: str
+    body: ObjectStorageQuotaInputBody
+
+type ResizeObjectStorageBucketResult = Bucket
