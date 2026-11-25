@@ -32,14 +32,16 @@ def exported(relative):
     }
 
 
-def transform(product, relative, data):
+def transform(product, relative, data, release_versions):
+    version, auth = release_versions[product], release_versions["auth"]
     if relative == "typescript/package.json":
         package = json.loads(data)
         package.pop("private", None)
+        package["version"] = version
         package["license"] = "MIT"
         package["files"] = ["dist", "README.md", "LICENSE"]
         if product != "auth":
-            package["dependencies"]["@dev-null-gmbh/auth-machine"] = "0.1.0"
+            package["dependencies"]["@dev-null-gmbh/auth-machine"] = auth
         package["publishConfig"] = {"registry": "https://registry.npmjs.org", "access": "public"}
         package["repository"] = {
             "type": "git", "url": "https://github.com/dev-null-GmbH/d0-sdk.git",
@@ -55,6 +57,11 @@ def transform(product, relative, data):
         result = "\n".join(lines).rstrip() + "\n"
         if "replace " in result or "../../../" in result:
             raise ValueError("unreviewed Go dependency override")
+        if product != "auth":
+            result = re.sub(
+                r"(github\.com/dev-null-GmbH/d0-sdk/auth/go )v\d+\.\d+\.\d+",
+                rf"\g<1>v{auth}", result,
+            )
         return result.encode()
     if relative == "python/pyproject.toml":
         result = re.sub(
@@ -63,6 +70,9 @@ def transform(product, relative, data):
         )
         if "../../../" in result:
             raise ValueError("unreviewed Python dependency override")
+        result = re.sub(r'^version = "\d+\.\d+\.\d+"$', f'version = "{version}"', result, flags=re.M)
+        if product != "auth":
+            result = re.sub(r'"d0-auth-machine==\d+\.\d+\.\d+"', f'"d0-auth-machine=={auth}"', result)
         result = result.replace('[project]\n', '[project]\nlicense = "MIT"\nlicense-files = ["LICENSE"]\n', 1)
         return result.encode()
     return data
@@ -72,6 +82,9 @@ def collect(sources_root):
     sources = json.loads((ROOT / "sources.json").read_text())
     if set(sources) != {"auth", "platform", "accounting", "einvoice", "eric"}:
         raise ValueError("all five SDK sources must be pinned")
+    release_versions = {product: source["version"] for product, source in sources.items()}
+    if not all(re.fullmatch(r"\d+\.\d+\.\d+", version) for version in release_versions.values()):
+        raise ValueError("release versions must be exact")
     output, records = {}, {}
     for product, source in sorted(sources.items()):
         repo = sources_root / source["repository"]
@@ -91,7 +104,7 @@ def collect(sources_root):
             if kind != "blob" or mode not in {"100644", "100755"}:
                 raise ValueError("links and special files are forbidden")
             data = git(repo, "cat-file", "blob", blob)
-            transformed = transform(product, relative, data)
+            transformed = transform(product, relative, data, release_versions)
             destination = f"{product}/{relative}"
             output[destination] = transformed
             records[destination] = {

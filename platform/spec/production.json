@@ -126,8 +126,20 @@
           "id": {
             "type": "string"
           },
+          "max_quota_bytes": {
+            "format": "int64",
+            "type": "integer"
+          },
           "name": {
             "type": "string"
+          },
+          "quota_bytes": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "requested_quota_bytes": {
+            "format": "int64",
+            "type": "integer"
           },
           "s3_name": {
             "type": "string"
@@ -142,7 +154,10 @@
           "name",
           "s3_name",
           "state",
-          "created_at"
+          "created_at",
+          "quota_bytes",
+          "requested_quota_bytes",
+          "max_quota_bytes"
         ],
         "type": "object"
       },
@@ -167,6 +182,10 @@
           "limits": {
             "$ref": "#/components/schemas/Limits"
           },
+          "max_new_bucket_bytes": {
+            "format": "int64",
+            "type": "integer"
+          },
           "region": {
             "type": "string"
           },
@@ -179,7 +198,8 @@
           "endpoint",
           "region",
           "limits",
-          "tariff"
+          "tariff",
+          "max_new_bucket_bytes"
         ],
         "type": "object"
       },
@@ -461,6 +481,7 @@
           "algorithm": {
             "description": "DNSKEY algorithm",
             "format": "int32",
+            "maximum": 255,
             "minimum": 0,
             "type": "integer"
           },
@@ -477,12 +498,14 @@
           "flags": {
             "description": "DNSKEY flags",
             "format": "int32",
+            "maximum": 65535,
             "minimum": 0,
             "type": "integer"
           },
           "protocol": {
             "description": "DNSKEY protocol",
             "format": "int32",
+            "maximum": 255,
             "minimum": 0,
             "type": "integer"
           },
@@ -912,6 +935,12 @@
             "minLength": 2,
             "type": "string"
           },
+          "quota_bytes": {
+            "description": "Requested initial quota in bytes. Omit to use the standard bucket size.",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          },
           "tariff_version": {
             "enum": [
               "object-storage-v1"
@@ -976,6 +1005,30 @@
         },
         "required": [
           "credentials"
+        ],
+        "type": "object"
+      },
+      "ObjectStorageQuotaInputBody": {
+        "additionalProperties": false,
+        "properties": {
+          "$schema": {
+            "description": "A URL to the JSON Schema for this object.",
+            "examples": [
+              "https://example.com/schemas/ObjectStorageQuotaInputBody.json"
+            ],
+            "format": "uri",
+            "readOnly": true,
+            "type": "string"
+          },
+          "quota_bytes": {
+            "description": "Absolute new bucket quota in bytes.",
+            "format": "int64",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "quota_bytes"
         ],
         "type": "object"
       },
@@ -2167,13 +2220,6 @@
               "schema": {
                 "$ref": "#/components/schemas/ResizeClusterInputBody"
               }
-            },
-            "application/octet-stream": {
-              "schema": {
-                "contentMediaType": "application/octet-stream",
-                "format": "binary",
-                "type": "string"
-              }
             }
           },
           "required": true
@@ -3299,6 +3345,13 @@
             "description": "Created"
           },
           "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bucket"
+                }
+              }
+            },
             "description": "Bucket is persisted and provisioning continues"
           },
           "400": {
@@ -3700,6 +3753,155 @@
           }
         ],
         "summary": "Revoke bucket credential",
+        "tags": [
+          "object-storage"
+        ]
+      }
+    },
+    "/platform/v1/object-storage/buckets/{id}/quota": {
+      "put": {
+        "description": "Requests an absolute byte quota for an active billable bucket. A confirmed target is safe to retry. While an increase is pending, the bucket list reports the last confirmed quota and the requested target.",
+        "operationId": "platform-resizeObjectStorageBucket",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectStorageQuotaInputBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bucket"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bucket"
+                }
+              }
+            },
+            "description": "Capacity reserved, awaiting native quota confirmation"
+          },
+          "400": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "402": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Payment Required"
+          },
+          "403": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "security": [
+          {
+            "machineDPoP": [
+              "platform.storage.write"
+            ]
+          }
+        ],
+        "summary": "Increase an organization bucket's storage quota",
         "tags": [
           "object-storage"
         ]

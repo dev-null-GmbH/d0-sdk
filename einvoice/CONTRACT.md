@@ -13,7 +13,7 @@ The canonical public-openapi.json SHA-256 values are:
 - console: 0f1b7b1c4f0e8b2fef50e47243518189293dffd207ac2c78740b9a2826ba0cce
 - test: 8992eea05febfece436d5125b7db231e19644ef493ab4bb457bfb50ae2ecbdb3
 
-Shared machine authentication source is d0-auth commit d6d52eacff852bb8f7a6e4c3bdbdcb0ea8a960b9. Local sibling
+Shared machine authentication source is d0-auth commit 3647c0a00e9fa1c3a2094b8d5ee88995df6d8f93. Local sibling
 source overrides make qualification reproducible within this checked-out
 workspace. Before publication, replace them with immutable published Go,
 npm and Python package versions; do not publish a package whose dependency

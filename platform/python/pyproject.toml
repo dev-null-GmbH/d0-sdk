@@ -6,11 +6,11 @@ build-backend = "hatchling.build"
 license = "MIT"
 license-files = ["LICENSE"]
 name = "d0-platform"
-version = "0.1.0"
+version = "0.1.1"
 description = "Typed Platform machine API client backed by d0-auth-machine"
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
-dependencies = ["d0-auth-machine==0.1.0"]
+dependencies = ["d0-auth-machine==0.1.1"]
 
 [tool.uv.sources]
 d0-auth-machine = { workspace = true }

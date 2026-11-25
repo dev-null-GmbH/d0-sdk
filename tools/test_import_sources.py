@@ -25,15 +25,23 @@ class ExportTests(unittest.TestCase):
                 exported(path)
 
     def test_public_dependencies_and_unknown_override_fail_closed(self):
+        versions = {"platform": "0.1.3", "auth": "0.1.4"}
         raw = json.dumps({"private": True, "dependencies": {"@dev-null-gmbh/auth-machine": "file:../../../d0-auth/packages/machine/typescript"}}).encode()
-        package = json.loads(transform("platform", "typescript/package.json", raw))
+        package = json.loads(transform("platform", "typescript/package.json", raw, versions))
         self.assertNotIn("private", package)
-        self.assertEqual(package["dependencies"]["@dev-null-gmbh/auth-machine"], "0.1.0")
+        self.assertEqual(package["version"], "0.1.3")
+        self.assertEqual(package["dependencies"]["@dev-null-gmbh/auth-machine"], "0.1.4")
         self.assertEqual(package["publishConfig"]["registry"], "https://registry.npmjs.org")
+        go = b"require github.com/dev-null-GmbH/d0-sdk/auth/go v0.1.0\n"
+        self.assertEqual(transform("platform", "go/go.mod", go, versions), go.replace(b"v0.1.0", b"v0.1.4"))
+        python = b'[project]\nversion = "0.1.0"\ndependencies = ["d0-auth-machine==0.1.0"]\n'
+        metadata = transform("platform", "python/pyproject.toml", python, versions)
+        self.assertIn(b'version = "0.1.3"\n', metadata)
+        self.assertIn(b'dependencies = ["d0-auth-machine==0.1.4"]\n', metadata)
         with self.assertRaises(ValueError):
-            transform("platform", "go/go.mod", b"module x\nreplace arbitrary => ../private\n")
+            transform("platform", "go/go.mod", b"module x\nreplace arbitrary => ../private\n", versions)
         with self.assertRaises(ValueError):
-            transform("platform", "python/pyproject.toml", b'unknown = "../../../private"')
+            transform("platform", "python/pyproject.toml", b'unknown = "../../../private"', versions)
 
 
 if __name__ == "__main__":

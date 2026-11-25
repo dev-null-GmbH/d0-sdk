@@ -558,3 +558,20 @@ func (c *Client) DeleteObjectStorageCredential(ctx context.Context, id string, c
 	}
 	return r, nil
 }
+
+func (c *Client) ResizeObjectStorageBucket(ctx context.Context, id string, body gen.PlatformResizeObjectStorageBucketJSONRequestBody) (*gen.PlatformResizeObjectStorageBucketResponse, error) {
+	if err := c.allow("resizeObjectStorageBucket"); err != nil {
+		return nil, err
+	}
+	if !validPath(id) {
+		return nil, errors.New("invalid Platform path identifier")
+	}
+	r, err := c.api.PlatformResizeObjectStorageBucketWithResponse(ctx, id, body)
+	if err != nil {
+		return nil, err
+	}
+	if r.StatusCode() != 200 && r.StatusCode() != 202 {
+		return nil, c.problem(r.StatusCode(), r.Body, r.HTTPResponse)
+	}
+	return r, nil
+}

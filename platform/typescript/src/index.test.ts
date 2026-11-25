@@ -22,8 +22,8 @@ function fixture(profile: Profile) {
 }
 
 describe("Platform machine contract", () => {
-  it("covers exactly 32 production and 5 test operations", () => {
-    expect(Object.keys(operations)).toHaveLength(32);
+  it("covers exactly 33 production and 5 test operations", () => {
+    expect(Object.keys(operations)).toHaveLength(33);
     expect(Object.values(operations).filter(op => op.test)).toHaveLength(5);
     for (const op of Object.keys(operations)) expect(typeof (PlatformClient.prototype as unknown as Record<string, unknown>)[op]).toBe("function");
   });

@@ -31,7 +31,7 @@ func testConfiguration(t *testing.T) Config {
 
 func verifiedClaims(t *testing.T, raw string, algorithm jose.SignatureAlgorithm, key any) (map[string]any, jose.Header) {
 	t.Helper()
-	signed, err := jose.ParseSigned(raw, []jose.SignatureAlgorithm{algorithm})
+	signed, err := jose.ParseSignedCompact(raw, []jose.SignatureAlgorithm{algorithm})
 	if err != nil || len(signed.Signatures) != 1 {
 		t.Fatal("invalid signed JWT", err)
 	}

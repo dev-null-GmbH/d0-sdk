@@ -5,7 +5,9 @@ ES256 DPoP, shared token refresh and bounded nonce retries for one organization'
 client and one d0 product resource. Product SDKs own their versioned operations,
 models, pagination, polling and business error handling.
 
-Use Python 3.14.10 and install from the lockfile with `uv sync --locked`. The shared transport is qualified with the product SDKs. Publication uses the
+Use Python 3.15.2 or 3.14.10 and install from the lockfile with `uv sync --locked`.
+The default interpreter is 3.15.2. Check the product SDK for its own interpreter
+requirements. Publication uses the
 public d0-sdk distribution; a local qualification is not a registry release.
 
 ```python
@@ -70,19 +72,22 @@ outcome. Concurrent callers share a refresh but get distinct DPoP proofs. The
 dedicated TLS 1.3 transport does not use ambient proxies, cookies or redirects.
 
 Run `uv run --locked python -m unittest discover -s tests -v`, `uv lock --check`,
-`uv audit --locked`, and `uv build` from this directory. The fixtures verify real
+`uv --no-config audit --locked`, and `uv build` from this directory.
+The audit checks the locked graph with the installed interpreter, including when
+only Python 3.14.10 is available. The fixtures verify real
 PS256/ES256 signatures, both nonce paths, exact write replay, origin and header
 boundaries, token downgrade, response limits, shared refresh and cancellation.
 They are functional checks, not load tests. From the repository root, CI runs
 the same SDK gate with `docker build --file Dockerfile.python-ci --target python-test --no-cache-filter python-test .`. The image
-builds the checksum-pinned official Python source into an isolated prefix and
-binds uv to it with automatic interpreter downloads disabled. The test stage
-runs afresh, including the vulnerability audit; the source build stays cached. For local checks,
-set `UV_PYTHON` to the absolute path of an installed Python 3.14.10 interpreter
-when uv cannot discover that patch.
+uses the digest-pinned official Python 3.15.2 image and binds uv to its interpreter
+with automatic interpreter downloads disabled. The test stage runs afresh,
+including the vulnerability audit. For local checks,
+set `UV_PYTHON` to the absolute path of an installed Python 3.15.2 or 3.14.10
+interpreter and set `UV_PYTHON_DOWNLOADS=never` to use that installation.
 
-Pins were verified on 2026-10-26 against the official
-[Python 3.14.10 security release](https://www.python.org/downloads/release/python-31410/),
+Interpreter pins were verified against the official
+[Python 3.15.2 security release](https://www.python.org/downloads/release/python-3152/)
+and [Python 3.14.10 security release](https://www.python.org/downloads/release/python-31410/),
 [joserfc 1.7.7 changelog](https://jose.authlib.org/en/changelog/),
 [cryptography 50.0.2 documentation](https://cryptography.io/en/50.0.2/), and
 [Hatchling release history](https://pypi.org/project/hatchling/).

@@ -694,9 +694,7 @@ export const operations = {
       201,
       202
     ],
-    "emptyStatuses": [
-      202
-    ],
+    "emptyStatuses": [],
     "bodyType": "application/json",
     "responseType": "application/json",
     "test": false,
@@ -809,6 +807,34 @@ export const operations = {
         "name": "credential_id",
         "wire": "credential_id",
         "in": "path",
+        "required": true
+      }
+    ]
+  },
+  "resizeObjectStorageBucket": {
+    "scope": "platform.storage.write",
+    "method": "PUT",
+    "path": "/object-storage/buckets/{id}/quota",
+    "status": 200,
+    "statuses": [
+      200,
+      202
+    ],
+    "emptyStatuses": [],
+    "bodyType": "application/json",
+    "responseType": "application/json",
+    "test": false,
+    "params": [
+      {
+        "name": "id",
+        "wire": "id",
+        "in": "path",
+        "required": true
+      },
+      {
+        "name": "body",
+        "wire": "body",
+        "in": "body",
         "required": true
       }
     ]

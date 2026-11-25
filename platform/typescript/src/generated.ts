@@ -2,8 +2,8 @@
 export type AuditEventBody = { "actor"?: string; "created_at" : string; "detail"?: Record<string, Record<string, unknown>>; "from_state"?: string; "id" : string; "resource_id" : string; "resource_type" : "order" | "cluster" | "object_storage_bucket" | "object_storage_credential"; "state_version" : number; "to_state" : string };
 export type AuthCodeOutputBody = { "$schema"?: string; "auth_code" : string };
 export type BoundBody = { "max" : number; "min" : number };
-export type Bucket = { "$schema"?: string; "billing_backend" : string; "billing_started_at"?: string; "created_at" : string; "id" : string; "name" : string; "s3_name" : string; "state" : string };
-export type Catalog = { "$schema"?: string; "enabled" : boolean; "endpoint" : string; "limits" : Limits; "region" : string; "tariff" : Tariff };
+export type Bucket = { "$schema"?: string; "billing_backend" : string; "billing_started_at"?: string; "created_at" : string; "id" : string; "max_quota_bytes" : number; "name" : string; "quota_bytes" : number; "requested_quota_bytes" : number; "s3_name" : string; "state" : string };
+export type Catalog = { "$schema"?: string; "enabled" : boolean; "endpoint" : string; "limits" : Limits; "max_new_bucket_bytes" : number; "region" : string; "tariff" : Tariff };
 export type CatalogBody = { "$schema"?: string; "max_memory_per_vcpu" : number; "memory_gib" : BoundBody; "network" : CatalogBodyNetworkStruct; "presets" : Array<PresetBody> | null; "rates" : RateCardBody; "storage_gib" : BoundBody; "vcpu" : BoundBody };
 export type CatalogBodyNetworkStruct = { "dedicated_ipv6" : boolean; "public_ipv4_available" : boolean };
 export type ClusterBody = { "$schema"?: string; "created_at" : string; "currency"?: string; "endpoint"?: string; "id" : string; "name" : string; "offering" : string; "price_cents"?: string; "public_ipv4_address"?: string; "ready" : boolean; "spec" : SpecBody; "state" : string; "state_version" : number; "updated_at" : string };
@@ -24,9 +24,10 @@ export type ListDomainsOutputBody = { "$schema"?: string; "domains" : Array<Doma
 export type ListRecordsOutputBody = { "$schema"?: string; "records" : Array<RecordBody> | null };
 export type NameserverInput = { "host" : string; "ipv4"?: string; "ipv6"?: string };
 export type ObjectStorageBucketsOutputBody = { "$schema"?: string; "buckets" : Array<Bucket> | null };
-export type ObjectStorageCreateBucketInputBody = { "$schema"?: string; "name" : string; "tariff_version" : "object-storage-v1" };
+export type ObjectStorageCreateBucketInputBody = { "$schema"?: string; "name" : string; "quota_bytes"?: number; "tariff_version" : "object-storage-v1" };
 export type ObjectStorageCreateCredentialInputBody = { "$schema"?: string; "name" : string; "write_access" : boolean };
 export type ObjectStorageCredentialsOutputBody = { "$schema"?: string; "credentials" : Array<Credential> | null };
+export type ObjectStorageQuotaInputBody = { "$schema"?: string; "quota_bytes" : number };
 export type PresetBody = { "name" : string; "price" : PriceBody; "spec" : SpecBody };
 export type PriceBody = { "amount_cents" : string; "currency" : string; "interval" : string };
 export type ProductUsage = { "duration_ms" : number; "errors" : number; "product" : string; "rate_limited" : number; "requests" : number };
@@ -100,7 +101,7 @@ export type GetObjectStorageCatalogResult = Catalog;
 export type ListObjectStorageBucketsRequest = {  };
 export type ListObjectStorageBucketsResult = ObjectStorageBucketsOutputBody;
 export type CreateObjectStorageBucketRequest = { "body": ObjectStorageCreateBucketInputBody };
-export type CreateObjectStorageBucketResult = Bucket | void;
+export type CreateObjectStorageBucketResult = Bucket;
 export type DeleteObjectStorageBucketRequest = { "id": string };
 export type DeleteObjectStorageBucketResult = void;
 export type ListObjectStorageCredentialsRequest = { "id": string };
@@ -109,6 +110,8 @@ export type CreateObjectStorageCredentialRequest = { "id": string; "body": Objec
 export type CreateObjectStorageCredentialResult = CreatedCredential;
 export type DeleteObjectStorageCredentialRequest = { "id": string; "credential_id": string };
 export type DeleteObjectStorageCredentialResult = void;
+export type ResizeObjectStorageBucketRequest = { "id": string; "body": ObjectStorageQuotaInputBody };
+export type ResizeObjectStorageBucketResult = Bucket;
 
 export interface OperationRequests {
   listAuditEvents: ListAuditEventsRequest;
@@ -143,6 +146,7 @@ export interface OperationRequests {
   listObjectStorageCredentials: ListObjectStorageCredentialsRequest;
   createObjectStorageCredential: CreateObjectStorageCredentialRequest;
   deleteObjectStorageCredential: DeleteObjectStorageCredentialRequest;
+  resizeObjectStorageBucket: ResizeObjectStorageBucketRequest;
 }
 export interface OperationResults {
   listAuditEvents: ListAuditEventsResult;
@@ -177,4 +181,5 @@ export interface OperationResults {
   listObjectStorageCredentials: ListObjectStorageCredentialsResult;
   createObjectStorageCredential: CreateObjectStorageCredentialResult;
   deleteObjectStorageCredential: DeleteObjectStorageCredentialResult;
+  resizeObjectStorageBucket: ResizeObjectStorageBucketResult;
 }
