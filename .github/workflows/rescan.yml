@@ -1,0 +1,49 @@
+name: Rescan supported SDK releases
+
+on:
+  schedule:
+    - cron: '53 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rescan:
+    if: github.repository == 'dev-null-GmbH/d0-sdk' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        release: [sdk-2026-10-15, sdk-2026-10-27]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/qualify-toolchain
+      - name: Verify public bytes, install fresh and retain resolved advisories
+        env:
+          GOTOOLCHAIN: local
+          RELEASE_TAG: ${{ matrix.release }}
+          EVIDENCE: ${{ runner.temp }}/sdk-rescan
+        run: |
+          python3 tools/rescan_release.py "$RELEASE_TAG" "$EVIDENCE"
+          jq -n --arg time "$(date -u +%FT%TZ)" \
+            '{scanner: "OSV-Scanner 2.7.1", advisorySource: "osv.dev", queriedAt: $time}' \
+            > "$EVIDENCE/scan-scope.json"
+          go_inputs=()
+          for product in auth platform accounting einvoice eric; do
+            go_inputs+=(-L "$EVIDENCE/declared-go/$product/go.mod")
+          done
+          osv-scanner scan source --no-resolve --no-call-analysis=go --all-vulns --all-packages \
+            --format json --output-file "$EVIDENCE/osv.json" \
+            -L "$EVIDENCE/package-lock.json" -L "$EVIDENCE/requirements.txt" -L "$EVIDENCE/go.mod" "${go_inputs[@]}"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: sdk-rescan-${{ matrix.release }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/sdk-rescan/
+          if-no-files-found: warn
+          retention-days: 30

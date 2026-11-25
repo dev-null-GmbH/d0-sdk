@@ -11,14 +11,15 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCTS = ("auth", "platform", "accounting", "einvoice", "eric")
 DISTRIBUTION_FILES = {
-    ".github/workflows/release.yml", ".gitignore", ".python-version", "AGENTS.md",
+    ".github/actions/qualify-toolchain/action.yml", ".github/workflows/release.yml",
+    ".github/workflows/rescan.yml", ".gitignore", ".python-version", "AGENTS.md",
     "LICENSE", "README.md", "PUBLISHING.md", "export-manifest.json", "sources.json",
     "go.work", "package.json", "package-lock.json", "pyproject.toml", "uv.lock",
     "tools/check.sh", "tools/check_install.py", "tools/import_sources.py",
     "tools/publish_npm.py", "tools/verify_export.py", "tools/verify_packages.py",
     "tools/test_import_sources.py", "tools/test_publish_npm.py",
     "tools/go_tags.py", "tools/test_go_tags.py", "tools/publish_python.py",
-    "tools/test_publish_python.py",
+    "tools/test_publish_python.py", "tools/rescan_release.py", "tools/test_rescan_release.py",
 }
 
 
