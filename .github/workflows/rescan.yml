@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release: [sdk-2026-10-15, sdk-2026-10-27, sdk-2026-11-25]
+        release: [sdk-2026-10-15, sdk-2026-10-27, sdk-2026-11-25, sdk-2026-11-27]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

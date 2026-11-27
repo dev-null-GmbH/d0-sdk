@@ -29,6 +29,10 @@ RELEASES = {
         "9a54d8ca8a05f4aeaf7031989aa2936c788ee93c", 441210,
         "9e48ac681f4f3dff3d18ab14f29c66e2e13b14dff9ecb152897219cee7954136",
     ),
+    "sdk-2026-11-27": (
+        "0fa10ea8d5d68c449b78c3723385489488f49dfb", 441106,
+        "1bc318bfe1e31d8beec6d34fdd7452218ecae868c37d3b1446b7498012323eb6",
+    ),
 }
 
 
