@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 license = "MIT"
 license-files = ["LICENSE"]
 name = "d0-auth-machine"
-version = "0.1.1"
+version = "0.1.2"
 description = "d0 machine OAuth and DPoP HTTP client"
 readme = "README.md"
 requires-python = ">=3.14,<3.16"

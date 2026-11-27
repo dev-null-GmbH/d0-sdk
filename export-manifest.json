@@ -3,33 +3,33 @@
   "sources": {
     "auth": {
       "repository": "d0-auth",
-      "commit": "d2389c65edbe9a0fe783216eb5ce8badeedc59cd",
+      "commit": "c1d10ae11f7c9e5bcc6fd949ac844d6e733b23c2",
       "prefix": "packages/machine",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     "platform": {
       "repository": "d0-api",
-      "commit": "4c017437c19b533d3eea174828457e44698f1133",
+      "commit": "e0b2d1dd3805ec0867edd501b24abd2e9e18930d",
       "prefix": "sdk",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     "accounting": {
       "repository": "devacc-api",
-      "commit": "f3c880610f4f059dec7051b32ca30122ef597df4",
+      "commit": "51308fec820b01f6b63062cfdd66d2f0a4da94d6",
       "prefix": "sdk",
-      "version": "0.1.3"
+      "version": "0.1.4"
     },
     "einvoice": {
       "repository": "devacc-einvoice-platform",
-      "commit": "2d4995ca8eb969ce7c59929eb546d2e863c38c44",
+      "commit": "f462af479a5d5c8cb92ac0301634fa37a37c6c0f",
       "prefix": "sdk",
-      "version": "0.1.1"
+      "version": "0.1.2"
     },
     "eric": {
       "repository": "devacc-eric-svc",
-      "commit": "7f055f7e583819a2bef9753603856a2f1b73c591",
+      "commit": "aa35bc5201bcf3db08e202122d87c0040bcdab62",
       "prefix": "sdk",
-      "version": "0.1.3"
+      "version": "0.1.4"
     }
   },
   "files": {
@@ -90,7 +90,7 @@
     "accounting/go/go.mod": {
       "sourcePath": "sdk/go/go.mod",
       "sourceSha256": "f213f1bead5478447bad201a5b2cb7782e0d744abac7bf5bb121be2f7f8f4a96",
-      "sha256": "64baf17351e64227dbebdb43c97a74ae092a2343f8b6fcfeba5979187d40710e",
+      "sha256": "cec87279281553ebd0de21843d90cc139df28002d77b8b9768556900d1c17450",
       "transformed": true
     },
     "accounting/go/go.sum": {
@@ -132,7 +132,7 @@
     "accounting/python/pyproject.toml": {
       "sourcePath": "sdk/python/pyproject.toml",
       "sourceSha256": "f12ac95c3651c62933c32fd4be7dfdc45c68ce1c8d5b4e4d4d8c5d024b8713b4",
-      "sha256": "a7d8796acbfca6b0315bf45d57c3f9f33f68882e4e5f124165f8a0c3fb58200d",
+      "sha256": "30bd07caf4e7d2357d46fb2305f6a7a7ccce135b554746c67438220805b5ed4b",
       "transformed": true
     },
     "accounting/python/src/d0_accounting/__init__.py": {
@@ -185,8 +185,8 @@
     },
     "accounting/typescript/package.json": {
       "sourcePath": "sdk/typescript/package.json",
-      "sourceSha256": "c7e418af7dd3871a63fa3ac670b2162f1ac4354301f14c1cb1d0734843500699",
-      "sha256": "ee52d05902a4e5cb01e8a40224412d6a4f3aac370c054aae6b1d614a7073cd04",
+      "sourceSha256": "201f05570c374d377bae4139f32ca8cea6dac30cb3b93ef94479cf0845e75ae1",
+      "sha256": "bc5794c35e8e91df624d6f3d6e6aeafef8c06eba2ea6a9c7d862533590bf0e51",
       "transformed": true
     },
     "accounting/typescript/src/generated.ts": {
@@ -291,7 +291,7 @@
     "auth/python/pyproject.toml": {
       "sourcePath": "packages/machine/python/pyproject.toml",
       "sourceSha256": "60c48d56d6c4f104f5b65533ab9a987c5676548c5e2456549bcc22286be1e1c3",
-      "sha256": "6e787cfc7f49e9df476d4775b09ebc1f2294f92caf99a230dcb299ff1a7fa816",
+      "sha256": "485827ecddb9df99b7b03940b140d3e0cc87dbdf6a16a23745732dfcbb333190",
       "transformed": true
     },
     "auth/python/src/d0_auth_machine/__init__.py": {
@@ -320,8 +320,8 @@
     },
     "auth/typescript/package.json": {
       "sourcePath": "packages/machine/typescript/package.json",
-      "sourceSha256": "18df381fc489f18fb673c7377ab560fd21e288a5983836fef9241be9d8baa00c",
-      "sha256": "7200077191916a26d9e1f27c4c722cdde8c1260521d37d51c300f0d09da33372",
+      "sourceSha256": "4d0f0e932db38b66d588fadb606082b64a1606f0904aef4cc8eec99ec7d5ea69",
+      "sha256": "829d83aa42fc897c45a1bc9ad7ae61f75ade963a256782e02f1695616d1800bb",
       "transformed": true
     },
     "auth/typescript/src/index.test.ts": {
@@ -402,7 +402,7 @@
     "einvoice/go/go.mod": {
       "sourcePath": "sdk/go/go.mod",
       "sourceSha256": "637d286a4b93e070e24f8160e283e152ffa89c1c6a930615670f54dd320f887a",
-      "sha256": "5d5171447e56170a48b35b047e5c8afaa517e8a8f674f104a3a8ddb9b3d3cfcf",
+      "sha256": "32bcfc79ace66e368da51df87856fc712f27aceaf42b16c48798f15718c8d8cb",
       "transformed": true
     },
     "einvoice/go/go.sum": {
@@ -426,7 +426,7 @@
     "einvoice/python/pyproject.toml": {
       "sourcePath": "sdk/python/pyproject.toml",
       "sourceSha256": "05fc940ed2b20564f187220642a18073a061522b2c948e18f1a9536fda848b47",
-      "sha256": "f087aaf015d2f454934c73566ad3711c1099a579587e032bc587182801e6b01e",
+      "sha256": "c571caa67c301a3fff1cf92a49e5df105afb0c719a54b2840dd8086dfd233ef8",
       "transformed": true
     },
     "einvoice/python/src/d0_einvoice/__init__.py": {
@@ -461,8 +461,8 @@
     },
     "einvoice/typescript/package.json": {
       "sourcePath": "sdk/typescript/package.json",
-      "sourceSha256": "b92a768bcab66c53eea4a5ee99927edabcfe7c57ae6c9f1bea280def73e6787f",
-      "sha256": "481d2990fa24a59a85ac2f9e4de624016b4f7612150115de875d41bbd02c883e",
+      "sourceSha256": "cd14bf3114cd1c81b1b598fd12d41d36e56c1919de6f8f20a05848b1c160f23f",
+      "sha256": "c2aa8e0a44e29ac9a8d2743a72e9420e1b3f54798ceb2413ef3a186b721c955a",
       "transformed": true
     },
     "einvoice/typescript/src/index.test.ts": {
@@ -561,7 +561,7 @@
     "eric/go/go.mod": {
       "sourcePath": "sdk/go/go.mod",
       "sourceSha256": "976c3e4a078d6526f48c71535050ce94856dd8271ec8a96e0c6a6ddc860d3075",
-      "sha256": "90b0bf28c9a3abfb09824e6ad9f6a05ed887c2618c9dcdd88b8f7655351a8c13",
+      "sha256": "625f3c935381142e0edee00f906f5dc9ce45bef79faeb1bb9c8bc71538d4c9ba",
       "transformed": true
     },
     "eric/go/go.sum": {
@@ -609,7 +609,7 @@
     "eric/python/pyproject.toml": {
       "sourcePath": "sdk/python/pyproject.toml",
       "sourceSha256": "ae582b4b2e919b697f02a42a258ed8b42bf647cbaad8f899b3784e6ea3920455",
-      "sha256": "7897ecd001f8336c2de6de0c50b4299af1c7ea1a461b6f80e2431edf4d57a6b0",
+      "sha256": "91813ccda868816f85e009726f761ae9cd23964e7dfed51ebfe48f6c2e5cf47e",
       "transformed": true
     },
     "eric/python/src/d0_eric/__init__.py": {
@@ -662,8 +662,8 @@
     },
     "eric/typescript/package.json": {
       "sourcePath": "sdk/typescript/package.json",
-      "sourceSha256": "5de35a1b3ccdf146c76b0244b4bb96428793e83d5e93bc398b6cef62b3ec2ce5",
-      "sha256": "59a40cd468574e6c7674356b00764f5b5ad94e0112ccb662775a6b60bdc2f06d",
+      "sourceSha256": "6d131d90a0b07b56d5f3b1f9e2988c0a3dff526340d0402b597474a25c997f49",
+      "sha256": "0816635bd71d04e126041b58121987a934966b3f03ab63f760fff5a5c5fe06f4",
       "transformed": true
     },
     "eric/typescript/src/generated.ts": {
@@ -755,14 +755,14 @@
     },
     "platform/go/gen/api.gen.go": {
       "sourcePath": "sdk/go/gen/api.gen.go",
-      "sourceSha256": "458f864206bca8ad2d8d4bb1dc6bbe3023fa135f93460edf4fab951ca16e0683",
-      "sha256": "458f864206bca8ad2d8d4bb1dc6bbe3023fa135f93460edf4fab951ca16e0683",
+      "sourceSha256": "4137e223ae883f00fcd3218d6459157d59978002e6da06c6b1d04a2f99680824",
+      "sha256": "4137e223ae883f00fcd3218d6459157d59978002e6da06c6b1d04a2f99680824",
       "transformed": false
     },
     "platform/go/go.mod": {
       "sourcePath": "sdk/go/go.mod",
       "sourceSha256": "99daa4a34ea1c88b7754d61fb961018d4194dfc3176cfd33cda6a7f60380fd68",
-      "sha256": "08b110e29c8202ba266fd4de4b94cd905bf7697d8f88997227e0b373bdb33b19",
+      "sha256": "3296e9f291fcede669051fe056fc3d112c83898a152e3c7e3fc61a1c07824cb7",
       "transformed": true
     },
     "platform/go/go.sum": {
@@ -803,8 +803,8 @@
     },
     "platform/python/pyproject.toml": {
       "sourcePath": "sdk/python/pyproject.toml",
-      "sourceSha256": "abf139ce07a94de4b239fdc4d07ae5499be3c0371afada3954e032b35e29c44b",
-      "sha256": "386dec30387b55f9db4e92cfd5f39755740c6d9eb523aeb1784b76f0adb93385",
+      "sourceSha256": "7c0926efa0bbf929b3982a01880af3b75ba39c83ab2a4e417f2fead807432498",
+      "sha256": "44e455230826add4d14c9a95f75d7bc80524625e0a9b3df075d2287cde56597b",
       "transformed": true
     },
     "platform/python/src/d0_platform/__init__.py": {
@@ -869,8 +869,8 @@
     },
     "platform/typescript/package.json": {
       "sourcePath": "sdk/typescript/package.json",
-      "sourceSha256": "ef91ebe68869b8eab3967faaf80a8dcdf81484d40996456e0a4eda6352d8cdad",
-      "sha256": "90d929c75116fa7482f70a1e17e74269a2e4d4f5c7b6aa5246e627d51ffbafc2",
+      "sourceSha256": "7770004918a4746a6e2096a788b69336e1e1c69107e96efd082848645bc90944",
+      "sha256": "35430dcc3b2f4720d9c525a1420b670664dafae0d94808447c887c838d5fba47",
       "transformed": true
     },
     "platform/typescript/src/generated.ts": {
