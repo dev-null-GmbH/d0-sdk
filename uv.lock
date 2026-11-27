@@ -178,7 +178,7 @@ wheels = [
 
 [[package]]
 name = "d0-accounting"
-version = "0.1.3"
+version = "0.1.4"
 source = { editable = "accounting/python" }
 dependencies = [
     { name = "d0-auth-machine" },
@@ -201,7 +201,7 @@ dev = [
 
 [[package]]
 name = "d0-auth-machine"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "auth/python" }
 dependencies = [
     { name = "cffi" },
@@ -230,7 +230,7 @@ dev = [
 
 [[package]]
 name = "d0-einvoice"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "einvoice/python" }
 dependencies = [
     { name = "d0-auth-machine" },
@@ -253,7 +253,7 @@ dev = [
 
 [[package]]
 name = "d0-eric"
-version = "0.1.3"
+version = "0.1.4"
 source = { editable = "eric/python" }
 dependencies = [
     { name = "d0-auth-machine" },
@@ -276,7 +276,7 @@ dev = [
 
 [[package]]
 name = "d0-platform"
-version = "0.1.1"
+version = "0.1.2"
 source = { editable = "platform/python" }
 dependencies = [
     { name = "d0-auth-machine" },
@@ -294,7 +294,7 @@ requires-dist = [{ name = "d0-auth-machine", editable = "auth/python" }]
 [package.metadata.requires-dev]
 dev = [
     { name = "mypy", specifier = "==2.4.1" },
-    { name = "ruff", specifier = "==0.17.4" },
+    { name = "ruff", specifier = "==0.17.6" },
 ]
 
 [[package]]

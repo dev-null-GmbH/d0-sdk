@@ -6,11 +6,11 @@ build-backend = "hatchling.build"
 license = "MIT"
 license-files = ["LICENSE"]
 name = "d0-accounting"
-version = "0.1.3"
+version = "0.1.4"
 description = "Typed Accounting machine API client backed by d0-auth-machine"
 readme = "README.md"
 requires-python = ">=3.14,<3.16"
-dependencies = ["d0-auth-machine==0.1.1"]
+dependencies = ["d0-auth-machine==0.1.2"]
 
 [tool.uv.sources]
 d0-auth-machine = { workspace = true }

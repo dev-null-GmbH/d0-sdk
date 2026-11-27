@@ -3,7 +3,7 @@ module github.com/dev-null-GmbH/d0-sdk/accounting/go
 go 1.27.4
 
 require (
-	github.com/dev-null-GmbH/d0-sdk/auth/go v0.1.1
+	github.com/dev-null-GmbH/d0-sdk/auth/go v0.1.2
 	github.com/oapi-codegen/nullable v1.2.0
 	github.com/oapi-codegen/runtime v1.9.1
 )
