@@ -70,6 +70,22 @@ Medium advisory [GHSA-9pg5-8c7x-5hfx](https://github.com/advisories/GHSA-9pg5-8c
 The original artifacts remain immutable. A new distribution requires the
 reviewed release procedure and successful clean installs of its own bytes.
 
+## Verified 27 November patch release
+
+The [27 November release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-11-27)
+contains Auth, Platform and EInvoice 0.1.2 and Accounting and ERiC 0.1.4.
+The Platform Go client uses oapi-codegen 2.9.0. Consumers that set a custom
+JSON codec through the oapi-codegen runtime now use it for generated Platform
+request and response bodies.
+
+[Main qualification run 45969853298](https://github.com/dev-null-GmbH/d0-sdk/actions/runs/45969853298)
+produced artifact `15184174499` from `0fa10ea8d5d68c449b78c3723385489488f49dfb`.
+The 441,106-byte anonymous download matched the original ZIP's SHA-256
+`1bc318bfe1e31d8beec6d34fdd7452218ecae868c37d3b1446b7498012323eb6`
+and all 35 inner checksums. Fresh consumer installs verified the five public
+Go modules against the archives and passed all twelve examples across Go,
+TypeScript and Python.
+
 ## Verified November security release
 
 The [25 November release](https://github.com/dev-null-GmbH/d0-sdk/releases/tag/sdk-2026-11-25)
